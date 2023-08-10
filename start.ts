@@ -1,4 +1,4 @@
-import "module-alias/register" 
-import Test from "app/app";
- 
-Test()
+import "module-alias/register"
+import { Kernel } from "kernel"
+
+new Kernel().InitailizeApplication()

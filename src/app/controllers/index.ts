@@ -1,4 +1,3 @@
-export default function Kernel(){
-    console.log("test")
+export class Controller{
+    
 }
-export const Test2 = ["te"]

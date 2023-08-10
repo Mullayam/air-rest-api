@@ -1,0 +1,138 @@
+ [AirAPI] INFO 2023-08-10 17:18:27 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:18:34 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:18:47 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:18:51 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:19:00 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:19:17 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:19:26 - InitailizeApplication
+[AirAPI] [34MINFO[39M 2023-08-10 17:20:04 - [34mInitailizeApplication[39m
+[AirAPI] [34MINFO[39M 2023-08-10 17:20:34 - [34mInitailizeApplication[39m
+[AirAPI] [34MINFO[39M 2023-08-10 17:20:41 - [34mInitailizeApplication[39m
+[AirAPI] [34MINFO[39M 2023-08-10 17:21:07 - [34mInitailizeApplication[39m
+[AirAPI] [34MINFO[39M 2023-08-10 17:21:35 - [34mInitailizeApplication[39m
+[AirAPI] [34MINFO[39M 2023-08-10 17:21:43 - [34mInitailizeApplication[39m
+[AirAPI] INFO 2023-08-10 17:21:59 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:23:53 - InitailizeApplication
+[AirAPI] ERROR 2023-08-10 17:23:53 - uncaughtException: Cannot read properties of undefined (reading 'bgBlack')
+TypeError: Cannot read properties of undefined (reading 'bgBlack')
+    at Server.<anonymous> (E:\private\noidejs\nodets-pack\src\app\bootstrap.ts:32:32)
+    at Object.onceWrapper (node:events:627:28)
+    at Server.emit (node:events:513:28)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1774:10)
+    at processTicksAndRejections (node:internal/process/task_queues:81:21)
+[AirAPI] INFO 2023-08-10 17:24:02 - InitailizeApplication
+[AirAPI] ERROR 2023-08-10 17:24:02 - uncaughtException: Cannot read properties of undefined (reading 'blue')
+TypeError: Cannot read properties of undefined (reading 'blue')
+    at Server.<anonymous> (E:\private\noidejs\nodets-pack\src\app\bootstrap.ts:32:32)
+    at Object.onceWrapper (node:events:627:28)
+    at Server.emit (node:events:513:28)
+    at Server.emit (node:domain:489:12)
+    at emitListeningNT (node:net:1774:10)
+    at processTicksAndRejections (node:internal/process/task_queues:81:21)
+[AirAPI] INFO 2023-08-10 17:25:21 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:25:30 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:25:51 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:26:01 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:26:14 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:26:53 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:26:59 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:27:05 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:27:24 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:27:33 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:27:50 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:27:59 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:28:06 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:28:40 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:29:15 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:30:11 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:31:16 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:31:18 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:31:38 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:32:25 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:32:35 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:32:55 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:33:15 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:34:12 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:35:43 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:36:10 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:36:16 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:36:45 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:37:14 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:37:37 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:38:08 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:38:17 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:38:54 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 17:38:57 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:42:34 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:43:18 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:43:54 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:45:51 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:46:05 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:46:36 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:46:39 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:47:23 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:47:36 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:47:47 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:47:49 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:48:15 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:48:20 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:48:36 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:50:46 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:51:27 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:51:33 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:51:36 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:51:46 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:52:02 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:52:45 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:52:49 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:53:36 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:53:53 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:54:04 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:54:26 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:54:50 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:54:53 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:55:01 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:55:26 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:55:36 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:55:50 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:56:01 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:56:10 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:56:21 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 18:56:32 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:00:29 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:01:00 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:01:21 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:01:33 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:01:42 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:01:56 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:02:06 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:02:12 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:02:22 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:02:35 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:02:47 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:02:52 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:03:03 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:03:27 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:03:30 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:03:43 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:03:52 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:06:34 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:07:11 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:07:23 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:07:30 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:07:46 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:08:09 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:08:17 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:08:58 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:09:07 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:09:09 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:11:42 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:11:45 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:12:28 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:12:59 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:13:03 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:14:53 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:15:04 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:15:38 - InitailizeApplication
+[AirAPI] INFO 2023-08-10 19:18:15 - InitailizeApplication
