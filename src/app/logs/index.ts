@@ -52,7 +52,7 @@ export class Logging {
           filename: `${LogsPath}/error.log`,
           level: level,
         }),
-        // new transports.File(this.LoggingOptions().file),
+        new transports.File(this.LoggingOptions().file),
         new transports.Console(this.LoggingOptions().console),
       ],
       rejectionHandlers: [
