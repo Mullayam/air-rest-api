@@ -33,7 +33,7 @@
       "App/*": ["./src/app/*"],
       "Factory/*": ["./src/factory/*"],
       "Types/*": ["./src/types/*"],
-      "Storage/*": ["./src/storage/*"],
+      "Storage/*": ["src/app/storage/*"],
       "Routes/*": ["./src/routes/*"],  
     },
     /* Specify a set of entries that re-map imports to additional lookup locations. */
