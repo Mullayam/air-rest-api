@@ -2,7 +2,6 @@ import { Router } from 'express'
 export class ApiRoutes {
 
     constructor(protected apiRoutes: Router) {
-
         this.PublicRoutes();
         this.ProtectedRoutes();
         this.UnhandledRoutes();

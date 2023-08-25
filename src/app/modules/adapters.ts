@@ -1,6 +1,6 @@
 import { PaytmConfig, PaytmConfigurationValidator } from '@enjoys/paytm'
 
-export class Kernel {
+export class Adapters {
     public static paytm: PaytmConfig;
     constructor() {
         this.InitiaitePaytmInstance()
@@ -20,7 +20,7 @@ export class Kernel {
      * This function is private and does not take any parameters or return any value.
      */
      InitiaitePaytmInstance() {
-        Kernel.paytm = new PaytmConfig(this._PrepareEnvironment())
+        Adapters.paytm = new PaytmConfig(this._PrepareEnvironment())
         return this
     }
 /**

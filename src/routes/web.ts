@@ -22,6 +22,6 @@ export class AppRoutes extends Routes {
 
     }
     private UnhandledRoutes(): void {
-        this.router.use("*", (req, res) => { throw new HttpException({ message: "Route Error", stack: "Route Not Found" }) })
+        this.router.use("*", (req, res) => { throw new HttpException({ name:"NOT_FOUND",message: "Route Error", stack: "Route Not Found" }) })
     }
 }

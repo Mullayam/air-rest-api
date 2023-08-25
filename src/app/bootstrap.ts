@@ -1,13 +1,12 @@
 import url from 'url'
 import path from 'path';
 import cors from 'cors';
-import { blue } from "colorette"
+import { blue, red } from "colorette"
 import bodyParser from "body-parser";
 import express, { Application, NextFunction } from 'express'
 import { Logging } from './logs';
 import { AppRoutes } from 'routes/web';
 import { HttpException } from './lib/ExceptionHandler';
-
 
 export class AppServer {
     protected static app: Application;
@@ -26,14 +25,12 @@ export class AppServer {
         AppServer.app.use(express.json());
         AppServer.app.use(cors({ origin: "*", credentials: true }));
         AppServer.app.use(bodyParser.urlencoded({ extended: false }));
-
     }
     private InitializeMiddlewares() {
         Logging.log("Initializing Middlewares")
-
     }
     private Exceptions(): void {
-        AppServer.app.use(async(err: Error, req: any, res: any, next: any) => { 
+        AppServer.app.use(async (err: Error, req: any, res: any, next: any) => {
             if (err) HttpException.ExceptionHandler(err, res, res, next)
             return next()
         });
@@ -43,9 +40,14 @@ export class AppServer {
         AppServer.app.use("/", new AppRoutes().router);
     }
     protected static RunApplication(): void {
-        AppServer.app.listen(AppServer.PORT, () => {
-            console.log(blue(`App listening on port ${AppServer.PORT}`),)
-        })
+        try {
+            AppServer.app.listen(AppServer.PORT, () => {
+                console.log(blue(`App listening on port ${AppServer.PORT}`),)
+            })
+        } catch (error: any) {
+            console.log(red(error),)
+
+        }
     }
 
 }
