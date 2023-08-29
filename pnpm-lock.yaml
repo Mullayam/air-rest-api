@@ -26,15 +26,15 @@ dependencies:
   express:
     specifier: ^4.18.2
     version: 4.18.2
+  express-interceptor:
+    specifier: ^1.2.0
+    version: 1.2.0
   googleapis:
     specifier: ^125.0.0
     version: 125.0.0
   jsonwebtoken:
     specifier: ^9.0.1
     version: 9.0.1
-  module-alias:
-    specifier: ^2.2.3
-    version: 2.2.3
   moment:
     specifier: ^2.29.4
     version: 2.29.4
@@ -58,6 +58,9 @@ dependencies:
     version: 13.11.0
 
 devDependencies:
+  '@types/bcryptjs':
+    specifier: ^2.4.2
+    version: 2.4.2
   '@types/body-parser':
     specifier: ^1.19.2
     version: 1.19.2
@@ -158,6 +161,10 @@ packages:
   /@sqltools/formatter@1.2.5:
     resolution: {integrity: sha512-Uy0+khmZqUrUGm5dmMqVlnvufZRSK0FbYzVgp0UMstm+F5+W2/jnEEQyc9vo1ZR/E5ZI/B1WjjoTqBqwJL6Krw==}
     dev: false
+
+  /@types/bcryptjs@2.4.2:
+    resolution: {integrity: sha512-LiMQ6EOPob/4yUL66SZzu6Yh77cbzJFYll+ZfaPiPPFswtIlA/Fs1MzdKYA7JApHU49zQTbJGX3PDmCpIdDBRQ==}
+    dev: true
 
   /@types/body-parser@1.19.2:
     resolution: {integrity: sha512-ALYone6pm6QmwZoAgeyNksccT9Q4AWZQ6PvfwR37GT6r6FWUPguq6sUmNGSMV2Wr761oQoBxwGGa6DR5o1DC9g==}
@@ -584,6 +591,14 @@ packages:
     engines: {node: '>= 0.6'}
     dev: false
 
+  /express-interceptor@1.2.0:
+    resolution: {integrity: sha512-fCbcJv8ZwabDg0M/3PmHUxfr/WKHGMpAicR9TfGdhANV4M1GBDSrBTenHIK3aegyRN5S6eDwlvyNFiLynnc19w==}
+    dependencies:
+      debug: 2.6.9
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
   /express@4.18.2:
     resolution: {integrity: sha512-5/PsL6iGPdfQ/lKM1UuielYgv3BUoJfz1aUwU9vHZ+J7gyvwdQXFEBIEIaxeGf0GIcreATNyBExtalisDbuMqQ==}
     engines: {node: '>= 0.10.0'}
@@ -1007,10 +1022,6 @@ packages:
     resolution: {integrity: sha512-+hEnITedc8LAtIP9u3HJDFIdcLV2vXP33sqLLIzkv1Db1zO/1OxbvYf0Y1OC/S/Qo5dxHXepofhmxL02PsKe+A==}
     engines: {node: '>=10'}
     hasBin: true
-    dev: false
-
-  /module-alias@2.2.3:
-    resolution: {integrity: sha512-23g5BFj4zdQL/b6tor7Ji+QY4pEfNH784BMslY9Qb0UnJWRAt+lQGLYmRaM0KDBwIG23ffEBELhZDP2rhi9f/Q==}
     dev: false
 
   /moment@2.29.4:

@@ -1,18 +1,20 @@
-import { Logging } from "app/logs/index.js";
+import { Logging } from "../../logs/index.js";
 import redis, { RedisClientType } from "redis";
  
 
 export class CacheService {
     public cache: RedisClientType
-    constructor() {
+    constructor(CACHE_ENBALED:string = "false") {
         this.cache = redis.createClient({
             password: 'l9GNnvy8Yo0tJFuoJcW2LZHb6itLqcZl',
             socket: {
                 host: 'redis-19063.c212.ap-south-1-1.ec2.cloud.redislabs.com',
                 port: 19063
             }
-        });
-        this.ConnectRedisClient()
+        });   
+        if (CACHE_ENBALED !== "false") {
+        this.ConnectRedisClient()            
+        }
     }
 
     /**

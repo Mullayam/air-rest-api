@@ -1,10 +1,10 @@
 import path from 'path';
 import winston from 'winston'
 import { yellow } from "colorette"
-import { LoggingLevel, LoggingOptions } from 'types';
+import { LoggingLevel, LoggingOptions } from '../types/index.js';
 import { createLogger, format, transports } from 'winston'
 const { combine, timestamp, label, printf, colorize } = format;
-const LogsPath = path.join(__dirname)
+const LogsPath = path.join(process.cwd(), 'src', 'logs')
 
 const Colors: Record<LoggingLevel, string> = {
   info: "blue",
@@ -39,7 +39,7 @@ export class Logging {
       },
     }
   }
-  private HandleCreateLogger(level: LoggingLevel = "debug") {
+  private HandleCreateLogger(level: LoggingLevel = "info") {
     return createLogger({
       format: combine(
         // colorize({ all: true, level: true, message: true, colors: Colors }),

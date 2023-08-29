@@ -1,8 +1,8 @@
-import { HttpStatus } from "types";
+import { HttpStatusName } from "../../types/index.js";
 
 export class Http {
 
-   static HttpStatus:HttpStatus = {
+   static HttpStatus:HttpStatusName = {
     OK: 200,
     CREATED: 201,
     ACCEPTED: 202,

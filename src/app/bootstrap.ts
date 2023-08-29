@@ -1,18 +1,17 @@
-import url from 'url'
-import path from 'path';
 import cors from 'cors';
 import { blue, red } from "colorette"
 import bodyParser from "body-parser";
-import express, { Application, NextFunction } from 'express'
-import { Logging } from './logs';
-import { AppRoutes } from 'routes/web';
-import { HttpException } from './lib/ExceptionHandler';
+import { Application, NextFunction } from 'express'
+import { Logging } from '../logs/index.js';
+import { AppRoutes } from '../routes/web.js';
+import { HttpException } from './lib/ExceptionHandler.js';
+
 
 export class AppServer {
     protected static app: Application;
-    private static PORT: number = 7134
-    constructor(PORT: number) {
-        AppServer.app = express()
+    private static PORT: number = 713;
+    constructor(app: Application, private readonly express: any, PORT: number = 7134) {
+        AppServer.app = app
         AppServer.PORT = PORT
         Logging.log("Compiling")
         this.config()
@@ -22,7 +21,7 @@ export class AppServer {
     }
     private config(): void {
         Logging.log("Applying Configurations")
-        AppServer.app.use(express.json());
+        AppServer.app.use(this.express.json());
         AppServer.app.use(cors({ origin: "*", credentials: true }));
         AppServer.app.use(bodyParser.urlencoded({ extended: false }));
     }
@@ -39,14 +38,13 @@ export class AppServer {
         Logging.log("Mapping Routes")
         AppServer.app.use("/", new AppRoutes().router);
     }
-    protected static RunApplication(): void {
+    static RunApplication(): void {
         try {
             AppServer.app.listen(AppServer.PORT, () => {
                 console.log(blue(`App listening on port ${AppServer.PORT}`),)
             })
         } catch (error: any) {
-            console.log(red(error),)
-
+            console.log(red(error))
         }
     }
 

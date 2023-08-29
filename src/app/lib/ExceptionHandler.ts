@@ -1,6 +1,6 @@
 import { NextFunction, Response, Request } from 'express';
-import { HttpExceptionParams, HttpStatusCodes } from 'types/index.js';
-import { Logging } from 'app/logs/index.js';
+import { HttpExceptionParams, HttpStatusCodes } from '../../types/index.js';
+import { Logging } from '../../logs/index.js';
 export class HttpException {
     constructor({ name, message, stack }: HttpExceptionParams) {
         this.ThrowNewException({ name, message, stack })
@@ -27,13 +27,13 @@ export class HttpException {
  * @param {NextFunction} next : The next middleware function in the chain.
  */
     static ExceptionHandler(err: Error, req: Request, res: Response, next: NextFunction) {
-        const errStatus = this.prototype.TypeOfError(err.name as keyof HttpStatusCodes);
+        const errStatus = this.TypeOfError(err.name as keyof HttpStatusCodes);
         Logging.info("Error Handled")
         const errMsg = err.message || 'Something went wrong';
         res.status(errStatus).send({
             success: false,
             status: errStatus,
-            type: err.name,
+            type: (err.name).replace(/_/g," "),
             message: err.message,
             stack: process.env.NODE_ENV === 'development' ? err.stack : {}
         })
@@ -75,7 +75,7 @@ export class HttpException {
             "REQUESTED_RANGE_NOT_SATISFIABLE": 416,
             "TOO_MANY_REQUESTS": 429,
             "CLIENT_CLOSED_REQUEST": 499,
-            "INTEMAL_SERVER_ERROR": 500,
+            "INTERNAL_SERVER_ERROR": 500,
             "BAD_GATEWAY": 502,
             "SERVICE_UNAVAILABLE": 503,
             "GATEWAY_TIMEOUT": 504,
@@ -88,8 +88,8 @@ export class HttpException {
      * @param {string} name - The http error name. 
      * @return {number} - The http error status code.
      */
-    private TypeOfError(name: keyof HttpStatusCodes): number {
-        const ExceptionObject = this.ExceptionsArray()
+    static TypeOfError(name: keyof HttpStatusCodes): number {
+        const ExceptionObject = this.prototype.ExceptionsArray()
         return ExceptionObject[name]
     }
 

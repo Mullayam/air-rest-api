@@ -1,5 +1,5 @@
 import { google } from "googleapis";
-import { AuthProviders, AuthProvidersKeys, AuthProvidersList, AuthProvidersScopes } from "types/index.js";
+import { AuthProviders, AuthProvidersKeys, AuthProvidersList, AuthProvidersScopes } from "../../types/index.js";
 
 
 export class Providers {

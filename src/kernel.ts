@@ -1,26 +1,39 @@
-import { AppServer } from "app/bootstrap";
-import { Logging } from "app/logs";
+import express, { Application } from 'express'
+import { AppServer } from './app/bootstrap.js'
+import { Logging } from "./logs/index.js";
+import { Engine } from './app/modules/engine.js'
 
-export class Kernel extends AppServer {
-
+export class Kernel {
+    protected static app: Application;
     constructor() {
-        super(7134);  
+        Kernel.app = express();
         this.LoadInstances()
-        this.LoadModules()  
+        this.LoadAppModules()
     }
-    private LoadModules() {
+    /**
+     * Loads the application modules.
+     *
+     * @private
+     */
+    private LoadAppModules() {
         Logging.log("Loading App Modules")
-      
-
+        new AppServer(Kernel.app, express)
     }
-    private LoadInstances() {
+    /**
+     * LoadInstances is a private function that prepares an instance to launch.
+     * 
+     * @private     
+     */
+    private LoadInstances():void {
         Logging.log("Preparing Instance To Launch")
-       
-
+        new Engine(Kernel.app)
     }
-
-    InitailizeApplication() {  
-        Logging.info("InitailizeApplication")     
+    /**
+     * Initializes the application.
+     *     
+     */
+    InitailizeApplication() {
+        Logging.info("InitailizeApplication")
         AppServer.RunApplication()
     }
 

@@ -1,20 +1,25 @@
-import { Router } from 'express'
-export class ApiRoutes {
+//  Write Your All Routes Here
 
-    constructor(protected apiRoutes: Router) {
+import { Router } from 'express'
+import { HttpException } from '../app/lib/ExceptionHandler.js';
+import { XResponse } from '../app/lib/Response.js';
+ 
+export class ApiRoutes {
+    constructor(public apiRoutes: Router) {
         this.PublicRoutes();
         this.ProtectedRoutes();
         this.UnhandledRoutes();
     }
 
     private PublicRoutes(): void {
+        this.apiRoutes.get("/test2", () => XResponse.JSON({message:"Public test Route"}))
 
     }
     protected ProtectedRoutes() {
 
     }
     private UnhandledRoutes(): void {
-        // this.apiRoutes.use("*", (req, res) => JSONResponse.Response(req, res, "API is Running", { error: "Not Found", code: 404, message: "Unhandled Route" }))
+        this.apiRoutes.all("*", () => { throw new HttpException({ name: "NOT_FOUND", message: "Route Error", stack: "Route Not Found" }) })
     }
 
 }

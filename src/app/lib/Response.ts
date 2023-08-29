@@ -1,4 +1,6 @@
 import { Response as ExpressResponse } from "express";
+import { HttpStatusCodes } from "../../types/index.js";
+import { HttpException } from "./ExceptionHandler.js";
 
 
 export class AirResponse {
@@ -10,3 +12,38 @@ export class AirResponse {
     }
 
 }
+export class XResponse {
+    private static res: ExpressResponse
+    constructor(res: ExpressResponse) {
+        XResponse.res = res
+    }
+    /**
+     * Sends a JSON response with the specified status code.
+     *
+     * @param {any} response - The JSON response to send.
+     * @param {number} statusCode - The status code to send (default: 200).
+     * @return {void}
+     */
+    static JSON(response: any, statusCode: number = 200): void {
+        XResponse.res.status(statusCode).json(response);
+    }
+    static Redirect(path: string): void {
+        if (!path) {
+            XResponse.Error({ name: "NOT_FOUND", message: "Redirection Failed, The Path must be defined and string, but got undefined", stack: "Redirection Path is undefined" }, "NOT_FOUND")
+        }
+        XResponse.res.redirect(path);
+    }
+
+    /**
+     * Throws an HttpException with the provided response and statusCode.
+     *
+     * @param {any} response - the response object
+     * @param {keyof HttpStatusCodes} statusCode - the status code (defaults to "INTERNAL_SERVER_ERROR")
+     * @return {void} 
+     */
+    static Error(response: any, statusCode: keyof HttpStatusCodes = "INTERNAL_SERVER_ERROR"): void {
+        throw new HttpException({ name: statusCode, message: "Something Went Wrong", stack: process.env.NODE_ENV === 'development' ? response : {} })
+    }
+
+}
+

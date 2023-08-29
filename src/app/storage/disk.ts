@@ -1,4 +1,7 @@
-export default function Kernel(){
-    console.log("test")
+import { AsyncLocalStorage } from 'async_hooks'
+
+const asyncLocalStorage = new AsyncLocalStorage();
+
+export class Storage {
+
 }
-export const Test2 = ["te"]
