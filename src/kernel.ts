@@ -2,14 +2,23 @@ import express, { Application } from 'express'
 import { AppServer } from './app/bootstrap.js'
 import { Logging } from "./logs/index.js";
 import { Engine } from './app/modules/engine.js'
+import bodyParser from 'body-parser';
+import { Cors } from './app/lib/Cors.js';
 
 export class Kernel {
     protected static app: Application;
     constructor() {
         Kernel.app = express();
+        this.config()
         this.LoadInstances()
         this.LoadAppModules()
         
+    }
+    private config(): void {
+        Logging.log("Applying Configurations")
+        Kernel.app.use(express.json());
+        Kernel.app.use(Cors.setCors());
+        Kernel.app.use(bodyParser.urlencoded({ extended: false }));
     }
     /**
      * Loads the application modules.

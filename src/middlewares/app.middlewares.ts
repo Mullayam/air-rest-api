@@ -1,15 +1,9 @@
-import Helpers from "app/utils/Helper";
+import Helpers from "../app/utils/Helper.js";
 import { Request, Response, NextFunction } from "express";
-import jwt, { JwtPayload,Secret } from "jsonwebtoken";
- 
 
-export const SECRET_KEY: Secret = `${process.env.JWT_SECRET_TOKEN}`
-export interface CustomRequest extends Request {
-  token: string | JwtPayload;  
- }
 export class Middlewares {
   //  Check App Variable is Generated or not
-  public static MiddlewareFunction(req: Request, res: Response, next: NextFunction): void {     
+  public static AppMiddlewareFunction(req: Request, res: Response, next: NextFunction): void {     
     
     try {
       if (typeof  process.env.APP_SECRET === "undefined" ||  process.env.APP_SECRET === "") {        
@@ -27,68 +21,6 @@ export class Middlewares {
       });
      
     }    
-  }
-// check user account is active or not
-  public static async isAccountActivated(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      // get token from headers
-      const loggedUserInfo = req.get("loggedUserInfo");
-      if (typeof loggedUserInfo === "undefined") {
-        throw new Error("User Info is manipulated or not available");
-      }
-      // const User = await UserModel.findOne({ _id: loggedUserInfo.userId });
-
-      // if (!User) {
-      //   throw new Error("User Doest not exist");
-      // }
-      // if (!User.status === "0x0000") {
-      //   throw new Error(
-      //     `This Account is not Activated, Please Contact the administrator`
-      //   );
-      // }
-      // if (loggedUserInfo.userRole !== User.role) {
-      //   throw new Error("User is not allowed to perform this action");
-      // }
-
-      next();
-    } catch (error: any) {
-      res.send({
-        success: false,
-        message: error.message,
-      });
-    }
-  }
-  // check user is authenticated or not
-  public static isAuthenticated(req: Request, res: Response, next: NextFunction): void {
-    console.log("AUTHENTICATION MIDDLEWARE")
-    try {
-      // get token from headers
-      const AuthToken = req.get("Authorization");
-
-      if (typeof AuthToken === "undefined") {
-        throw new Error("Invalid Auth Token");
-      }
-      const token = AuthToken.split(" ")[1];
-      if (SECRET_KEY === "undefined" ||SECRET_KEY ==="") {
-        throw new Error("JWT SECRET TOKEN is required");
-      }
-      const DecryptToken = jwt.verify(token,SECRET_KEY);
-      (req as CustomRequest).body.user  = DecryptToken;
-      console.log(DecryptToken)
-      // req.body.user = {
-      //   userId: DecryptToken.id,
-      //   userEmail: DecryptToken.email,
-      //   userRole: DecryptToken.role,
-      //   userStatus: DecryptToken.status,
-      // };
-
-      next();
-    } catch (error: any) {
-      res.send({
-        success: false,
-        message: error.message,
-      });
-    }
   }
 //  check api key from frontend is valid or not
   public static isApiProtected(req: Request, res: Response, next: NextFunction) {
