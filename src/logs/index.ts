@@ -1,6 +1,6 @@
 import path from 'path';
 import winston from 'winston'
-import { yellow } from "colorette"
+import { magenta, redBright, yellow } from "colorette"
 import { LoggingLevel, LoggingOptions } from '../types/index.js';
 import { createLogger, format, transports } from 'winston'
 const { combine, timestamp, label, printf, colorize } = format;
@@ -17,6 +17,11 @@ const Colors: Record<LoggingLevel, string> = {
 }
 
 export class Logging {
+  /**
+   * Generates the LoggingOptions object.
+   *
+   * @return {LoggingOptions} The LoggingOptions object with the specified configuration.
+   */
   private LoggingOptions(): LoggingOptions {
     return {
       file: {
@@ -39,6 +44,12 @@ export class Logging {
       },
     }
   }
+  /**
+   * Creates a logger with the specified logging level.
+   *
+   * @param {LoggingLevel} [level="info"] - The logging level to use. Defaults to "info".
+   * @return {Logger} - The created logger.
+   */
   private HandleCreateLogger(level: LoggingLevel = "info") {
     return createLogger({
       format: combine(
@@ -64,15 +75,39 @@ export class Logging {
       exitOnError: false,
     });
   }
+  /**
+   * Logs an info message.
+   *
+   * @param {string} message - The message to log.
+    
+   */
   static info(message: string) {
     return this.prototype.HandleCreateLogger("info").info(message)
   }
+  /**
+   * A static method that handles an error message.
+   *
+   * @param {string} message - The error message to handle.
+    
+   */
   static error(message: string) {
     return this.prototype.HandleCreateLogger("error").error(message)
   }
+  /**
+   * Logs a message to the console.
+   *
+   * @param {string} text - The message to be logged.
+   */
   static log(text: string) {
     console.log(yellow(`----------- ${text} -------------`))
-
+  };
+  /**
+   * Prints the given text in the console with a formatted alert message.
+   *
+   * @param {string} text - The text to be displayed in the alert message.
+   */
+  static alert(text: string) {
+    console.log(magenta(`----------- ${text} -------------`))
   };
 
 

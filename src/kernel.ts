@@ -9,6 +9,7 @@ export class Kernel {
         Kernel.app = express();
         this.LoadInstances()
         this.LoadAppModules()
+        
     }
     /**
      * Loads the application modules.
@@ -28,6 +29,7 @@ export class Kernel {
         Logging.log("Preparing Instance To Launch")
         new Engine(Kernel.app)
     }
+    
     /**
      * Initializes the application.
      *     
