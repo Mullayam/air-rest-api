@@ -12,7 +12,7 @@ export class Kernel {
         this.config()
         this.LoadInstances()
         this.LoadAppModules()
-        
+
     }
     private config(): void {
         Logging.log("Applying Configurations")
@@ -21,31 +21,27 @@ export class Kernel {
         Kernel.app.use(bodyParser.urlencoded({ extended: false }));
     }
     /**
-     * Loads the application modules.
-     *
+     * Loads the application modules.    
      * @private
      */
     private LoadAppModules() {
         Logging.log("Loading App Modules")
+        Kernel.app.use(express.static(`${process.cwd()}/pages`));
         new AppServer(Kernel.app, express)
     }
     /**
-     * LoadInstances is a private function that prepares an instance to launch.
-     * 
-     * @private     
+     * LoadInstances is a private function that prepares an instance to launch.  * 
+     * @private  
      */
-    private LoadInstances():void {
+    private LoadInstances(): void {
         Logging.log("Preparing Instance To Launch")
         new Engine(Kernel.app)
     }
-    
     /**
-     * Initializes the application.
-     *     
+     * Initializes the application. 
      */
     InitailizeApplication() {
         Logging.info("InitailizeApplication")
         AppServer.RunApplication()
     }
-
 }
