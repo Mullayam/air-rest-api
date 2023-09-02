@@ -33,7 +33,7 @@ export class HttpException {
         res.status(errStatus).send({
             success: false,
             status: errStatus,
-            type: (err.name).replace(/_/g," "),
+            type: (err.name).replace(/_/g, " "),
             message: err.message,
             stack: process.env.NODE_ENV === 'development' ? err.stack : {}
         })
@@ -46,6 +46,9 @@ export class HttpException {
   */
     static UnauthorizedException(payload: HttpExceptionParams) {
         new HttpException(payload)
+    }
+    static ThrottleException(message: Record<string, any> = { info: "Current Rate Limit is Exceeded", solution: "Try Again after time you settled in the rate limit, or disable it" }) {
+        new HttpException({ name: "TOO_MANY_REQUESTS", message: "Request Throttled", stack: message })
     }
     private ExceptionsArray() {
         return {

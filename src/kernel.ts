@@ -25,8 +25,7 @@ export class Kernel {
      * @private
      */
     private LoadAppModules() {
-        Logging.log("Loading App Modules")
-        Kernel.app.use(express.static(`${process.cwd()}/pages`));
+        Logging.log("Loading App Modules")       
         new AppServer(Kernel.app, express)
     }
     /**

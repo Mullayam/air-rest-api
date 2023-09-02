@@ -5,6 +5,7 @@ import { XResponse } from '../lib/Response.js'
 import { Application } from "express";
 import { Interceptor } from "../lib/Interceptors.js";
 import { Platform } from "../../services/Platform.js";
+import { Middlewares } from "../../middlewares/app.middlewares.js";
 export class Engine {
     constructor(private app: Application) {
         Logging.log("Initializing App Engine Cache/Adapters Services ");
@@ -16,6 +17,7 @@ export class Engine {
         Adapters.prototype.InitiaitePaytmInstance();
         // Set Response instance
         this.app.use((req, res, next) => { new XResponse(res); next() });
+        this.app.use(Middlewares.AppMiddlewareFunction);
         Platform.LaunchWindow()
     }
     /**

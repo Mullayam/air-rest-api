@@ -1,4 +1,3 @@
-import cors from 'cors';
 import { blue, red } from "colorette"
 import { Application } from 'express'
 import { Logging } from '../logs/index.js';
@@ -17,15 +16,13 @@ export class AppServer {
         this.InitializeMiddlewares()
         this.InitializeRoutes()
         this.Exceptions()
-    }
-    
+    }    
     /**
      * Initializes the middlewares for the application.
       
      */
     private InitializeMiddlewares() {
-        Logging.log("Initializing Middlewares")
-        AppServer.app.use(Middlewares.AppMiddlewareFunction);
+        Logging.log("Initializing Middlewares")       
         
     }
     /**
@@ -37,7 +34,7 @@ export class AppServer {
      * @param {NextFunction} next - The next function.
      * @return {void} This function does not return anything.
      */
-    private Exceptions(): void {
+    private Exceptions(): void {        
         AppServer.app.use(async (err: Error, req: any, res: any, next: any) => {
             if (err) HttpException.ExceptionHandler(err, res, res, next)
             return next()
@@ -52,6 +49,7 @@ export class AppServer {
      */
     private InitializeRoutes(): void {
         Logging.log("Mapping Routes")
+        AppServer.app.use(this.express.static(`${process.cwd()}/pages`));
         AppServer.app.use("/", new AppRoutes().router);
     }
     /**
@@ -61,7 +59,7 @@ export class AppServer {
     static RunApplication(): void {
         try {
             AppServer.app.listen(AppServer.PORT, () => {
-                console.log(blue(`App listening on port ${AppServer.PORT}`),)
+                console.log(blue(`App listening on port http://localhost:${AppServer.PORT}`),)
             })
         } catch (error: any) {
             console.log(red(error))
