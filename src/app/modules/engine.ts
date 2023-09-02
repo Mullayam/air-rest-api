@@ -6,11 +6,13 @@ import { Application } from "express";
 import { Interceptor } from "../lib/Interceptors.js";
 import { Platform } from "../../services/Platform.js";
 import { Middlewares } from "../../middlewares/app.middlewares.js";
+import { Limiter } from "../lib/Limiter.js";
 export class Engine {
     constructor(private app: Application) {
         Logging.log("Initializing App Engine Cache/Adapters Services ");
         // Initialize Interceptor to modify Response body
         this.InitInterceptor()
+        Limiter.createInstance(this.app)
         // Enable/Disable Cache Service
         new CacheService(process.env.CACHE_ENBALED as string)
         // Enabled Paytm Transaction Router Service
@@ -29,6 +31,22 @@ export class Engine {
     private InitInterceptor():void{
         Interceptor.useInterceptors(this.app, { response: { test: "Interceptor Response " }, isEnable: false })
     }
-
+    /**
+     * This function is called when the throttle is enabled. It uses the Limiter class
+     * to set the limiter to "noLimit" with a delay of 1000 milliseconds.
+     *
+     * @param {type} paramName - description of parameter     
+     */
+    private onThrottleEnabled(): void{
+        Limiter.useLimiter("noLimit", 1000)
+    }
+    /**
+     * Initializes the module.
+     *
+     * @return {void} 
+     */
+    static InitModule(){
+        this.prototype.onThrottleEnabled()
+    }
 
 }
