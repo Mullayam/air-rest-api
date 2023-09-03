@@ -37,14 +37,14 @@ export class Engine {
      
      */
     private ThrottleRequest(): void{        
-        Limiter.useLimiter(5, 1000)
+        Limiter.useLimiter(5)
+      
     }
     /**
      * Initializes the module.    
      */
-    static InitModule(){     
-        this.prototype.ThrottleRequest()
-        
+    static InitModuleCustomSettings(){     
+        this.prototype.ThrottleRequest()        
     }
 
 }

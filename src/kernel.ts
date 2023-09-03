@@ -34,7 +34,8 @@ export class Kernel {
      */
     private LoadInstances(): void {
         Logging.log("Preparing Instance To Launch")
-        new Engine(Kernel.app)
+        new Engine(Kernel.app)        
+        
     }
     /**
      * Initializes the application. 

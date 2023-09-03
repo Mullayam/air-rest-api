@@ -34,7 +34,7 @@ export class UnprotectedRoutes {
      * @return {type} void
      */
     private UnhandledRoutes(): void {
-        this.router.use("*", () => XResponse.Error({ error: "Not Found", code: 404, message: "Unhandled Route" }, "INTERNAL_SERVER_ERROR"))
+        this.router.use("*", () => XResponse.Error({ error: "Not Found", code: 404, message: "Unhandled Route" }, "NOT_FOUND"))
     }
 
 }

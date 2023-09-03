@@ -53,8 +53,8 @@ export class HttpException {
      * @param {Record<string, any>} message - An optional object containing the message and solution for the exception.
      * @return {void}
      */
-    static ThrottleException(message: Record<string, any> = { info: "Current Rate Limit is Exceeded", solution: "Try Again after time you settled in the rate limit, or disable it" }): void {
-        new HttpException({ name: "TOO_MANY_REQUESTS", message: "Request Throttled", stack: message })
+    static ThrottleException(message: Record<string, any> = {path:"/", info: "Request Throttled", solution: "Try Again after time you settled in the rate limit, or disable it" }): void {
+        new HttpException({ name: "TOO_MANY_REQUESTS", message: "Current Rate Limit is Exceeded", stack: message })
     }
     private ExceptionsArray() {
         return {

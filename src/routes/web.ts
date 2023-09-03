@@ -1,8 +1,9 @@
-import { Routes } from '../app/lib/RoutesHandler.js';
 import { Router } from 'express'
+import { ApiRoutes } from './api.js';
+import { Limiter } from '../app/lib/Limiter.js';
+import { Routes } from '../app/lib/RoutesHandler.js';
 import { XResponse } from "../app/lib/Response.js";
 import { HttpException } from '../app/lib/ExceptionHandler.js';
-import { ApiRoutes } from './api.js';
 
 export class AppRoutes extends Routes {
     constructor(public router: Router = Router()) {
@@ -21,7 +22,7 @@ export class AppRoutes extends Routes {
      * @returns {void} 
      */
     private PublicRoutes(): void {
-        this.router.get("/test", () => XResponse.Redirect("/test2"))
+        this.router.get("/test",() => XResponse.JSON({ message: "Public test Route1" }))
     }
 
     protected ProtectedRoutes() { }
