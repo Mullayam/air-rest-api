@@ -3,7 +3,6 @@ import { Application } from 'express'
 import { Logging } from '../logs/index.js';
 import { AppRoutes } from '../routes/web.js';
 import { HttpException } from './lib/ExceptionHandler.js';
-import { Middlewares } from '../middlewares/app.middlewares.js';
 
 
 export class AppServer {

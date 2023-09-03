@@ -10,15 +10,15 @@ import { Limiter } from "../lib/Limiter.js";
 export class Engine {
     constructor(private app: Application) {
         Logging.log("Initializing App Engine Cache/Adapters Services ");
-        // Initialize Interceptor to modify Response body
-        this.InitInterceptor()
         Limiter.createInstance(this.app)
+        // Initialize Interceptor to modify Response body
+        this.InitInterceptor()         
         // Enable/Disable Cache Service
         new CacheService(process.env.CACHE_ENBALED as string)
         // Enabled Paytm Transaction Router Service
         Adapters.prototype.InitiaitePaytmInstance();
         // Set Response instance
-        this.app.use((req, res, next) => { new XResponse(res); next() });
+        this.app.use((req, res, next) => { new XResponse(res); next() });       
         this.app.use(Middlewares.AppMiddlewareFunction);
         Platform.LaunchWindow()
     }
@@ -34,19 +34,17 @@ export class Engine {
     /**
      * This function is called when the throttle is enabled. It uses the Limiter class
      * to set the limiter to "noLimit" with a delay of 1000 milliseconds.
-     *
-     * @param {type} paramName - description of parameter     
+     
      */
-    private onThrottleEnabled(): void{
-        Limiter.useLimiter("noLimit", 1000)
+    private ThrottleRequest(): void{        
+        Limiter.useLimiter(5, 1000)
     }
     /**
-     * Initializes the module.
-     *
-     * @return {void} 
+     * Initializes the module.    
      */
-    static InitModule(){
-        this.prototype.onThrottleEnabled()
+    static InitModule(){     
+        this.prototype.ThrottleRequest()
+        
     }
 
 }

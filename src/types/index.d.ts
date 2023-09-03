@@ -127,4 +127,10 @@ export interface InterceptorsSettings {
     response: Record<string,any>;
     isEnable?: boolean;
 }
- 
+
+export type RateLimitInfo = {
+	limit: number
+	current: number
+	remaining: number
+	resetTime: Date | undefined
+}
