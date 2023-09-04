@@ -7,14 +7,13 @@ import { InterceptorsSettings } from "../../types/index.js";
 const ORIGINAL_RESPONSE = { response: { info: "Interceptor Response" } }
 export class Interceptor {
     private static app: Application
-    myResponse: Record<string, any>;
+    private myResponse: Record<string, any>;
     constructor(private app: Application, private settings: InterceptorsSettings) {
         Interceptor.app = app
         this.myResponse = settings.response
         if (settings.isEnable) {
             this.InterceptResponse()
         }
-
     }
     private InterceptResponse() {
         const _this = this
@@ -47,7 +46,6 @@ export class Interceptor {
     public static useInterceptors(app: Application, settings: { response: Record<string, any>, isEnable?: boolean } = { ...ORIGINAL_RESPONSE, isEnable: false }) {
         if (!Interceptor.app) {
             new Interceptor(app, settings)
-
             return this
         }
         return this

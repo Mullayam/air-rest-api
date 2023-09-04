@@ -6,11 +6,9 @@ import { HttpException } from "./ExceptionHandler.js";
 const LIMITER_HANDLER = () => HttpException.ThrottleException()
 export class Limiter {
     private static instance: Limiter
-    private static AllLimiters: string[]=[];
+    private static AllLimiters: string[] = [];
 
-    constructor(private app: Application) {
-      
-    }
+    constructor(private app: Application) { }
     /**
      * Create a new instance of the Limiter class.
      *

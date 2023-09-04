@@ -1,4 +1,5 @@
 import { JwtPayload } from "jsonwebtoken";
+import { TemplateOptions } from 'nodemailer-express-handlebars';
 
 interface UserInfoJwtPayload {
     id?: string,
@@ -10,15 +11,7 @@ export interface LoginResponse {
     Token: string
     RefreshToken: string
 }
-export interface MailOptionsInterface {
-    from?: string;
-    to: string | string[];
-    cc?: string | string[];
-    bcc?: string | string[];
-    subject: string;
-    text?: string;
-    html: string;
-}
+
 export interface IUser {
     firstName: string;
     lastName: string;
@@ -76,7 +69,7 @@ export interface HttpStatusName {
 export interface HttpExceptionParams {
     name: keyof HttpStatusCodes;
     message: string;
-    stack?: string |any
+    stack?: string | any
 }
 export type HttpStatusCodes = {
     "FOUND": 302,
@@ -124,13 +117,23 @@ export interface AuthProvidersKeys {
 };
 export type AuthProvidersList = "google" | "facebook" | "github"
 export interface InterceptorsSettings {
-    response: Record<string,any>;
+    response: Record<string, any>;
     isEnable?: boolean;
 }
 
 export type RateLimitInfo = {
-	limit: number
-	current: number
-	remaining: number
-	resetTime: Date | undefined
+    limit: number
+    current: number
+    remaining: number
+    resetTime: Date | undefined
 }
+export interface MailOptions {
+    from?: string;
+    to: string | string[];
+    cc?: string | string[];
+    bcc?: string | string[];
+    subject: string;
+    text?: string;
+    html: string;
+}
+export type MailOptionsWithTemplate = MailOptions & TemplateOptions
