@@ -1,4 +1,4 @@
-import { Response as ExpressResponse } from "express";
+import { Response as ExpressResponse ,NextFunction,Request} from "express";
 import { HttpStatusCodes } from "../../types/index.js";
 import { HttpException } from "./ExceptionHandler.js";
 
@@ -14,8 +14,12 @@ export class AirResponse {
 }
 export class XResponse {
     private static res: ExpressResponse
-    constructor(res: ExpressResponse) {
+    private static req: Request
+    private static next: NextFunction
+    constructor(req:Request,res: ExpressResponse,next:NextFunction) {
         XResponse.res = res
+        XResponse.req = req
+        XResponse.next = next
     }
     /**
      * Sends a JSON response with the specified status code.
@@ -43,6 +47,12 @@ export class XResponse {
      */
     static Error(response: any, statusCode: keyof HttpStatusCodes = "INTERNAL_SERVER_ERROR"): void {
         throw new HttpException({ name: statusCode, message: "Something Went Wrong", stack: process.env.NODE_ENV === 'development' ? response : {} })
+    }
+    static Request(): Request {
+        return XResponse.req
+    }
+    static Skip(): NextFunction {
+        return XResponse.next
     }
 
 }

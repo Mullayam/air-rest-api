@@ -29,8 +29,7 @@ export class UnprotectedRoutes {
     }
     /**
      * Handles unhandled routes by returning a JSON response with a "Not Found" error message.
-     *  
-    
+     *      
      * @return {type} void
      */
     private UnhandledRoutes(): void {

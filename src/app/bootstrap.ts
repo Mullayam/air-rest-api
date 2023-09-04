@@ -49,6 +49,7 @@ export class AppServer {
     private InitializeRoutes(): void {
         Logging.log("Mapping Routes")
         AppServer.app.use(this.express.static(`${process.cwd()}/pages`));
+        AppServer.app.use("/_static",this.express.static(`${process.cwd()}/src/resources/views`));
         AppServer.app.use("/", new AppRoutes().router);
     }
     /**

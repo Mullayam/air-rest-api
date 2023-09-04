@@ -16,7 +16,7 @@ export class Kernel {
     }
     private config(): void {
         Logging.log("Applying Configurations")
-        Kernel.app.use(express.json());
+        Kernel.app.use(express.json());         
         Kernel.app.use(Cors.setCors());
         Kernel.app.use(bodyParser.urlencoded({ extended: false }));
     }
