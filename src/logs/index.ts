@@ -1,6 +1,6 @@
 import path from 'path';
 import winston from 'winston'
-import { magenta, redBright, yellow } from "colorette"
+import { blue, cyan, green, magenta, redBright, yellow } from "colorette"
 import { LoggingLevel, LoggingOptions } from '../types/index.js';
 import { createLogger, format, transports } from 'winston'
 const { combine, timestamp, label, printf, colorize } = format;
@@ -109,6 +109,7 @@ export class Logging {
   static alert(text: string) {
     console.log(magenta(`----------- ${text} -------------`))
   };
-
+  static map(text: string) {    
+    console.log(yellow(`[AirAPI] [${new Date().toLocaleString()}][INFO] ${text}`))  };
 
 }

@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {       
+      "@air/*": ["*"],
+      "@air/app/*": ["app/*"],
+      "@air/factory/*": ["factory/*"],
+      "@air/types/*": ["types/*"],
+      "@air/storage/*": ["src/app/storage/*"],
+      "@air/routes/*": ["routes/*"],
+      "@air/middleware/*": ["middlewares/*"],
+      "@air/services/*": ["services/*"],
+      "@air/modules/*": ["app/modules/core/*"],
+      
+    }
+  }
+}

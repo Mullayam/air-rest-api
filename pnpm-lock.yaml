@@ -59,6 +59,9 @@ dependencies:
   redis:
     specifier: ^4.6.7
     version: 4.6.7
+  reflect-metadata:
+    specifier: ^0.1.13
+    version: 0.1.13
   typeorm:
     specifier: ^0.3.17
     version: 0.3.17(mysql2@3.6.0)(redis@4.6.7)

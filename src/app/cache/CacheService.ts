@@ -6,9 +6,9 @@ export class CacheService {
     public cache: RedisClientType
     constructor(CACHE_ENBALED:string = "false") {
         this.cache = redis.createClient({
-            password: 'l9GNnvy8Yo0tJFuoJcW2LZHb6itLqcZl',
+            password: '',
             socket: {
-                host: 'redis-19063.c212.ap-south-1-1.ec2.cloud.redislabs.com',
+                host: '127.0.0.1',
                 port: 19063
             }
         });   
