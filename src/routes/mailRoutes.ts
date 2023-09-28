@@ -12,9 +12,13 @@ export class MailRoutes {
      */
     private LoadRoutes(): void {
         this.mailRoute.get("/test/mail", () => {
-            this.Email.SendTemplate({ to: "your mail", subject: "Test", template: "welcome-mail", context: { date: new Date(), name: "Developer", imgUrl: `${process.env.APP_IMG_URL}/welcome-mail` }, })
+            this.Email.SendTemplate({
+                to: ["your email" ], subject: "Test Email", template: "test",
+                context: { date: new Date(), name: "Developer", imgUrl: `${process.env.APP_IMG_URL}/welcome-mail` },
+            })
             XResponse.JSON({ message: "Mail test Route2" })
         })
     }
 
 } 
+// anucool@shioft.com
