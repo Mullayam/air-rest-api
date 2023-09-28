@@ -1,13 +1,19 @@
 import { Request, Response } from 'express';
-import Controller from '../../app/modules/core/controller.air.js';
-import { GET } from '../../app/modules/core/routes.air.js';
+import { Get } from '@enjoys/modules'
+import { TestService } from '../../services/test/test.service.js';
+import { XController, InjectService } from '../../app/modules/common/index.js';
 
-@Controller('/base')
-export default class BaseController {
 
-    @GET('')
-    public index(req: Request, res: Response): void {
-        res.json({ hello: "World !" });
+@XController()
+export class BaseController {
+    @InjectService(TestService)
+    private test:TestService
+    
+    @Get("/test")
+    public index(req: Request, res: Response) {
+
+ 
+        return { url: this.test.test() }
     }
 
 

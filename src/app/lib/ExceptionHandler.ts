@@ -28,8 +28,7 @@ export class HttpException {
  */
     static ExceptionHandler(err: Error, req: Request, res: Response, next: NextFunction) {
         const errStatus = this.TypeOfError(err.name as keyof HttpStatusCodes);
-        Logging.info("Error Handled")
-        const errMsg = err.message || 'Something went wrong';
+        Logging.info("Error Handled")      
         res.status(errStatus).send({
             success: false,
             status: errStatus,
@@ -37,7 +36,7 @@ export class HttpException {
             message: err.message,
             stack: process.env.NODE_ENV === 'development' ? err.stack : {}
         })
-        next(errMsg)
+         
     }
     /**
   * Creates a new UnauthorizedException with the given payload.

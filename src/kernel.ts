@@ -1,14 +1,30 @@
-import express, { Application } from 'express'
+import express, { Application, NextFunction } from 'express'
 import { AppServer } from './app/bootstrap.js'
 import { Logging } from "./logs/index.js";
 import { Engine } from './app/modules/engine.js'
 import bodyParser from 'body-parser';
 import { Cors } from './app/lib/Cors.js';
-
+import { useContainer, useExpressServer } from '@enjoys/modules'
+import { Controllers } from './controllers/index.js';
+import { Container } from './app/modules/common/index.js';
+import { HttpException } from './app/lib/ExceptionHandler.js';
+import { Middlewares } from './middlewares/index.js';
 export class Kernel {
     protected static app: Application;
     constructor() {
-        Kernel.app = express();
+        const app = express();
+         
+        Kernel.app = useExpressServer(app, {
+            controllers: [...Controllers],
+            cors: { ...Cors.options() },
+            middlewares: [...Middlewares],
+            defaultErrorHandler: false,
+            defaults: {
+                nullResultCode: 404,
+                undefinedResultCode: 204,
+            },
+        })
+      
         this.config()
         this.LoadInstances()
         this.LoadAppModules()
@@ -16,8 +32,8 @@ export class Kernel {
     }
     private config(): void {
         Logging.log("Applying Configurations")
-        Kernel.app.use(express.json());         
-        Kernel.app.use(Cors.setCors());
+        useContainer(Container)
+        Kernel.app.use(express.json());
         Kernel.app.use(bodyParser.urlencoded({ extended: false }));
     }
     /**
@@ -25,7 +41,7 @@ export class Kernel {
      * @private
      */
     private LoadAppModules() {
-        Logging.log("Loading App Modules")       
+        Logging.log("Loading App Modules")
         new AppServer(Kernel.app, express)
     }
     /**
@@ -34,8 +50,7 @@ export class Kernel {
      */
     private LoadInstances(): void {
         Logging.log("Preparing Instance To Launch")
-        new Engine(Kernel.app)        
-        
+        new Engine(Kernel.app)
     }
     /**
      * Initializes the application. 

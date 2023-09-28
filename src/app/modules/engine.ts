@@ -1,13 +1,11 @@
 import { Adapters } from "./adapters.js";
 import { CacheService } from "../cache/CacheService.js";
-import { Logging } from "../../logs/index.js";
-import { XResponse } from '../lib/Response.js'
+import { Logging } from "../../logs/index.js"; 
 import { Application } from "express";
 import { Interceptor } from "../lib/Interceptors.js";
-import { Platform } from "../../services/Platform.js";
-import { Middlewares } from "../../middlewares/app.middlewares.js";
+import { Platform } from "../lib/Platform.js";
 import { Limiter } from "../lib/Limiter.js";
-import { MailService } from "../../services/MailService.js";
+import { MailService } from "../lib/MailService.js";
 export class Engine {
     constructor(private app: Application) {
         Logging.log("Initializing App Engine Cache/Adapters Services ");
@@ -21,9 +19,8 @@ export class Engine {
         new CacheService(process.env.CACHE_ENBALED as string)
         // Enabled Paytm Transaction Router Service
         Adapters.prototype.InitiaitePaytmInstance();
-        // Set Response instance
-        this.app.use((req, res, next) => { new XResponse(req,res,next); next() });
-        this.app.use(Middlewares.AppMiddlewareFunction);
+        // Set Response instance       
+      
         Platform.LaunchWindow()
     }
     /**

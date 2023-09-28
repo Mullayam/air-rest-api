@@ -1,22 +1,12 @@
-import { Response as ExpressResponse ,NextFunction,Request} from "express";
+import { Response as ExpressResponse, NextFunction, Request } from "express";
 import { HttpStatusCodes } from "../../types/index.js";
 import { HttpException } from "./ExceptionHandler.js";
 
-
-export class AirResponse {
-    static JSON(res: ExpressResponse, response: any, code: number = 200): void {
-        res.status(code).json(response);
-    }
-    static Message(res: ExpressResponse, response: any, code: number = 200): void {
-        res.status(code).send(response)
-    }
-
-}
 export class XResponse {
     private static res: ExpressResponse
     private static req: Request
     private static next: NextFunction
-    constructor(req:Request,res: ExpressResponse,next:NextFunction) {
+    constructor(req: Request, res: ExpressResponse, next: NextFunction) {
         XResponse.res = res
         XResponse.req = req
         XResponse.next = next

@@ -1,8 +1,8 @@
 import path from "path";
-import { Logging } from "../logs/index.js";
+import { Logging } from "../../logs/index.js";
 import * as Mail from "nodemailer/lib/mailer";
 import nodemailer, { Transporter, SentMessageInfo } from "nodemailer";
-import { MailOptionsWithTemplate } from "../types/index.js";
+import { MailOptionsWithTemplate } from "../../types/index.js";
 import { MailOptions } from "nodemailer/lib/json-transport/index.js";
 import hbs, { NodemailerExpressHandlebarsOptions, TemplateOptions } from 'nodemailer-express-handlebars';
 import SMTPTransport from "nodemailer/lib/smtp-transport/index.js";

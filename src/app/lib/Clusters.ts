@@ -1,6 +1,6 @@
 import * as os from "os";
 import cluster from "cluster";
-import { Logging } from "../logs/index.js";
+import { Logging } from "../../logs/index.js";
 
 const clusterWorkerSize = os.cpus().length;
 export class Clusters {
