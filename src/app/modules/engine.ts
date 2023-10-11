@@ -25,6 +25,7 @@ export class Engine {
         this.app.use((req, res, next) => { new XResponse(req,res,next); next() });
         this.app.use(Middlewares.AppMiddlewareFunction);
         Platform.LaunchWindow()
+        
     }
     /**
      * Initializes the interceptor.

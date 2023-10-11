@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "nodemon start.ts",
-    "start": "nodemon"
+    "start": "nodemon start.ts"
   },
   "keywords": [
     "express",

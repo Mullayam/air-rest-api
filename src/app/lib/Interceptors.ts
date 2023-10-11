@@ -1,5 +1,4 @@
 import { Application, Request, Response, NextFunction } from "express";
-
 import { Logging } from "../../logs/index.js";
 import { HttpException } from "./ExceptionHandler.js";
 import { InterceptorsSettings } from "../../types/index.js";
@@ -41,7 +40,30 @@ export class Interceptor {
             }
         })
     }
+    public static forRoot(response:any) {        
+        Interceptor.app.use(function (req: Request, res: Response, next: NextFunction) {
+            try {
+                const oldJSON = res.json;
+                res.json = (data) => {
+                    if (data && data.then != undefined) {
+                        return data.then((resData: any) => {
+                            res.json = oldJSON;
 
+                            return oldJSON.call(res, resData);
+                        }).catch((error: any) => {
+                            next(error);
+                        });
+                    } else {
+                        data = Object.assign(data, response);
+                        return oldJSON.call(res, data);
+                    }
+                }
+                next()
+            } catch (error) {
+                throw new HttpException({ name: "PAYLOAD_TOO_LARGE", message: "Something Went Wrong with Intercepting the Response", stack: error })
+            }
+        }) 
+    }
 
     public static useInterceptors(app: Application, settings: { response: Record<string, any>, isEnable?: boolean } = { ...ORIGINAL_RESPONSE, isEnable: false }) {
         if (!Interceptor.app) {

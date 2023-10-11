@@ -1,7 +1,7 @@
 # dependencies
 node_modules/
 .env
-.env.locla
+.env.local
 *.env.local
 # IDE
 /.idea

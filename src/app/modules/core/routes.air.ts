@@ -16,7 +16,11 @@ export interface IRouter {
   path: string;
   handlerName: string | symbol;
 }
-
+export interface BasePath {
+  middleware: any[];
+  path: string;
+   
+}
 const MethodDecoratorFactory = (method: Methods) => {
   return (path: string): MethodDecorator => {
    
