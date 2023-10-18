@@ -1,6 +1,6 @@
 import { JwtPayload } from "jsonwebtoken";
 import { TemplateOptions } from 'nodemailer-express-handlebars';
-
+ 
 interface UserInfoJwtPayload {
     id?: string,
     email?: string,

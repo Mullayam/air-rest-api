@@ -16,25 +16,16 @@ export class Engine {
         // Create Mail Service Instance to use throughout Application
         MailService.createInstance()
         // Initialize Interceptor to modify Response body
-        this.InitInterceptor()
+        Interceptor.useInterceptors(this.app, { response: { test: "Interceptor Response " }, isEnable: false })
         // Enable/Disable Cache Service
         new CacheService(process.env.CACHE_ENBALED as string)
         // Enabled Paytm Transaction Router Service
         Adapters.prototype.InitiaitePaytmInstance();
-        // Set Response instance
+        // Set custom Response instance to use throughout Application
         this.app.use((req, res, next) => { new XResponse(req,res,next); next() });
         this.app.use(Middlewares.AppMiddlewareFunction);
         Platform.LaunchWindow()
-    }
-    /**
-     * Initializes the interceptor.
-     *
-     * @private
-     * @return {void}
-     */
-    private InitInterceptor(): void {
-        Interceptor.useInterceptors(this.app, { response: { test: "Interceptor Response " }, isEnable: false })
-    }
+    }    
     /**
      * This function is called when the throttle is enabled. It uses the Limiter class
      * to set the limiter to "noLimit" with a delay of 1000 milliseconds.

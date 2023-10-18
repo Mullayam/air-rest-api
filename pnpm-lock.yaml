@@ -38,6 +38,9 @@ dependencies:
   jsonwebtoken:
     specifier: ^9.0.1
     version: 9.0.1
+  list_end_points:
+    specifier: ^2.0.6
+    version: 2.0.6
   million:
     specifier: 2.6.0-beta.10
     version: 2.6.0-beta.10
@@ -869,6 +872,11 @@ packages:
     resolution: {integrity: sha512-IfEDxwoWIjkeXL1eXcDiow4UbKjhLdq6/EuSVR9GMN7KVH3r9gQ83e73hsz1Nd1T3ijd5xv1wcWRYO+D6kCI2w==}
     dev: false
 
+  /colors@1.4.0:
+    resolution: {integrity: sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==}
+    engines: {node: '>=0.1.90'}
+    dev: false
+
   /colorspace@1.1.4:
     resolution: {integrity: sha512-BgvKJiuVu1igBUF2kEjRCZXol6wiiGbY5ipL/oVPwm0BL9sIpMIzM8IK7vwuxIIzOXMV3Ey5w+vxhm0rR/TN8w==}
     dependencies:
@@ -1515,6 +1523,15 @@ packages:
   /kuler@2.0.0:
     resolution: {integrity: sha512-Xq9nH7KlWZmXAtodXDDRE7vs6DU1gTU8zYDHDiWLSip45Egwq3plLHzPn27NgvzL2r1LMPC1vdqh98sQxtqj4A==}
     dev: true
+
+  /list_end_points@2.0.6:
+    resolution: {integrity: sha512-cgtRyOFcbiTOJTt+TQp+P1b6W7DN/3SXy2drtE9Biunk1e9IMxv2iA8RevUFwBSeX0o8goN6ihpBLyOk9YZAig==}
+    dependencies:
+      colors: 1.4.0
+      express: 4.18.2
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
 
   /lodash@4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}

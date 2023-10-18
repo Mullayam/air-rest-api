@@ -58,6 +58,11 @@ export class MailService {
     getTransporter(): Transporter {
         return this.transporter;
     }
+    /**
+     * Generates the options object for the Handlebars view engine in Nodemailer.
+     *
+     * @return {NodemailerExpressHandlebarsOptions} The options object for the Handlebars view engine.
+     */
     private hbsOptions(): NodemailerExpressHandlebarsOptions {
         return {
             viewEngine: {

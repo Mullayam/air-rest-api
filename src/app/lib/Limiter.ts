@@ -42,12 +42,24 @@ export class Limiter {
         })
         Limiter.instance.app.use(limiter)
     }
-    static new(LimiterName: string, LimiterOptions: Omit<Partial<Options>, "handler">): RateLimitRequestHandler {
+    /**
+     * Creates a new RateLimitRequestHandler.
+     *
+     * @param {string} LimiterName - The name of the limiter.
+     * @param {Omit<Partial<Options>, "handler">} LimiterOptions - The options for the limiter.
+     * @return {RateLimitRequestHandler} The newly created RateLimitRequestHandler.
+     */
+    static forRoute(LimiterName: string, LimiterOptions: Omit<Partial<Options>, "handler">): RateLimitRequestHandler {
         Limiter.AllLimiters.push(LimiterName)
         Logging.alert("Rate Limiting is Enabled, Name " + LimiterName)
 
         return rateLimit({ ...LimiterOptions, handler: LIMITER_HANDLER })
     }
+    /**
+     * Retrieves the list of active limiters.
+     *
+     * @return {string[]} The list of active limiters.
+     */
     static getActiveLimiters(): string[] {
         return this.AllLimiters
     }

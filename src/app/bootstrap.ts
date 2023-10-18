@@ -2,8 +2,8 @@ import { blue, red } from "colorette"
 import { Application } from 'express'
 import { Logging } from '../logs/index.js';
 import { AppRoutes } from '../routes/web.js';
-import { HttpException } from './lib/ExceptionHandler.js';
-
+import { HttpException } from './lib/ExceptionHandler.js'; 
+import { RouteResolver } from "./lib/RoutesHandler.js";
 
 export class AppServer {
     protected static app: Application;
@@ -13,16 +13,15 @@ export class AppServer {
         AppServer.PORT = PORT
         Logging.log("Compiling")         
         this.InitializeMiddlewares()
-        this.InitializeRoutes()
-        this.Exceptions()
+        this.InitializeRoutes()        
+        this.Exceptions()        
     }    
     /**
      * Initializes the middlewares for the application.
       
      */
     private InitializeMiddlewares() {
-        Logging.log("Initializing Middlewares")       
-        
+        Logging.log("Initializing Middlewares") 
     }
     /**
      * Initializes the Exceptions handler for the AppServer.
@@ -33,11 +32,12 @@ export class AppServer {
      * @param {NextFunction} next - The next function.
      * @return {void} This function does not return anything.
      */
-    private Exceptions(): void {        
+    private Exceptions(): void {              
         AppServer.app.use(async (err: Error, req: any, res: any, next: any) => {
             if (err) HttpException.ExceptionHandler(err, res, res, next)
             return next()
         });
+        RouteResolver.Mapper(AppServer.app)
     }
     /**
      * Initializes the routes for the application.
@@ -47,16 +47,18 @@ export class AppServer {
      * class to define the routes. The routes are then registered with the `AppServer` instance.
      */
     private InitializeRoutes(): void {
-        Logging.log("Mapping Routes")
+        Logging.log("Mapping Routes") 
         AppServer.app.use(this.express.static(`${process.cwd()}/pages`));
         AppServer.app.use("/_static",this.express.static(`${process.cwd()}/src/resources/views`));
-        AppServer.app.use("/", new AppRoutes().router);
+        AppServer.app.use("/",new AppRoutes().router);
+       
     }
     /**
      * Runs the application server
      
      */
     static RunApplication(): void {
+        
         try {
             AppServer.app.listen(AppServer.PORT, () => {
                 console.log(blue(`App listening on port http://localhost:${AppServer.PORT}`),)

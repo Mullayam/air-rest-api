@@ -7,25 +7,32 @@ import { Cors } from './app/lib/Cors.js';
 
 export class Kernel {
     protected static app: Application;
+    /**
+     * Initializes the constructor.    
+     */
     constructor() {
+
         Kernel.app = express();
         this.config()
         this.LoadInstances()
         this.LoadAppModules()
 
     }
+    /**
+    * Applies the necessary configurations to the application.
+    */
     private config(): void {
         Logging.log("Applying Configurations")
-        Kernel.app.use(express.json());         
-        Kernel.app.use(Cors.setCors());
+        Kernel.app.use(express.json());
+        Kernel.app.use(Cors.useCors);
         Kernel.app.use(bodyParser.urlencoded({ extended: false }));
     }
     /**
-     * Loads the application modules.    
+     * Loads the all necessary application modules.    
      * @private
      */
     private LoadAppModules() {
-        Logging.log("Loading App Modules")       
+        Logging.log("Loading App Modules")
         new AppServer(Kernel.app, express)
     }
     /**
@@ -34,8 +41,8 @@ export class Kernel {
      */
     private LoadInstances(): void {
         Logging.log("Preparing Instance To Launch")
-        new Engine(Kernel.app)        
-        
+        new Engine(Kernel.app)
+
     }
     /**
      * Initializes the application. 

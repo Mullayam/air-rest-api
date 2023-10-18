@@ -1,7 +1,7 @@
 import cors, { CorsOptions } from 'cors'
 export class Cors {
 
-    static setCors() {
+    static useCors() {
         return cors({ ...this.options })
     }
     /**

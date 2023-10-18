@@ -1,7 +1,10 @@
 import { PaytmConfig, PaytmConfigurationValidator } from '@enjoys/paytm'
+import { AppDataSource } from '../config/DataSource.js';
+import { Logging } from '../../logs/index.js';
 
 export class Adapters {
     public static paytm: PaytmConfig;
+    public static TypeORM = AppDataSource   
     constructor() {
         this.InitiaitePaytmInstance()
     }
@@ -36,5 +39,28 @@ export class Adapters {
             PAYTM_MERCHANT_WEBSITE: "DEFAULT",
             CALLBACK_URL: process.env.CALLBACK_URL as string,
         }
+    }
+     /**
+     * Initializes the TypeORM Datasource.
+     * Establish Database Connection
+     * 
+     * @private
+     * @async
+     * @return {Promise<void>} Promise that resolves once the datasource is initialized.
+     */
+     private async TypeORM_Datasource(): Promise<void> {
+        Adapters.TypeORM.initialize()
+            .then(() => {
+                Logging.alert("Database Connected Successfuly")
+                // this.app.emit("ready", "Intiating Application Server")
+            })
+            .catch((error) => {
+                if (error.code === "ECONNREFUSED") {
+                    Logging.error("Your Database (MySQL) Server is not Enabled")
+                    // this.app.emit("error", "Database Connection Refused, Server Cannot be Started Untill DB connection is Established")
+                    return
+                }
+                console.log(error)
+            })
     }
 }

@@ -1,21 +1,38 @@
-import { Router } from 'express' 
-export class Routes {
-    protected router: Router
-    constructor(router: Router) {
-        this.router = router        
-    }
-    /**
-     * Creates a new instance of the Routes class or returns the existing
-     * instance if it already exists.
-     *
-     * @param {Router} router - The router object used for routing.
-      
-     */
-    static instance(router: Router) {
-        if (!Routes.prototype.router) {
-            return new Routes(router)
+import { Application} from "express"
+import listEndpoints from 'list_end_points'
+ 
+export class RouteResolver {
+   private print(path: any, layer: any) {
+        if (layer.route) {
+            layer.route.stack.forEach(print.bind(path.concat(this.split(layer.route.path))))
+        } else if (layer.name === 'router' && layer.handle.stack) {
+            layer.handle.stack.forEach(print.bind(path.concat(this.split(layer.regexp))))
+        } else if (layer.method) {
+            console.log('%s /%s',
+                layer.method.toUpperCase(),
+                path.concat(this.split(layer.regexp)).filter(Boolean).join('/'))
         }
-        return router
     }
 
+    private  split(thing: any) {  
+        if (typeof thing === 'string') {
+            return thing.split('/')
+        } else if (thing.fast_slash) {
+            return ''
+        } else {
+            var match = thing.toString()
+                .replace('\\/?', '')
+                .replace('(?=\\/|$)', '$')
+                .match(/^\/\^((?:\\[.*+?^${}()|[\]\\\/]|[^.*+?^${}()|[\]\\\/])*)\$\//)
+            return match
+                ? match[1].replace(/\\(.)/g, '$1').split('/')
+                : '<complex:' + thing.toString() + '>'
+        }
+    }
+
+    static Mapper(AppServer: Application) {
+        listEndpoints.default(AppServer)  
+             
+        // AppServer._router.stack.forEach(this.print.bind([]))
+    }
 }
