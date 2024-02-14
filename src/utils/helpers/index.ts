@@ -1,9 +1,14 @@
 import * as crypto from "crypto"
 import moment from "moment";
+import { createHash } from 'node:crypto'
+const ALGORITHM = "aes-256-cbc";
+const ENCODING = "hex";
 export let Tokens = new Map();
 export let BlacklistedTokens: string[] = [];
 class Helpers {
-
+    private ENCRYPTION_KEY: string =
+        "enjoys_encrption_key!@#%^&*()_NJ" ;
+    private IV_LENGTH = 16;
     /**
      * Generates a token of random bytes with the specified byte length.
      *
@@ -48,10 +53,10 @@ class Helpers {
      *  
      * @return {number} The converted number.
      */
-    CreateOTP(min:number=100000, max:number=999999): number {
-        return  Math.floor(
+    CreateOTP(min: number = 100000, max: number = 999999): number {
+        return Math.floor(
             Math.random() * (max - min + 1) + min
-          )
+        )
 
     }
     /**
@@ -141,7 +146,7 @@ class Helpers {
      * @param {number} salary - The salary to be formatted.
      * @return {string} - The formatted salary as a string.
      */
-    FormatSalary(salary: number): string {
+    IndianNumberFormat(salary: number): string {
         return salary.toLocaleString("en-IN", { maximumFractionDigits: 0 });
     };
 
@@ -161,6 +166,46 @@ class Helpers {
             .replace(/^-+|-+$/g, "");
 
     }
+    uuid_v4() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+    Md5Checksum(content: string): string {
+        return createHash('md5').update(content).digest("hex")
+    }
 
+    SimpleHash(): string {
+        return crypto.randomBytes(16).toString('hex')
+    }
+    Encrypt(data: any): string {
+        if (typeof data === "object") {
+            data = JSON.stringify(data);
+        }
+        const iv = crypto.randomBytes(this.IV_LENGTH);
+        const cipher = crypto.createCipheriv(
+            ALGORITHM,
+            Buffer.from(this.ENCRYPTION_KEY),
+            iv
+        );
+        let encrypted = cipher.update(data);
+        encrypted = Buffer.concat([encrypted, cipher.final()]);
+        return `${iv.toString(ENCODING)}:${encrypted.toString(ENCODING)}`;
+    }
+    Decrypt(text: any): any {
+        const textParts = text.split(":");
+        const iv = Buffer.from(textParts.shift(), ENCODING);
+        const encryptedText = Buffer.from(textParts.join(":"), ENCODING);
+        const decipher = crypto.createDecipheriv(
+            ALGORITHM,
+            Buffer.from(this.ENCRYPTION_KEY),
+            iv
+        );
+        let decrypted = decipher.update(encryptedText);
+        decrypted = Buffer.concat([decrypted, decipher.final()]);
+
+        return decrypted.toString();
+    }
 }
 export default new Helpers()

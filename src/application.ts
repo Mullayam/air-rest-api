@@ -43,7 +43,7 @@ export class AppServer {
         Logging.dev("Applying Express Server Configurations")
         AppServer.App.set('trust proxy', 1)
         AppServer.App.use(helmet());
-        AppServer.App.use(morgan("dev"));
+        // AppServer.App.use(morgan("dev"));
         AppServer.App.use(cookieParser(CONFIG.SECRETS.COOKIE_SECRET));
         AppServer.App.use(Cors.useCors());
         AppServer.App.use(bodyParser.json());
@@ -99,9 +99,9 @@ export class AppServer {
      */
     private ExceptionHandler() {
         Logging.dev("Exception Handler Initiated")
-
         AppServer.App.use((err: Error, req: Request, res: Response, next: NextFunction) => {
             if (err) {
+                Logging.dev(err.message,"error")
                 return Exception.HttpException.ExceptionHandler(err, req, res, next); // handler error and send response
             }
             next(); // call when no err found
@@ -115,7 +115,7 @@ export class AppServer {
         Logging.dev("Application Started")
         try {
             // Enable Database Connection
-            createConnection()
+            // createConnection()
             const server = http.createServer(AppServer.App).listen(AppServer.PORT, () => {
                 InitScoketConnection(server)
                 console.log(blue(`Application Started Successfully on ${CONFIG.APP.APP_URL}`),)
@@ -124,7 +124,7 @@ export class AppServer {
                 this.CloseServer(server)
             })
         } catch (error: any) {
-            console.log(red(error))
+            Logging.dev(error.message,"error")            
         }
     }
     /**

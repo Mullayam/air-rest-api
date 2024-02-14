@@ -1,7 +1,7 @@
 import session from 'express-session'
-import { uuid } from '@/utils/helpers/uuid';
 import { Logging } from '@/logs';
 import { CONFIG } from '../config';
+import helpers from '@/utils/helpers';
 export class SessionHandler {
 
     static forRoot() {
@@ -11,7 +11,7 @@ export class SessionHandler {
     private _sessionOptions(): session.SessionOptions {
         return {
             genid: function (req: any) {
-                return uuid.v4() // use UUIDs for session IDs
+                return helpers.uuid_v4() // use UUIDs for session IDs
             },
             saveUninitialized: true,
             secret: CONFIG.SECRETS.SESSION_SECRET,

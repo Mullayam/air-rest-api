@@ -1,16 +1,24 @@
 import { StorageType } from "../types"
 
+let IN_MEMORY_STORAGE = new Map()
+
 export class StorageService {
-     constructor(private storageType: StorageType = "Disk") {
-         
-     }
+    constructor(private storageType: StorageType = "Disk") {
+
+    }
     static get(key: string) {
-        return localStorage.getItem(key)
+        return IN_MEMORY_STORAGE.get(key)
     }
     static set(key: string, value: string) {
-        localStorage.setItem(key, value)
+        return IN_MEMORY_STORAGE.set(key, value)
     }
     static remove(key: string) {
-        localStorage.removeItem(key)
+        return IN_MEMORY_STORAGE.delete(key)
+    }
+    static size() {
+        return IN_MEMORY_STORAGE.size
+    }
+    static destroyAll() {
+        return IN_MEMORY_STORAGE.clear()
     }
 }
