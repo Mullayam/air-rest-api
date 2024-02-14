@@ -20,6 +20,7 @@ const Colors: Record<LoggingLevel, string> = {
 
  class Logger {
   constructor() { 
+    process.stdout.write("\u001b[2J\u001b[0;0H");
        process.stdout.write(greenBright(`[ENJOYS] ${yellow(process.pid)} - ${moment().format('DD/MM/YYYY HH:mm:ss')}, INFO ${Logger.name} Service Iniatialized \n`))     
   }
   /**
