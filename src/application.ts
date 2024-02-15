@@ -134,15 +134,22 @@ export class AppServer {
      */
     private GracefulShutdown() {
         process.on('SIGINT', () => {
+            Logging.dev("Manually Shutting Down","notice")     
             BroadCastEvents.sendServerClosed()
             process.exit(1);
         })
         process.on('SIGTERM', () => {
+            Logging.dev("Error Occured","error")     
             BroadCastEvents.sendServerClosed()
             process.exit(1);
         })
+        process.on('uncaughtException', (err, origin) => {
+            Logging.dev(`Uncaught Exception ${err.name}` + err.message + err.stack, "error")
 
-
+        });
+        process.on('unhandledRejection', (reason, promise) => {           
+            Logging.dev(`Unhandled Rejection at ${promise}, reason: ${reason}`, "error")
+        });
     }
     /**
      * Closes the given server and exits the process.

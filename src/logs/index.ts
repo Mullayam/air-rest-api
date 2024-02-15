@@ -1,6 +1,6 @@
 import path from 'path';
 import winston from 'winston'
-import { green, greenBright, magenta, red, redBright, yellow } from "colorette"
+import { bold, green, greenBright, magenta, red, redBright, yellow } from "colorette"
 import { LoggingLevel, LoggingOptions } from '../utils/types';
 import { createLogger, format, transports } from 'winston'
 import moment from 'moment';
@@ -113,6 +113,9 @@ const Colors: Record<LoggingLevel, string> = {
     }
     if (type === "error") {
       return process.stdout.write(red(`[ENJOYS] ${process.pid} - ${moment().format('DD/MM/YYYY HH:mm:ss')}, ${(type).toUpperCase()} ${text} \n`))
+    }
+    if (type === "debug") {
+      return process.stdout.write(bold(`[ENJOYS] ${process.pid} - ${moment().format('DD/MM/YYYY HH:mm:ss')}, ${(type).toUpperCase()} ${text} \n`))
     }
     if (type === "alert") {
       process.stdout.write(magenta(`[ENJOYS] ${yellow(process.pid)} - ${moment().format('DD/MM/YYYY HH:mm:ss')}, ${(type).toUpperCase()} ${text}\n`))
