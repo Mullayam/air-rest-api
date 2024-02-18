@@ -7,7 +7,14 @@
     "moduleResolution": "NodeNext",
     "baseUrl": "./",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@app/*": ["./src/app/*"],
+      "@controllers/*": ["./src/controllers/*"],
+      "@factory/*": ["./src/factory/*"],
+      "@middlewares/*": ["./src/middlewares/*"],
+      "@helpers/*": ["./src/utils/helpers/*"],
+      "@services/*": ["./src/utils/services/*"],
+      "@utils/*": ["./src/utils/*"]
     },
     "resolveJsonModule": true,
     "outDir": "./build",

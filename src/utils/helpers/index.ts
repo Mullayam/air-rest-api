@@ -1,14 +1,73 @@
 import * as crypto from "crypto"
+import bcrypt from "bcryptjs";
 import moment from "moment";
+import jwt from 'jsonwebtoken'
 import { createHash } from 'node:crypto'
+import { CONFIG } from "@/app/config";
 const ALGORITHM = "aes-256-cbc";
 const ENCODING = "hex";
+
 export let Tokens = new Map();
 export let BlacklistedTokens: string[] = [];
 class Helpers {
     private ENCRYPTION_KEY: string =
         "enjoys_encrption_key!@#%^&*()_NJ" ;
     private IV_LENGTH = 16;
+    signJWT(payload: any,kid: string): string {          
+        return jwt.sign(payload, CONFIG.SECRETS.JWT_SECRET_KEY, {
+            expiresIn: '7d',
+            issuer:"ENJOYS",
+            header:{
+                alg:"HS256",
+                typ:"JWT",
+                kid,                 
+            }
+        });
+    }
+    verifyJWT(token: string,options?: jwt.VerifyOptions): any {
+        return jwt.verify(token, CONFIG.SECRETS.JWT_SECRET_KEY,options);
+    }
+    decodeToken(token: string, options?: jwt.DecodeOptions): any {
+        return jwt.decode(token,options);
+    }
+     
+    generateSalt(saltRounds = 10): string {
+        return bcrypt.genSaltSync(saltRounds)
+    }
+    hashPassword(PasswordStr: string,salt:string): string {
+        return bcrypt.hashSync(PasswordStr, salt);
+    }
+    /**
+     * Compare two passwords and return a boolean indicating if they match.
+     *
+     * @param {string} HashedPassword - The hashed password to compare.
+     * @param {string} Password - The password to compare.
+     * @return {boolean} Returns true if the passwords match, false otherwise.
+     */
+    comparePassword( Password: string,HashedPassword: string,): boolean {
+        return bcrypt.compareSync(Password, HashedPassword);
+    }
+     /**
+     * Generates a random number within a specified range.
+     *
+     * @param {number} min - The minimum value of the range (default: 100000).
+     * @param {number} max - The maximum value of the range (default: 999999).
+     * @return {number} - The randomly generated number.
+     */
+     randomNumber(min: number = 100000, max: number = 999999): number {
+        return Math.floor(
+            Math.random() * (max - min + 1) + min
+        )
+    }
+    /**
+     * Generates a unique user ID.
+     *
+     * @return {string} The generated user ID.
+     */
+    createUserID(): string {
+        const id = Math.floor(Math.random() * 10000000).toString()
+        return id
+    } 
     /**
      * Generates a token of random bytes with the specified byte length.
      *
@@ -24,7 +83,7 @@ class Helpers {
      * @param {number} byteLength - The length of the refresh token in bytes. Defaults to 32.
      * @return {string} - The generated refresh token.
      */
-    CreateRefreshToken(byteLength: number = 32): string {
+    createRefreshToken(byteLength: number = 32): string {
         return crypto.randomBytes(byteLength).toString("base64")
     }
     /**
@@ -43,7 +102,7 @@ class Helpers {
      * @return {string} - The newly generated refresh token.
      */
     HandleRefreshToken(id: string): string {
-        const RefreshToken = this.CreateRefreshToken()
+        const RefreshToken = this.createRefreshToken()
         Tokens.set(id, RefreshToken)
         return RefreshToken
     }
@@ -177,7 +236,7 @@ class Helpers {
     }
 
     SimpleHash(): string {
-        return crypto.randomBytes(16).toString('hex')
+        return crypto.randomBytes(32).toString('hex')
     }
     Encrypt(data: any): string {
         if (typeof data === "object") {

@@ -1,8 +1,7 @@
 {
   "name": "air-rest-api-default",
   "version": "1.0.0",
-  "description": "",
-  "main": "main.js",
+  "description": "",   
   "scripts": {
     "build": "npx tsc",
     "ready": "npm install",
@@ -65,8 +64,10 @@
     "@types/jsonwebtoken": "^9.0.2",
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.10.8",
+    "@types/node-cron": "^3.0.11",
     "@types/nodemailer": "^6.4.9",
     "@types/nodemailer-express-handlebars": "^4.0.2",
+    "node-cron": "^3.0.3",
     "ts-node": "^10.9.2"
   }
 }
