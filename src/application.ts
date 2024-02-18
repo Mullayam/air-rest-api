@@ -43,7 +43,7 @@ export class AppServer {
         Logging.dev("Applying Express Server Configurations")
         AppServer.App.set('trust proxy', 1)
         AppServer.App.use(helmet());
-        // AppServer.App.use(morgan("dev"));
+        AppServer.App.use(morgan("dev"));
         AppServer.App.use(cookieParser(CONFIG.SECRETS.COOKIE_SECRET));
         AppServer.App.use(Cors.useCors());
         AppServer.App.use(bodyParser.json());

@@ -3,26 +3,38 @@ import { Request, Send } from 'express'
 import { JwtPayload } from "jsonwebtoken";
 import { TemplateOptions } from 'nodemailer-express-handlebars';
 import { UploadedFile } from 'express-fileupload';
+import { USER_STATUS } from '../helpers/constants';
 export type Type<C extends object = object> = new (...args: any) => C;
 export type AppConfig = typeof CONFIG
 declare global {
     namespace Express {
         export interface Request {
             session: {
-                user?: UserInfoJwtPayload
-                admin?: AdminJwtPayload
-                driver?: DriverJwtPayload
+                user: UserInfoJwtPayload
                 [key: string]: any
             },
             files?: fileUpload.FileArray | null | undefined;
         }
     }
 }
+interface UploadFilesReturn {
+    success: boolean,
+    message: string,
+    result: any
+}
+interface FileOptions {
+    encoding: BufferEncoding;
+    flag?: string | undefined;
+}
+type ReadFilesPathOptions = BufferEncoding|FileOptions
+
 interface UserInfoJwtPayload {
-    uid?: string,
-    email?: string,
-    role?: string,
-    status?: string,
+    aid: string;
+    fullname: string;
+    email: string;
+    role: string;
+    status: USER_STATUS;
+    image: string;
 }
 
 export interface AdminJwtPayload extends JwtPayload {
@@ -30,15 +42,10 @@ export interface AdminJwtPayload extends JwtPayload {
     fullname: string
     username: string
     email: string
-    status: string
+    status: USER_STATUS
     role: string
 }
-export interface DriverJwtPayload extends JwtPayload {
-    "aid": string
-    "fullname": string
-    "status": string
-    "role": string
-}
+
 export interface ResponseHandler extends Response {
     json: CustomResponse;
 }
@@ -48,19 +55,7 @@ interface CustomResponse {
     result: null | Record<string, any>
     [key: string]: any
 }
-export interface IUser {
-    firstName: string;
-    lastName: string;
-    gender: string;
-    dateOfBirth: Date;
-    residence: string;
-    avatar: string;
-    email: string;
-    password: string;
-    role: IRole;
-    isEmailVerified: boolean;
-    isProfileCompleted: boolean;
-}
+ 
 export type LoggingLevel = "emerg" | "alert" | "crit" | "error" | "notice" | "info" | "debug"
 export type StorageType = "Redis" | "Memory" | "Disk"
 export type LoggingOptions = {
@@ -148,7 +143,7 @@ export interface MailOptions {
 }
 export type MailOptionsWithTemplate = MailOptions & TemplateOptions
 
-export interface FileHandler extends UploadedFile {
+export interface FileHandler extends UploadedFile implements UploadedFile {
     name: string;
     /** A function to move the file elsewhere on your server */
     mv(path: string, callback: (err: any) => void): void;
@@ -168,3 +163,16 @@ export interface FileHandler extends UploadedFile {
     /** MD5 checksum of the uploaded file */
     md5: string;
 }
+export interface AuthProviders {
+    [key: AuthProvidersList]: AuthProvidersKeys
+}
+export interface AuthProvidersScopes {
+    [key: AuthProvidersList]: string[];
+
+}
+export interface AuthProvidersKeys {
+    clientID: string;
+    clientSecret: string;
+    callbackURL: string;
+};
+export type AuthProvidersList = "google" | "facebook" | "github"

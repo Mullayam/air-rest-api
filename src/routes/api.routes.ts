@@ -1,6 +1,6 @@
 //  Write Your All API Routes Here
 
-import { UserAuthController } from '@/controllers/user';
+import { UserAuthController } from '@/controllers';
 import { UserReqValidator } from '@/factory/validators/User.request.validator';
 import { JwtAuth } from '@/middlewares/auth.Middleware';
 import { Validator } from '@/middlewares/validator.middleware';
