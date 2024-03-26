@@ -10,7 +10,7 @@ export class FilesMapper {
             .filter((file) => file.startsWith('index') === false)
             .filter((file) => (path.extname(file) === '.js') || (file !== '.ts') && !file.endsWith('.d.ts'))
             .filter((file) => file.indexOf(".spec") === -1 && file.indexOf(".test") === -1)
-            .map((file) => require(`${__workingDir}\\${file}`).default as any)
+            .map((file) => require(`${__workingDir}/${file}`).default as any)
     }
     
 }

@@ -168,3 +168,16 @@ export interface FileHandler extends UploadedFile {
     /** MD5 checksum of the uploaded file */
     md5: string;
 }
+export interface AuthProviders {
+    [key: AuthProvidersList]: AuthProvidersKeys
+}
+export interface AuthProvidersScopes {
+    [key: AuthProvidersList]: string[];
+
+}
+export interface AuthProvidersKeys {
+    clientID: string;
+    clientSecret: string;
+    callbackURL: string;
+};
+export type AuthProvidersList = "google" | "facebook" | "github"

@@ -1,6 +1,6 @@
 import path from 'path';
 import winston from 'winston'
-import { bold, green, greenBright, magenta, red, redBright, yellow } from "colorette"
+import { bold, green, greenBright, magenta, red, redBright, white, yellow } from "colorette"
 import { LoggingLevel, LoggingOptions } from '../utils/types';
 import { createLogger, format, transports } from 'winston'
 import moment from 'moment';
@@ -18,10 +18,10 @@ const Colors: Record<LoggingLevel, string> = {
   notice: "cyan"
 }
 
- class Logger {
-  constructor() { 
+class Logger {
+  constructor() {
     process.stdout.write("\u001b[2J\u001b[0;0H");
-       process.stdout.write(greenBright(`[ENJOYS] ${yellow(process.pid)} - ${moment().format('DD/MM/YYYY HH:mm:ss')}, INFO ${Logger.name} Service Iniatialized \n`))     
+    process.stdout.write(greenBright(`[ENJOYS] ${yellow(process.pid)} - ${white(moment().format('DD/MM/YYYY hh:mm:ss A'))}, INFO ${Logger.name} Service Iniatialized \n`))
   }
   /**
    * Generates the LoggingOptions object.
@@ -86,7 +86,7 @@ const Colors: Record<LoggingLevel, string> = {
    * @param {string} message - The message to log.
     
    */
-    info(message: string) {
+  info(message: string) {
     return this.HandleCreateLogger("info").info(message)
   }
   /**
@@ -95,7 +95,7 @@ const Colors: Record<LoggingLevel, string> = {
    * @param {string} message - The error message to handle.
     
    */
-    error(message: string) {
+  error(message: string) {
     return this.HandleCreateLogger("error").error(message)
   }
   /**
@@ -103,25 +103,26 @@ const Colors: Record<LoggingLevel, string> = {
    *
    * @param {string} text - The message to be logged.
    */
-   log(text: string) {
+  log(text: string) {
     process.stdout.write(yellow(`----------- ${text} -------------`))
   };
-   dev(text: string, type: LoggingLevel = "info") {    
+  dev(text: string, type: LoggingLevel = "info") {
 
     if (type === "info") {
-      return process.stdout.write(greenBright(`[ENJOYS] ${yellow(process.pid)} - ${moment().format('DD/MM/YYYY HH:mm:ss')}, ${(type).toUpperCase()} ${text} \n`))
+      return process.stdout.write(greenBright(`[ENJOYS] ${yellow(process.pid)} - ${white(moment().format('DD/MM/YYYY hh:mm:ss A'))}, ${(type).toUpperCase()} ${text} \n`))
     }
     if (type === "error") {
-      return process.stdout.write(red(`[ENJOYS] ${process.pid} - ${moment().format('DD/MM/YYYY HH:mm:ss')}, ${(type).toUpperCase()} ${text} \n`))
+      return process.stdout.write(red(`[ENJOYS] ${process.pid} - ${white(moment().format('DD/MM/YYYY hh:mm:ss A'))}, ${(type).toUpperCase()} ${text} \n`))
     }
     if (type === "debug") {
-      return process.stdout.write(bold(`[ENJOYS] ${process.pid} - ${moment().format('DD/MM/YYYY HH:mm:ss')}, ${(type).toUpperCase()} ${text} \n`))
+      process.stdout.write(bold(`[ENJOYS] ${process.pid} - ${white(moment().format('DD/MM/YYYY hh:mm:ss A'))},${(type).toUpperCase()} ${text} \n`))
+      return process.exit(1)
     }
     if (type === "alert") {
-      process.stdout.write(magenta(`[ENJOYS] ${yellow(process.pid)} - ${moment().format('DD/MM/YYYY HH:mm:ss')}, ${(type).toUpperCase()} ${text}\n`))
+      process.stdout.write(magenta(`[ENJOYS] ${yellow(process.pid)} - ${white(moment().format('DD/MM/YYYY hh:mm:ss A'))}, ${(type).toUpperCase()} ${text}\n`))
     }
     if (type === "notice") {
-      return process.stdout.write(yellow(`[ENJOYS] ${process.pid} - ${moment().format('DD/MM/YYYY HH:mm:ss')}, ${(type).toUpperCase()} ${text}\n`))
+      return process.stdout.write(yellow(`[ENJOYS] ${process.pid} - ${white(moment().format('DD/MM/YYYY hh:mm:ss A'))}, ${(type).toUpperCase()} ${text}\n`))
     }
   };
   /**
@@ -129,7 +130,7 @@ const Colors: Record<LoggingLevel, string> = {
    *
    * @param {string} text - The text to be displayed in the alert message.
    */
-    alert(text: string) {
+  alert(text: string) {
     process.stdout.write(magenta(`----------- ${text} -------------`))
   };
 
@@ -137,4 +138,4 @@ const Colors: Record<LoggingLevel, string> = {
 
 }
 const Logging = new Logger();
-export {Logging}
+export { Logging }

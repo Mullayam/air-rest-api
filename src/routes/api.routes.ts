@@ -19,7 +19,7 @@ export class ApiRoutes {
      Creates the Public Routes 
      */
     private PublicRoutes(): void {
-        this.apiRoutes.get("/auth/login", UserAuthController.default.SendOTP)
+        this.apiRoutes.get("/auth/login", UserAuthController.default.Hello)
     }
     /**
      * Creates the protected routes.

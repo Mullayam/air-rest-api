@@ -1,7 +1,6 @@
 import { Router, Request, Response } from "express";
 import { Exception } from "@enjoys/exception"
 import { ApiRoutes } from "./api.routes";
-import { BaseController } from "@/controllers/admin";
 import { AdminRoutes } from "./admin.routes";
 
 export class AppRoutes {
@@ -16,7 +15,7 @@ export class AppRoutes {
     */
     private PublicRoutes(): void {
         /** PUBLIC ROUTES */
-        this.router.get("/api/public/amount", BaseController.default.GetDefaultAmount)
+        
     }
 
     HandleRoutes() {

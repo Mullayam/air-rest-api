@@ -1,7 +1,7 @@
 {
   "name": "air-rest-api-default",
   "version": "1.0.0",
-  "description": "",   
+  "description": "",
   "scripts": {
     "build": "npx tsc",
     "ready": "npm install",
@@ -34,6 +34,7 @@
     "express-rate-limit": "^6.10.0",
     "express-session": "^1.17.3",
     "express-validator": "^7.0.1",
+    "googleapis": "^134.0.0",
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.1",
     "million": "2.6.0-beta.10",

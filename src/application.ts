@@ -85,7 +85,7 @@ export class AppServer {
     private RegisterRoutes() {
         Logging.dev("Registering Routes")
         AppServer.App.use("/", new AppRoutes().router);
-        RouteResolver.Mapper(AppServer.App, { listEndpoints: false });
+        RouteResolver.Mapper(AppServer.App, { listEndpoints: true });
 
     }
     /**
@@ -97,6 +97,7 @@ export class AppServer {
      * @param {NextFunction} next - The next function to call.
      * @return {void} There is no return value.
      */
+   
     private ExceptionHandler() {
         Logging.dev("Exception Handler Initiated")
         AppServer.App.use((err: Error, req: Request, res: Response, next: NextFunction) => {
@@ -111,8 +112,8 @@ export class AppServer {
     /**
         * Initializes the application. 
     */
-    InitailizeApplication() {
-        Logging.dev("Application Started")
+    async InitailizeApplication() {
+        Logging.dev("Application Dependencies Injected")
         try {
             // Enable Database Connection
             // createConnection()
@@ -144,7 +145,8 @@ export class AppServer {
             process.exit(1);
         })
         process.on('uncaughtException', (err, origin) => {
-            Logging.dev(`Uncaught Exception ${err.name}` + err.message + err.stack, "error")
+            Logging.dev(`Uncaught Exception ${err.name} ` + err.message + err.stack, "error")
+            Logging.dev(`Origin Of Error ${origin} `, "error")
 
         });
         process.on('unhandledRejection', (reason, promise) => {           
@@ -157,8 +159,6 @@ export class AppServer {
      * @param {http.Server} server - The server to be closed.
      */
     private CloseServer(server: http.Server) {
-        server.close(() => {
-            process.exit(1);
-        });
+        server.close(() => process.exit(1));
     }
 }

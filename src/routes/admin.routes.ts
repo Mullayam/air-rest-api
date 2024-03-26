@@ -1,7 +1,6 @@
 //  Write Your All Admin API Routes Here
 import { Router } from 'express'
 import { Validator } from '@/middlewares/validator.middleware';
-import {  BaseController } from '@/controllers/admin';
 import { SessionMiddleware } from '@/middlewares/session.Middleware';
 
 export class AdminRoutes {
@@ -17,9 +16,8 @@ export class AdminRoutes {
      * @return {void}
      */
     protected ProtectedRoutes(): void {
-
         
-        this.router.get("/test", BaseController.default.GetAnalytics)
+      
 
 
     }
