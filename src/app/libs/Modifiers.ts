@@ -7,10 +7,12 @@ export class Modifiers {
     set() {
         this.app.locals.title = "Air API - ENJOYS"
     }
+ 
     mount() {
         this.app.on('mount', function (parent) {
             console.log('Application Mounted')
            
           })
     }
+    
 }

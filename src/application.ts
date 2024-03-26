@@ -17,6 +17,7 @@ import { InitScoketConnection } from '@/utils/services/Sockets';
 import BroadCastEvents from '@/utils/helpers/broadCastEvents';
 import { createConnection } from '@/factory/typeorm'
 import { CONFIG } from './app/config';
+import { CronJob } from './utils/decorators/cron-job.decorator';
 export class AppServer {
     static App: Application = express();
     static PORT: number = +CONFIG.APP.APP_PORT;
@@ -24,7 +25,7 @@ export class AppServer {
      * Initializes the constructor.
      */
     constructor() {
-
+         
         this.ApplyConfiguration();
         this.InitMiddlewares();
         this.LoadInterceptors();
@@ -43,7 +44,7 @@ export class AppServer {
         Logging.dev("Applying Express Server Configurations")
         AppServer.App.set('trust proxy', 1)
         AppServer.App.use(helmet());
-        // AppServer.App.use(morgan("dev"));
+        AppServer.App.use(morgan("dev"));
         AppServer.App.use(cookieParser(CONFIG.SECRETS.COOKIE_SECRET));
         AppServer.App.use(Cors.useCors());
         AppServer.App.use(bodyParser.json());
@@ -160,5 +161,5 @@ export class AppServer {
      */
     private CloseServer(server: http.Server) {
         server.close(() => process.exit(1));
-    }
+    }   
 }

@@ -6,7 +6,6 @@ export enum USER_STATUS {
     PENDING = 'PENDING',
     SUSPENDED = 'SUSPENDED',
     BLOCKED = 'BLOCKED'
-
 }
 export enum USER_ROLE {
     GUEST = 'GUEST',
@@ -15,6 +14,10 @@ export enum USER_ROLE {
     SUPERVISER = 'SUPERVISER',
     MANAGER = 'MANAGER',
     SUPERADMIN = 'SUPERADMIN',
+}
+export const METADATA_KEYS = {
+    CRONJOB: Symbol('cronSchedule')
+
 }
 export const RolesArray = Object.values(USER_ROLE);
 export enum Action {
@@ -119,4 +122,4 @@ export enum CronExpression {
     MONDAY_TO_FRIDAY_AT_9PM = '0 0 21 * * 1-5',
     MONDAY_TO_FRIDAY_AT_10PM = '0 0 22 * * 1-5',
     MONDAY_TO_FRIDAY_AT_11PM = '0 0 23 * * 1-5',
-  }
+}

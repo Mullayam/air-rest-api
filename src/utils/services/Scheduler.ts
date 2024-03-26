@@ -1,5 +1,5 @@
 import cron from 'node-cron'
-import { CronExpression } from '@helpers/constants'
+import { CronExpression, METADATA_KEYS } from '@helpers/constants'
 export class Scheduler {
     private static _instance: Scheduler
     private constructor() { }
@@ -19,4 +19,15 @@ export class Scheduler {
     validate(cronExpression: string): boolean {
         return cron.validate(cronExpression)
     }
+
+}
+export function InitializeCronJobs(targetClass: any) {
+    const methods = Object.getOwnPropertyNames(targetClass.prototype);
+    methods.forEach(methodName => {
+        const cronSchedule = Reflect.getMetadata(METADATA_KEYS.CRONJOB, targetClass.prototype, methodName);
+        if (cronSchedule) {
+            cron.schedule(cronSchedule, targetClass.prototype[methodName]);
+            console.log(`Cron job scheduled for method ${methodName} with schedule ${cronSchedule}`);
+        }
+    });
 }
