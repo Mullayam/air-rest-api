@@ -5,18 +5,13 @@ import UserRoutes from "./api/user";
 
 
 const router = Router();
-export default (prefix:string ="/") => {
-    function publicRoutes() {
-        router.get("/", () => { })
+router.get("/", (req: Request, res: Response) => {
+    throw new HttpException({ name: "FORBIDDEN", message: "Access Denied", stack: { info: "Forbidden Resource", path: req.baseUrl, method: req.method } })
+})
 
-    }
-    function privateRoutes() {
-        router.use(prefix).get("/", () => { })
-    }
-    router.use(prefix,UserRoutes)
-    router.use("*", (req: Request, res: Response) => {
-        throw new HttpException({ name: "FORBIDDEN", message: "Access Denied", stack: { info: "Forbidden Resource", path: req.baseUrl, method: req.method } })
-    })
-    return router
-}
+router.use("*", (req: Request, res: Response) => {
+    throw new HttpException({ name: "FORBIDDEN", message: "Access Denied", stack: { info: "Forbidden Resource", path: req.baseUrl, method: req.method } })
+})
 
+
+export default router
