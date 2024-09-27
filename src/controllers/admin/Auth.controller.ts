@@ -1,15 +1,17 @@
 
+import { HttpStatus } from "@/utils/decorators/core.decorator";
+import { NotFound } from "@/utils/decorators/error.decorator";
 import type { Request, Response } from "express";
  
 class AdminAuthController {
+    
+
+    
     async HandleLogin(req: Request, res: Response) {
-        let error: string[] = [];
-        try {
-            
-            return res.json({ message: "Login Successfull", result:" { ...AdminData, token, sessionId: sid }", success: true })
-        } catch (error: any) {
-            return res.json({ message: error.message, result: error, success: false })
-        }
+       throw new Error(
+
+        "ssdsds"
+       )
     }
 
     async HandleLogout(req: Request, res: Response) {
