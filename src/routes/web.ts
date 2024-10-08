@@ -1,6 +1,5 @@
 import { Router, Request, Response } from "express";
 import { HttpException } from "@enjoys/exception"
-import { Routes } from "./api/test";
 import UserRoutes from "./api/user";
 import { AdminAuthController } from "@/controllers/admin";
 

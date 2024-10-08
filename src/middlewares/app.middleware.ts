@@ -6,40 +6,47 @@ import { Request, Response, NextFunction } from "express";
 const sigHeaderName = "X-Signature";
 export class AppMiddlewares {
 
-  //  check api key from frontend is valid or not
+
+  /**
+   * Middleware to protect API routes.
+   * 
+   * This middleware checks if the API request contains the required API key header.
+   * If the key is not present or is invalid, it will return a 404 or 401 status code respectively.
+   * If the key is valid, it will set the client secret to the API key and call the next middleware.
+   * 
+   * @param {Request} req - The request object.
+   * @param {Response} res - The response object.
+   * @param {NextFunction} next - The next middleware function.
+   */
+
   public static isApiProtected(req: Request, res: Response, next: NextFunction) {
     Logging.dev("API Routes are Protected")
-    try {
-      const headers = req.headers;
-      const apiKey = headers["api_key"] || undefined;
-      if (typeof apiKey === "undefined") {
-        return res.status(404).json({
-          success: false,
-          result: {
-            code: 404
-          },
-          message: "API_KEY is Required",
-        });
-      }
-      if (apiKey !== process.env.API_KEY) {
-        return res.status(401).json({
-          success: false,
-          status_code: {
-            code: 412
-          },
-          message: "Invalid KEY, Check API KEY",
-        });
-      }
-      req.clientSecret = apiKey;
-      next();
-    } catch (error: any) {
-      res.send({
+    const headers = req.headers;
+    const apiKey = headers["api_key"] || undefined;
+    if (typeof apiKey === "undefined") {
+      res.status(404).json({
         success: false,
-        result: null,
-        message: error.message,
+        result: {
+          code: 404
+        },
+        message: "API_KEY is Required",
       });
       res.end();
+      return
     }
+    if (apiKey !== process.env.API_KEY) {
+      res.status(401).json({
+        success: false,
+        status_code: {
+          code: 412
+        },
+        message: "Invalid KEY, Check API KEY",
+      });
+      res.end();
+      return
+    }
+    req.clientSecret = apiKey;
+    next();
 
   }
   /**
@@ -84,7 +91,7 @@ export class AppMiddlewares {
     // //Calculate HMAC
     const originalUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`
     const [method] = SetAppRoutes.get(req.path)
-    const digest = await new Security().GenerateSignature(method, originalUrl, JSON.stringify(req.body), req.clientSecret!) 
+    const digest = await new Security().GenerateSignature(method, originalUrl, JSON.stringify(req.body), req.clientSecret!)
     // //Compare HMACs
     if (sig.length !== digest.length || String(sig) !== String(digest)) {
       return res.status(400).json({
