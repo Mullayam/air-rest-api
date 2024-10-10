@@ -1,7 +1,7 @@
 import { Logging } from "@/logs";
 import {  METADATA_KEYS } from "@helpers/constants";
 import helpers from "@helpers/index";
-import { InitializeCronJobs } from "@services/Scheduler";
+import { InitializeCronJobs } from "@services/cron/scheduler";
 import { CronExpression } from "../types/cron-expression.interface";
 
 export const CronJob = (cronExpression: keyof typeof CronExpression, name?: string | null) => {

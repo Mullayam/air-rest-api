@@ -9,12 +9,14 @@
     "paths": {
       "@/*": ["./src/*"],
       "@app/*": ["./src/app/*"],
-      "@controllers/*": ["./src/controllers/*"],
+      "@handlers/*": ["./src/handlers/*"],
       "@factory/*": ["./src/factory/*"],
       "@middlewares/*": ["./src/middlewares/*"],
       "@helpers/*": ["./src/utils/helpers/*"],
       "@services/*": ["./src/utils/services/*"],
-      "@utils/*": ["./src/utils/*"]
+      "@utils/*": ["./src/utils/*"],
+      "@types/*": ["./src/utils/types/*"],
+      "@validators/*": ["./src/utils/validators/*"]
     },
     "resolveJsonModule": true,
     "outDir": "./build",

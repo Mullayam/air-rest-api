@@ -4,7 +4,45 @@ import { interval, timer } from "rxjs";
 import type { Request, Response, NextFunction } from "express";
 import { IUser } from "@/utils/types";
 import { AllowedRoles } from "@/utils/types/user.interface";
+function handleAuthorization(
+    req: Request, 
+    res: Response, 
+    next: NextFunction, 
+    opts: { isPublic: boolean }, 
+    callback: () => void
+) {
+    try {
+        if (opts.isPublic) {
+            return next();
+        }
 
+        const authHeader = (req.headers["authorization"] as string) || null;
+
+        if (!authHeader) {
+            return res.status(400).json({ message: "Authorization header is missing", result: null, success: false });
+        }
+
+        if (authHeader.trim() === "" || !authHeader.includes("JWT ")) {
+            return res.status(400).json({ message: "Token is missing or invalid", result: null, success: false });
+        }
+
+        const token = authHeader.replace("JWT ", "");
+        if (!token) {
+            return res.status(401).json({ message: "Authorization Token is missing", result: null, success: false });
+        }
+
+        const decodedToken = jwt.verify(token, CONFIG.SECRETS.JWT_SECRET_KEY) as IUser;
+        if (!decodedToken) {
+            return res.status(401).json({ message: "Invalid Token", result: null, success: false });
+        }
+
+        (req as any).user = decodedToken; // Attach the decoded token to the request
+
+        return callback(); // Proceed to the original method
+    } catch (error) {
+        return res.status(401).json({ message: "Token is invalid", result: null, success: false });
+    }
+}
 /**
  * Decorator function that checks if the user has the required roles to access a protected route.
  *
@@ -43,39 +81,42 @@ export function Accessible<T = AllowedRoles[]>(allowedRoles: T) {
 }
 
 
-export function isAuthorized(opts: { isPublic: boolean } = { isPublic: false }) {
+export function isAuthorized(opts: { isPublic: boolean } = { isPublic: false }):any {
     return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-        const originalMethod = descriptor.value;
+        if (typeof propertyKey === 'undefined' && typeof descriptor === 'undefined') {
+            const classConstructor = target;
 
-        descriptor.value = function (req: Request, res: Response, next: NextFunction) {
-            try {
-                if (opts.isPublic) return next();
-                const authHeader = req.headers["authorization"] as String || null
+            // Get all method names in the class prototype, excluding the constructor
+            const methodNames = Object.getOwnPropertyNames(classConstructor.prototype).filter(
+                methodName => methodName !== 'constructor'
+            );
 
-                if (!authHeader) {
-                    return res.status(400).json({ message: "Authorization header is missing", result: null, success: false })
-                }
-                if (authHeader.trim() === "" || authHeader.includes("JWT ")) {
-                    return res.status(400).json({ message: "Token is missing", result: null, success: false })
-                }
-                const token = authHeader?.replace("JWT ", "")
-                if (!token) {
-                    return res.status(401).json({ message: "Authorization Token is missing", result: null, success: false })
-                }
-                const decodedToken = jwt.verify(token, CONFIG.SECRETS.JWT_SECRET_KEY) as IUser
-                if (!decodedToken) {
-                    return res.status(401).json({ message: "Invalid Token", result: null, success: false })
-                }
-                // req.session["user"] = decodedToken 
-                (req as any).user = decodedToken;
+            // Wrap all methods with the authorization middleware
+            for (const methodName of methodNames) {
+                const originalMethod = classConstructor.prototype[methodName];
 
-                return originalMethod.apply(this, [req, res, next]);
-            } catch (error) {
-                return res.status(401).json({ message: "Token is invalid", result: null, success: false })
+                if (typeof originalMethod === 'function') {
+                    classConstructor.prototype[methodName] = function (req: Request, res: Response, next: NextFunction) {
+                        handleAuthorization(req, res, next, opts, () => {
+                            originalMethod.apply(this, arguments);
+                        });
+                    };
+                }
             }
-        };
+        } 
+        // Method-level decorator
+        else if (propertyKey && descriptor) {
+            const originalMethod = descriptor.value;
 
-        return descriptor;
+            descriptor.value = function (req: Request, res: Response, next: NextFunction) {
+                handleAuthorization(req, res, next, opts, () => {
+                    originalMethod.apply(this, arguments);
+                });
+            };
+
+            return descriptor;
+        }
+    
     }
 }
 

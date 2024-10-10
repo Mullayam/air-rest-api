@@ -19,7 +19,7 @@ class AdminAuthController {
             // req.session.destroy()
             return res.json({ message: "Login Successfull", result: null, success: true })
         } catch (error: any) {
-            res.json({ message: error.message, result: error, success: false })
+            return res.json({ message: error.message, result: error, success: false })
         }
     }
 

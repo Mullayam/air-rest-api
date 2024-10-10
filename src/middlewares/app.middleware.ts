@@ -20,7 +20,7 @@ export class AppMiddlewares {
    */
 
   public static isApiProtected(req: Request, res: Response, next: NextFunction) {
-    Logging.dev("API Routes are Protected")
+    Logging.dev(`API Route ${req.originalUrl} is Protected`)
     const headers = req.headers;
     const apiKey = headers["api_key"] || undefined;
     if (typeof apiKey === "undefined") {

@@ -1,6 +1,6 @@
 import { Logging } from "@/logs";
 import { Application } from "express"
-import { bgCyan, bgMagenta, bgWhite, blue, blueBright, bold, gray, green, magenta, red, yellow } from 'colorette';
+import { bgCyan, bgMagenta, bgWhite, blackBright, blue, blueBright, bold, cyan, gray, green, magenta, red, redBright, yellow } from 'colorette';
 import { SetAppRoutes } from "@/utils/helpers";
 
 type RouteMethods = string[];
@@ -58,16 +58,19 @@ export class RouteResolver {
     }
 
     static Mapper(AppServer: Application, options: { listEndpoints: boolean } = { listEndpoints: false }) {
-        if (options.listEndpoints) {           
+        if (options.listEndpoints) {
             // listEndpoints(AppServer)
             this.prototype.getEndpoints(AppServer).forEach((endpoint, key, arr) => {
-                SetAppRoutes.set(endpoint.path,endpoint.methods)               
+                SetAppRoutes.set(endpoint.path, endpoint.methods)
                 const str = `${endpoint.methods.includes('GET') ? bold(bgWhite(gray('GET')))
                     : endpoint.methods.includes('POST') ? bold(bgCyan(blue('POST')))
                         : endpoint.methods.includes('PATCH') ? bold(bgCyan(magenta('PATCH')))
                             : endpoint.methods.includes('PUT') ? bold(bgMagenta(green('PUT')))
                                 : endpoint.methods.includes('DELETE') ? bold(bgWhite(red('DELETE')))
-                                    : bold(yellow(endpoint.methods.join(', ')))} ${blueBright(endpoint.middlewares.join())} - ${yellow(endpoint.path)}`
+                                    : endpoint.methods.includes('ALL') ? bold(bgWhite(cyan('ALL')))
+                                        : endpoint.methods.includes('OPTIONS') ? bold(bgWhite(redBright('OPTIONS')))
+                                            : endpoint.methods.includes('HEAD') ? bold(bgWhite(blackBright('HEAD')))
+                                                : bold(yellow(endpoint.methods.join(', ')))} ${blueBright(endpoint.middlewares.join())} - ${yellow(endpoint.path)}`
 
                 Logging.dev(str);
             });
@@ -139,7 +142,7 @@ export class RouteResolver {
     };
     private parseEndpoints(app: any, basePath = '', endpoints: Endpoint[] = []): Endpoint[] {
         const stack = app.stack || (app._router && app._router.stack);
- 
+
         if (!stack) {
             endpoints = this.addEndpoints(endpoints, [
                 {
@@ -149,14 +152,14 @@ export class RouteResolver {
                 },
             ]);
         } else {
-            endpoints = this.parseStack(stack, basePath, endpoints);            
+            endpoints = this.parseStack(stack, basePath, endpoints);
         }
 
         return endpoints;
     };
 
     private addEndpoints(currentEndpoints: Endpoint[], endpointsToAdd: Endpoint[]): Endpoint[] {
-        
+
         endpointsToAdd.forEach((newEndpoint) => {
             const existingEndpoint = currentEndpoints.find((item) => item.path === newEndpoint.path);
 
@@ -176,7 +179,7 @@ export class RouteResolver {
         stack.forEach((stackItem) => {
             if (stackItem.route) {
                 const newEndpoints = this.parseExpressRoute(stackItem.route, basePath);
-               
+
                 endpoints = this.addEndpoints(endpoints, newEndpoints);
             } else if (STACK_ITEM_VALID_NAMES.includes(stackItem.name || '')) {
                 const isExpressPathRegexp = regExpToParseExpressPathRegExp.test(stackItem.regexp?.toString() || '');

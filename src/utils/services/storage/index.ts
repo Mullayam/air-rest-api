@@ -1,10 +1,10 @@
 import type { Request, Response, NextFunction } from 'express'
-import { FileHandler, FileUploadOptions } from '../types/fileupload.interface'
+import { FileHandler, FileUploadOptions } from "@utils/types/fileupload.interface"
 import * as path from 'path'
 import * as fs from 'fs'
-import helpers from '../helpers'
+import helpers from '@utils/helpers'
 import { Logging } from '@/logs'
-import { FileUploadInfo } from '../types'
+import { FileUploadInfo } from '@utils/types'
 
 
 const UploadFilesPath = helpers.createPath('public/train-data')

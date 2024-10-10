@@ -31,7 +31,7 @@ export class Modifiers {
      * Mounts the application.
      */
     private mount() {
-        this.app.on('mount', (parent) => console.log('Application Mounted'))
+        this.app.on('mount', (parent) => console.log('Application Mounted'))        
         this._events.forEach((event) => this.app.on(event, () => console.log(event)))
 
     }

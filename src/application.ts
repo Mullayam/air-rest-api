@@ -4,7 +4,7 @@ import morgan from 'morgan'
 import helmet from 'helmet';
 import { Logging } from '@/logs';
 import bodyParser from 'body-parser';
-import { blue, red } from 'colorette';
+import { blue } from 'colorette';
 import { CONFIG } from './app/config';
 import { Cors } from '@/app/libs/Cors';
 import cookieParser from 'cookie-parser'
@@ -15,9 +15,12 @@ import { SessionHandler } from '@/app/libs/Session';
 import { Interceptor } from '@/app/libs/Interceptors'
 import { RouteResolver } from '@/app/libs/RouteResolver';
 import { AppMiddlewares } from '@/middlewares/app.middleware';
-import { InitScoketConnection } from '@/utils/services/Sockets';
-import BroadCastEvents from '@/utils/helpers/broadCastEvents';
+import { InitScoketConnection } from '@/utils/services/sockets/Sockets';
+import BroadCastEvents from '@/utils/services/sockets/broadCastEvents';
 import { CreateConnection } from '@factory/typeorm'
+import { AppLifecycle } from '@app/modules/appLifecycle';
+import { AppEvents } from './utils/services/Events';
+ 
 
 
 class AppServer {
@@ -27,12 +30,14 @@ class AppServer {
      * Initializes the constructor.
      */
     constructor() {
+        AppLifecycle.enableHooks([])
         this.ApplyConfiguration();
         this.InitMiddlewares();
         this.LoadInterceptors();
         this.RegisterRoutes();
         this.ExceptionHandler();
         this.GracefulShutdown()
+
     }
     /**
      * Applies the necessary configurations to the AppServer.
@@ -41,7 +46,7 @@ class AppServer {
      * 
      * @return {void} This function does not return anything.
      */
-    private ApplyConfiguration() {
+    private ApplyConfiguration(): void {
         Logging.dev("Applying Express Server Configurations")
         AppServer.App.use(helmet());
         AppServer.App.disable('x-powered-by');
@@ -60,7 +65,7 @@ class AppServer {
      * to `'production'`, it adds the necessary middlewares for request headers
      * and API protection to the application server.
      */
-    private InitMiddlewares() {
+    private InitMiddlewares(): void {
         Logging.dev("Middlewares Initiated")
         /** Enable Request headers for production */
         if (CONFIG.APP.APP_ENV.toUpperCase() === 'PRODUCTION' || CONFIG.APP.APP_ENV.toUpperCase() === 'PROD') {
@@ -78,7 +83,7 @@ class AppServer {
      * @param {type} paramName - description of parameter
      * @return {type} description of return value
      */
-    private LoadInterceptors() {
+    private LoadInterceptors(): void {
         Interceptor.useInterceptors(AppServer.App, {
             response: { "X-API-PLATFORM STATUS": "OK" }, // enter your custom interceptor in object format
             isEnable: true, // default is false
@@ -90,11 +95,10 @@ class AppServer {
      * @param {type} paramName - description of parameter
      * @return {type} description of return value
      */
-    private RegisterRoutes() {
+    private RegisterRoutes(): void {
         Logging.dev("Registering Routes")
         AppServer.App.use(AppRoutes);
         RouteResolver.Mapper(AppServer.App, { listEndpoints: true });
-
     }
     /**
      * ExceptionHandler function.
@@ -106,7 +110,7 @@ class AppServer {
      * @return {void} There is no return value.
      */
 
-    private ExceptionHandler() {
+    private ExceptionHandler(): void {
         Logging.dev("Exception Handler Initiated")
         const { ExceptionHandler } = createHandlers();
         AppServer.App.use((err: Error, req: Request, res: Response, next: NextFunction) => {
@@ -121,17 +125,29 @@ class AppServer {
     private InitServer() {
         const server = http.createServer(AppServer.App).listen(AppServer.PORT, () => {
             InitScoketConnection(server)
+            AppEvents.emit('start')
             console.log(blue(`Application Started Successfully on ${CONFIG.APP.APP_URL}`),)
         })
         server.on('close', () => {
+            AppEvents.emit('shutdown')
             this.CloseServer(server)
         })
-
+        server.on('listening', () => {
+            console.log('The server is now ready and listening for connections.');
+        });
+        server.on('error', (err: any) => {
+            AppEvents.emit('error')
+            if (err.code === 'EADDRINUSE') {
+                Logging.dev(`Address in use, retrying on port ${AppServer.PORT}`, "error");
+            } else {
+                console.log(`server.listen ERROR: ${err.code}`);
+            }
+        })
     }
     /**
         * Initializes the application. 
     */
-    InitailizeApplication() {
+    InitailizeApplication(): Application {
         Logging.dev("Application Dependencies Injected")
         try {
             /** NOTE  Enable Database Connection
@@ -148,6 +164,7 @@ class AppServer {
 
         } catch (error: any) {
             Logging.dev(error.message, "error")
+            return AppServer.App
         }
     }
     /**
@@ -155,23 +172,27 @@ class AppServer {
      *
      * @private
      */
-    private GracefulShutdown() {
+    private GracefulShutdown(): void {
         process.on('SIGINT', () => {
+            AppEvents.emit('shutdown')
             Logging.dev("Manually Shutting Down", "notice")
             BroadCastEvents.sendServerClosed()
             process.exit(1);
         })
         process.on('SIGTERM', () => {
+            AppEvents.emit('shutdown')
             Logging.dev("Error Occured", "error")
             BroadCastEvents.sendServerClosed()
             process.exit(1);
         })
         process.on('uncaughtException', (err, origin) => {
+            AppEvents.emit('error')
             Logging.dev(`Uncaught Exception ${err.name} ` + err.message + err.stack, "error")
             Logging.dev(`Origin Of Error ${origin} `, "error")
 
         });
         process.on('unhandledRejection', (reason, promise) => {
+            AppEvents.emit('error')
             Logging.dev(`Unhandled Rejection at ${promise}, reason: ${reason}`, "error")
         });
     }
@@ -180,7 +201,7 @@ class AppServer {
      *
      * @param {http.Server} server - The server to be closed.
      */
-    private CloseServer(server: http.Server) {
+    private CloseServer(server: http.Server): void {
         server.close(() => process.exit(1));
     }
 }

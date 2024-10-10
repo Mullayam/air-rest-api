@@ -1,7 +1,16 @@
-
-export interface onApplicationStart {
-    onAppStart(): Promise<void>|void
+export type Methods = "onAppReady" | "onAppShutDown" | "onAppStart" | "onAppError";
+export interface OnAppReady {
+    onAppReady(): void;
 }
-export interface onApplicationShutdown {
-    onAppShutdown(): Promise<void>|void
+
+export interface OnAppShutDown {
+    onAppShutDown(): void;
+}
+
+export interface OnAppStart {
+    onAppStart(): void;
+}
+
+export interface OnAppError {
+    onAppError(): void;
 }

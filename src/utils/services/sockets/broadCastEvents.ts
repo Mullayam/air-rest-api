@@ -1,4 +1,4 @@
-import { getSocketIo } from "../services/Sockets";
+import { getSocketIo } from "./Sockets";
 import { SocketEventConstants } from "./socketEventConstants";
 
 class BroadCaseEvents {
