@@ -1,0 +1,9 @@
+{
+    "$schema": "https://json.schemastore.org/nest-cli",
+    "sourceMaps": true,
+    "compilerOptions": {
+        "builder": "swc",
+        "typeCheck": false,
+        "deleteOutDir": true
+    }
+}

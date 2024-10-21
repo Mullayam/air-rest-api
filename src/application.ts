@@ -20,7 +20,7 @@ import BroadCastEvents from '@/utils/services/sockets/broadCastEvents';
 import { CreateConnection } from '@factory/typeorm'
 import { AppLifecycle } from '@app/modules/appLifecycle';
 import { AppEvents } from './utils/services/Events';
- 
+
 
 
 class AppServer {
@@ -43,7 +43,7 @@ class AppServer {
      * Applies the necessary configurations to the AppServer.
      *
      * No parameters.
-     * 
+     *
      * @return {void} This function does not return anything.
      */
     private ApplyConfiguration(): void {
