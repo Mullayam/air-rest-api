@@ -1,27 +1,28 @@
-import { OnAppShutDown } from "@/utils/types/application.interface";
+import { AsyncHandler } from "@/utils/libs/AsyncHandler";
 import type { Request, Response } from "express";
 
-class AuthController implements OnAppShutDown{
-  
-    onAppShutDown(): void {
-        console.log("App is Shutting Down "+ AuthController.name)
-    }
-   async Hello(req: Request, res: Response):Promise<Response<any, Record<string, any>>>  {
-        
+class AuthController {
+
+    async Login(req: Request, res: Response) {
         try {
-            return res.json({ message: "OK", result: null, success: false })
+            res.json({ message: "OK", result: null, success: false })
         } catch (error: any) {
-            return res.json({ message: "Something went wrong", result: null, success: false })
+            if (error instanceof Error) {
+                res.json({ message: error.message, result: null, success: false })
+                return;
+            }
+            res.json({ message: "Something went wrong", result: null, success: false })
         }
     }
-    Hello2(req: Request, res: Response) {
-        res.json({ message: "OK", result: null, success: false })
-        // try {
-        //     return res.json({ message: "OK", result: null, success: false })
-        // } catch (error: any) {
-        //     return res.json({ message: "Something went wrong", result: null, success: false })
-        // }
-    }
+
+    Register = AsyncHandler(async (req: Request, res: Response) => {      
+
+        res.json({ message: "OK", result: null, success: true });
+    })
+    RefereshToken = AsyncHandler(async (req: Request, res: Response) => {      
+
+        res.json({ message: "OK", result: null, success: true });
+    })
 }
 
 export default new AuthController()

@@ -57,9 +57,8 @@ export class RouteResolver {
         }
     }
 
-    static Mapper(AppServer: Application, options: { listEndpoints: boolean } = { listEndpoints: false }) {
+    static Mapper(AppServer: Application, options: { listEndpoints: boolean, onlyPaths?: boolean } = { listEndpoints: false, onlyPaths: false }) {
         if (options.listEndpoints) {
-            // listEndpoints(AppServer)
             this.prototype.getEndpoints(AppServer).forEach((endpoint, key, arr) => {
                 SetAppRoutes.set(endpoint.path, endpoint.methods)
                 const str = `${endpoint.methods.includes('GET') ? bold(bgWhite(gray('GET')))
@@ -70,7 +69,7 @@ export class RouteResolver {
                                     : endpoint.methods.includes('ALL') ? bold(bgWhite(cyan('ALL')))
                                         : endpoint.methods.includes('OPTIONS') ? bold(bgWhite(redBright('OPTIONS')))
                                             : endpoint.methods.includes('HEAD') ? bold(bgWhite(blackBright('HEAD')))
-                                                : bold(yellow(endpoint.methods.join(', ')))} ${blueBright(endpoint.middlewares.join())} - ${yellow(endpoint.path)}`
+                                                : options.onlyPaths ? blueBright(endpoint.middlewares.join()) : bold(yellow(endpoint.methods.join(', ')))} ${blueBright(endpoint.middlewares.join())} - ${yellow(endpoint.path)}`
 
                 Logging.dev(str);
             });

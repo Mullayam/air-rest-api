@@ -22,4 +22,5 @@ export const METADATA_KEYS = {
 
 }
 export const RolesArray = Object.values(USER_ROLE);
+export const LIFECYCLE_HOOKS_KEY = 'lifecycle:hooks';
  

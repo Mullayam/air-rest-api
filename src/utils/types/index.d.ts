@@ -10,8 +10,13 @@ export type AppConfig = typeof CONFIG;
 export interface ExpressMiddleware {
     activate(req: Request, res: Response, next: NextFunction): void;
 }
+type Events = "ready" | "error" | "mount";
 declare global {
     namespace Express {
+        interface Application {
+            enableHooks: () => void;
+            event: (event: Events, callback: () => void) => void;
+          }
         export interface Request {
             session: {
                 user?: UserInfoJwtPayload;

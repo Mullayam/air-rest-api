@@ -1,1 +1,0 @@
-export * as  AdminAuthController from './Auth.controller'

@@ -2,7 +2,6 @@
   "name": "air-rest-api-default",
   "version": "1.0.0",
   "main": "build/main.js",
-  "description": "",
   "scripts": {
     "build": "nest build",
     "ready": "npm install",

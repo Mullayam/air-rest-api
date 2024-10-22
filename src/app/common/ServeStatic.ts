@@ -12,7 +12,6 @@ type Options = {
 
 
 export class ServeStaticModule {
-
     private static isRouteExcluded(req: Request, paths: string[]) {
         return paths.some((path) => {
             const re = pathToRegexp(path);

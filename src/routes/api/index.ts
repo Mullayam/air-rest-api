@@ -3,7 +3,9 @@ import {UserAuthController} from "@/handlers/controllers/user";
 
 const router = Router();
 
-router.get("/2",UserAuthController.default.Hello2)
+router.post("/login",UserAuthController.default.Login)
+router.post("/register",UserAuthController.default.Register)
+router.get("/refresh-token",UserAuthController.default.RefereshToken)
 
 
 

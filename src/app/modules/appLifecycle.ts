@@ -1,24 +1,45 @@
 import { Logging } from "@/logs";
+import { LIFECYCLE_HOOKS_KEY } from "@/utils/helpers/constants";
 import { AppEvents } from "@/utils/services/Events";
 import { Methods } from "@/utils/types/application.interface";
 
 
-export class AppLifecycle {
+export class AppLifecycleManager {
     private modules: any[] = [];
-    /**
-     * Initializes the AppLifecycleModules class.
-     *
-     * @param {any[]} modules Modules that will be called on app lifecycle events
-     * @memberof AppLifecycleModules
-     */
-    static enableHooks(modules: any[]) {
-        AppEvents.emit('ready')
-        AppEvents.emit('shutdown')
-        AppEvents.emit('start')
-        this.prototype.modules = modules;
-        this.ListenMethods()
-        return
+    static isAppLifecycleManager = false;
+    static setAppLifecycleManager() {
+        return this.isAppLifecycleManager = true;
     }
+    static initializeModules() {
+        const modules = Reflect.getMetadata(LIFECYCLE_HOOKS_KEY, Reflect) || [];
+        this.prototype.modules = modules;
+        modules.forEach((Module: any) => {
+            const instance = new Module();
+            if (instance.onModuleInit) instance.onModuleInit();         
+        });
+        this.ListenMethods()
+    }
+
+
+    static destroyModules() {
+        const modules = Reflect.getMetadata(LIFECYCLE_HOOKS_KEY, Reflect) || [];
+        modules.forEach((Module: any) => {
+            const instance = new Module();
+            if (instance.onModuleDestroy) instance.onModuleDestroy();
+        });
+    }
+
+    // Handle App Error and emit `onAppError`
+    static handleAppError(error: Error) {
+        const modules = Reflect.getMetadata(LIFECYCLE_HOOKS_KEY, Reflect) || [];
+        modules.forEach((Module: any) => {
+            const instance = new Module();
+            if (instance.onAppError) {
+                AppEvents.emit('error', instance, error);
+            }
+        });
+    }
+
     static ListenMethods() {
         this.prototype.onAppReady()
         this.prototype.onAppShutDown()
@@ -27,11 +48,9 @@ export class AppLifecycle {
     }
     // Helper function to check and execute module methods
     private checkAndExecute(methodName: Methods): void {
-        this.modules.forEach(module => {
-            if (typeof module[methodName] === 'function') {
-                module[methodName](); // Call the method
-            } else {
-                Logging.dev(`${methodName} method not implemented in module ${module.name}`, "error");
+        this.modules.forEach(Module => {
+            if (Module.prototype[methodName]) {
+                Module.prototype[methodName]()
             }
         });
     }

@@ -4,11 +4,14 @@ import { interval, timer } from "rxjs";
 import type { Request, Response, NextFunction } from "express";
 import { IUser } from "@/utils/types";
 import { AllowedRoles } from "@/utils/types/user.interface";
+import { LIFECYCLE_HOOKS_KEY } from "../helpers/constants";
+
+
 function handleAuthorization(
-    req: Request, 
-    res: Response, 
-    next: NextFunction, 
-    opts: { isPublic: boolean }, 
+    req: Request,
+    res: Response,
+    next: NextFunction,
+    opts: { isPublic: boolean },
     callback: () => void
 ) {
     try {
@@ -81,7 +84,7 @@ export function Accessible<T = AllowedRoles[]>(allowedRoles: T) {
 }
 
 
-export function isAuthorized(opts: { isPublic: boolean } = { isPublic: false }):any {
+export function isAuthorized(opts: { isPublic: boolean } = { isPublic: false }): any {
     return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
         if (typeof propertyKey === 'undefined' && typeof descriptor === 'undefined') {
             const classConstructor = target;
@@ -103,7 +106,7 @@ export function isAuthorized(opts: { isPublic: boolean } = { isPublic: false }):
                     };
                 }
             }
-        } 
+        }
         // Method-level decorator
         else if (propertyKey && descriptor) {
             const originalMethod = descriptor.value;
@@ -116,7 +119,7 @@ export function isAuthorized(opts: { isPublic: boolean } = { isPublic: false }):
 
             return descriptor;
         }
-    
+
     }
 }
 
@@ -169,4 +172,21 @@ export function HandleTimeout(timeout: number) {
 
         return descriptor;
     };
+}
+/**
+ * Decorator function that adds hook enabling functionality to a target class.
+ *
+ * Adds an `onEnableHook` method to the target class, allowing it to initialize
+ * and store modules for lifecycle events. It also defines metadata for the target 
+ * and sets up a `ListenMethods` method to log the modules set for hooks.
+ *
+ * @return {Function} - A function that takes a target class and enhances it with
+ * hook management capabilities.
+ */
+
+export function onEnableHook() {
+    return function (target: any) {
+        const existingModules = Reflect.getMetadata(LIFECYCLE_HOOKS_KEY, Reflect) || [];
+         Reflect.defineMetadata(LIFECYCLE_HOOKS_KEY, [...existingModules, target], Reflect);
+      };
 }

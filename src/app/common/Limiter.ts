@@ -11,22 +11,9 @@ function ThrottleException(message: Record<string, any> = { path: "/", info: "Re
 }
 const LIMITER_HANDLER = () => ThrottleException()
 export class Limiter {
-    private static instance: Limiter
     private static AllLimiters: string[] = [];
     private RATE_LIMIT = 10;
-    constructor(private app: Application) { }
-    /**
-     * Create a new instance of the Limiter class.
-     *
-     * @param {Application} app - The application object.
-     * @return {Limiter} - The new instance of the Limiter class.
-     */
-    static createInstance(app: Application): Limiter {
-        if (!(this instanceof Limiter)) {
-            Limiter.instance = new Limiter(app);
-        }
-        return Limiter.instance
-    }
+
     /**
      * Enabled the use of RateLimiter for all Api Calls
      *
@@ -38,7 +25,7 @@ export class Limiter {
         if (timeout === 0) timeout = 1;
         Logging.dev("Rate Limiting is Enabled")
         Limiter.AllLimiters.push("Default Limiter")
-        const limiter = rateLimit({
+        return rateLimit({
             windowMs: timeout * 60 * 1000, // 15 minutes
             max: limit, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
             standardHeaders: 'draft-7', // draft-6: RateLimit-* headers; draft-7: combined RateLimit header
@@ -46,7 +33,7 @@ export class Limiter {
             handler: LIMITER_HANDLER
             // store: ... , // Use an external store for more precise rate limiting
         })
-        Limiter.instance.app.use(limiter)
+
     }
     /**
      * Creates a new RateLimit RequestHandler. Can be use in route handlers

@@ -1,4 +1,4 @@
-export type Methods = "onAppReady" | "onAppShutDown" | "onAppStart" | "onAppError";
+export type Methods = "OnModuleInit" | "OnModuleDestroy" | "onAppReady" | "onAppShutDown" | "onAppStart" | "onAppError";
 export interface OnAppReady {
     onAppReady(): void;
 }
@@ -13,4 +13,12 @@ export interface OnAppStart {
 
 export interface OnAppError {
     onAppError(): void;
+}
+
+export interface OnModuleInit {
+    onModuleInit(): void;
+}
+
+export interface OnModuleDestroy {
+    onModuleDestroy(): void;
 }

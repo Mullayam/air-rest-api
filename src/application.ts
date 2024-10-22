@@ -6,20 +6,21 @@ import { Logging } from '@/logs';
 import bodyParser from 'body-parser';
 import { blue } from 'colorette';
 import { CONFIG } from './app/config';
-import { Cors } from '@/app/libs/Cors';
+import { Cors } from '@/app/common/Cors';
 import cookieParser from 'cookie-parser'
 import AppRoutes from '@/routes/web';
-import { useHttpsRedirection } from '@/app/libs/HttpsRedirection'
+import { useHttpsRedirection } from '@/app/common/HttpsRedirection'
 import { createHandlers } from '@enjoys/exception';
-import { SessionHandler } from '@/app/libs/Session';
-import { Interceptor } from '@/app/libs/Interceptors'
-import { RouteResolver } from '@/app/libs/RouteResolver';
+import { SessionHandler } from '@/app/common/Session';
+import { Interceptor } from '@/app/common/Interceptors'
+import { RouteResolver } from '@/app/common/RouteResolver';
 import { AppMiddlewares } from '@/middlewares/app.middleware';
 import { InitScoketConnection } from '@/utils/services/sockets/Sockets';
 import BroadCastEvents from '@/utils/services/sockets/broadCastEvents';
 import { CreateConnection } from '@factory/typeorm'
-import { AppLifecycle } from '@app/modules/appLifecycle';
+import { AppLifecycleManager } from '@app/modules/appLifecycle';
 import { AppEvents } from './utils/services/Events';
+import { Modifiers } from './app/common/Modifiers';
 
 
 
@@ -30,7 +31,7 @@ class AppServer {
      * Initializes the constructor.
      */
     constructor() {
-        AppLifecycle.enableHooks([])
+        AppLifecycleManager.initializeModules()
         this.ApplyConfiguration();
         this.InitMiddlewares();
         this.LoadInterceptors();
@@ -48,8 +49,8 @@ class AppServer {
      */
     private ApplyConfiguration(): void {
         Logging.dev("Applying Express Server Configurations")
+        Modifiers.useRoot(AppServer.App)
         AppServer.App.use(helmet());
-        AppServer.App.disable('x-powered-by');
         AppServer.App.use(morgan("dev"));
         AppServer.App.use(Cors.useCors());
         AppServer.App.use(bodyParser.json());
@@ -98,7 +99,7 @@ class AppServer {
     private RegisterRoutes(): void {
         Logging.dev("Registering Routes")
         AppServer.App.use(AppRoutes);
-        RouteResolver.Mapper(AppServer.App, { listEndpoints: true });
+        RouteResolver.Mapper(AppServer.App, { listEndpoints: true,  });
     }
     /**
      * ExceptionHandler function.
@@ -113,13 +114,7 @@ class AppServer {
     private ExceptionHandler(): void {
         Logging.dev("Exception Handler Initiated")
         const { ExceptionHandler } = createHandlers();
-        AppServer.App.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-            if (err) {
-                Logging.dev(err.message, "error")
-                return ExceptionHandler(err, req, res, next); // handler error and send response
-            }
-            next(); // call when no err found
-        });
+        AppServer.App.use(ExceptionHandler);
 
     }
     private InitServer() {
@@ -174,25 +169,27 @@ class AppServer {
      */
     private GracefulShutdown(): void {
         process.on('SIGINT', () => {
+            AppLifecycleManager.destroyModules();
+            BroadCastEvents.sendServerClosed()
             AppEvents.emit('shutdown')
             Logging.dev("Manually Shutting Down", "notice")
-            BroadCastEvents.sendServerClosed()
             process.exit(1);
         })
         process.on('SIGTERM', () => {
+            AppLifecycleManager.destroyModules();
+            BroadCastEvents.sendServerClosed()
             AppEvents.emit('shutdown')
             Logging.dev("Error Occured", "error")
-            BroadCastEvents.sendServerClosed()
             process.exit(1);
         })
         process.on('uncaughtException', (err, origin) => {
-            AppEvents.emit('error')
+            AppLifecycleManager.handleAppError(err)
             Logging.dev(`Uncaught Exception ${err.name} ` + err.message + err.stack, "error")
             Logging.dev(`Origin Of Error ${origin} `, "error")
 
         });
         process.on('unhandledRejection', (reason, promise) => {
-            AppEvents.emit('error')
+            AppLifecycleManager.handleAppError(reason as Error)
             Logging.dev(`Unhandled Rejection at ${promise}, reason: ${reason}`, "error")
         });
     }
