@@ -3,7 +3,7 @@ import { Request, Response, NextFunction, Send } from "express";
 
 import { JwtPayload } from "jsonwebtoken";
 import { TemplateOptions } from "nodemailer-express-handlebars";
-import { FileHandler } from './fileupload.interface';
+import { FileHandler } from '../interfaces/fileupload.interface';
 import fileUpload from "express-fileupload";
 export type Type<C extends object = object> = new (...args: any) => C;
 export type AppConfig = typeof CONFIG;
@@ -56,16 +56,3 @@ export interface InterceptorsSettings {
     response: Record<string, any>;
     isEnable?: boolean;
 }
-
-export interface AuthProviders {
-    [key: AuthProvidersList]: AuthProvidersKeys;
-}
-export interface AuthProvidersScopes {
-    [key: AuthProvidersList]: string[];
-}
-export interface AuthProvidersKeys {
-    clientID: string;
-    clientSecret: string;
-    callbackURL: string;
-}
-export type AuthProvidersList = "google" | "facebook" | "github";

@@ -3,7 +3,7 @@ import path from "path"
 import { pathToFileURL } from 'url';
 import { globSync } from 'glob';
 
-import { Type } from '@/utils/types'
+import { Type } from '@/utils/interfaces'
 
 type T = "controller" | "entity" | "service" | "middleware" | "migrations"
 export class FilesMapper {

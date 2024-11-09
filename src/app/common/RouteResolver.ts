@@ -29,6 +29,8 @@ const regexpExpressParamRegexp = /\(\?:\(\[\^\\\/]\+\?\)\)/g;
 const EXPRESS_ROOT_PATH_REGEXP_VALUE = '/^\\/?(?=\\/|$)/i';
 const STACK_ITEM_VALID_NAMES = ['router', 'bound dispatch', 'mounted_app'];
 export class RouteResolver {
+    static mappedRoutes:Array<{path:string,handler:any}> =[];
+
     private print(path: any, layer: any) {
         if (layer.route) {
             layer.route.stack.forEach(print.bind(path.concat(this.split(layer.route.path))))
@@ -105,7 +107,10 @@ export class RouteResolver {
 
         const endpoints = paths.map((path) => {
             const completePath = basePath && path === '/' ? basePath : `${basePath}${path}`;
-
+            RouteResolver.mappedRoutes.push({
+                path: completePath,
+                handler: route.stack.map((item: any) => item.handle).pop()
+              })
             const endpoint: Endpoint = {
                 path: completePath,
                 methods: _this.getRouteMethods(route),

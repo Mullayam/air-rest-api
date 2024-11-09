@@ -1,7 +1,7 @@
 import path from 'path';
 import winston from 'winston'
-import { bold, green, greenBright, magenta, red, redBright, white, yellow } from "colorette"
-import { LoggingLevel, LoggingOptions, ColorCode } from '../utils/types/logs.interface';
+import { bold, greenBright, magenta, red, white, yellow } from "colorette"
+import { LoggingLevel, LoggingOptions } from '@/utils/interfaces/logs.interface';
 import { createLogger, format, transports } from 'winston'
 import moment from 'moment';
 const { combine, timestamp, label, printf, colorize } = format;
@@ -18,6 +18,7 @@ const Colors: Record<LoggingLevel, string> = {
 }
 
 class Logger {
+  
   constructor() {
     process.stdout.write("\u001b[2J\u001b[0;0H");
     process.stdout.write(greenBright(`[ENJOYS] ${yellow(process.pid)} - ${white(moment().format('DD/MM/YYYY hh:mm:ss A'))}, INFO ${Logger.name} Service Iniatialized \n`))

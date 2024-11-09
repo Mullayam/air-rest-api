@@ -70,8 +70,8 @@ class AppServer {
         Logging.dev("Middlewares Initiated")
         /** Enable Request headers for production */
         if (CONFIG.APP.APP_ENV.toUpperCase() === 'PRODUCTION' || CONFIG.APP.APP_ENV.toUpperCase() === 'PROD') {
-            AppServer.App.use(AppMiddlewares.IRequestHeaders)
-            AppServer.App.use(AppMiddlewares.isApiProtected)
+            AppServer.App.use(AppMiddlewares.IRequestHeaders())
+            AppServer.App.use(AppMiddlewares.isApiProtected())
         }
         /** Enable Signature header validation on api routes */
         // AppServer.App.use(AppMiddlewares.SecureApiRoutesWithValidateSignature)
@@ -99,7 +99,7 @@ class AppServer {
     private RegisterRoutes(): void {
         Logging.dev("Registering Routes")
         AppServer.App.use(AppRoutes);
-        RouteResolver.Mapper(AppServer.App, { listEndpoints: true,  });
+        RouteResolver.Mapper(AppServer.App, { listEndpoints: true, });
     }
     /**
      * ExceptionHandler function.
@@ -120,8 +120,9 @@ class AppServer {
     private InitServer() {
         const server = http.createServer(AppServer.App).listen(AppServer.PORT, () => {
             InitScoketConnection(server)
-            AppEvents.emit('start')
+            AppEvents.emit('ready')
             console.log(blue(`Application Started Successfully on ${CONFIG.APP.APP_URL}`),)
+
         })
         server.on('close', () => {
             AppEvents.emit('shutdown')
@@ -129,6 +130,8 @@ class AppServer {
         })
         server.on('listening', () => {
             console.log('The server is now ready and listening for connections.');
+            AppEvents.emit('start')
+
         });
         server.on('error', (err: any) => {
             AppEvents.emit('error')

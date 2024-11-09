@@ -1,5 +1,5 @@
 import { Logging } from "@/logs";
-import { LoggingLevel } from "../types/logs.interface";
+import { LoggingLevel } from "../interfaces/logs.interface";
 import { yellow } from "colorette";
 
 export const Log = (message: string, type: LoggingLevel = "info") => {

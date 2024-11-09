@@ -1,5 +1,5 @@
 import { Response as ExpressResponse ,NextFunction,Request} from "express";
-import { HttpStatusCodes } from "@/utils/types/httpCode.interface";
+import { HttpStatusCodes } from "@/utils/interfaces/httpCode.interface";
 
 
 export class AirResponse {

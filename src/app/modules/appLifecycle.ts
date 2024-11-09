@@ -1,7 +1,7 @@
 import { Logging } from "@/logs";
 import { LIFECYCLE_HOOKS_KEY } from "@/utils/helpers/constants";
 import { AppEvents } from "@/utils/services/Events";
-import { Methods } from "@/utils/types/application.interface";
+import { Methods } from "@/utils/interfaces/application.interface";
 
 
 export class AppLifecycleManager {

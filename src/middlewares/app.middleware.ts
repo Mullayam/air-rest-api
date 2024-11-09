@@ -19,35 +19,37 @@ export class AppMiddlewares {
    * @param {NextFunction} next - The next middleware function.
    */
 
-  public static isApiProtected(req: Request, res: Response, next: NextFunction) {
-    Logging.dev(`API Route ${req.originalUrl} is Protected`)
-    const headers = req.headers;
-    const apiKey = headers["api_key"] || undefined;
-    if (typeof apiKey === "undefined") {
-      res.status(404).json({
-        success: false,
-        result: {
-          code: 404
-        },
-        message: "API_KEY is Required",
-      });
-      res.end();
-      return
-    }
-    if (apiKey !== process.env.API_KEY) {
-      res.status(401).json({
-        success: false,
-        status_code: {
-          code: 412
-        },
-        message: "Invalid KEY, Check API KEY",
-      });
-      res.end();
-      return
-    }
-    req.clientSecret = apiKey;
-    next();
+  public static isApiProtected() {
+    Logging.dev(`API Route are Protected`)
+    return (req: Request, res: Response, next: NextFunction) => {
+      const headers = req.headers;
+      const apiKey = headers["api_key"] || undefined;
+      if (typeof apiKey === "undefined") {
+        res.status(404).json({
+          success: false,
+          result: {
+            code: 404
+          },
+          message: "API_KEY is Required",
+        });
+        res.end();
+        return
+      }
+      if (apiKey !== process.env.API_KEY) {
+        res.status(401).json({
+          success: false,
+          status_code: {
+            code: 412
+          },
+          message: "Invalid KEY, Check API KEY",
+        });
+        res.end();
+        return
+      }
+      req.clientSecret = apiKey;
+      next();
 
+    }
   }
   /**
    * Sets the X-Request-Id and X-Platform headers in the request and response objects.
@@ -56,13 +58,15 @@ export class AppMiddlewares {
    * @param {Response} res - The response object.
    * @param {NextFunction} next - The next function in the middleware chain.
    */
-  public static IRequestHeaders(req: Request, res: Response, next: NextFunction) {
+  public static IRequestHeaders() {
     Logging.dev("IRequestHeaders ID Initiated")
-    const requestId = Helpers.RequestId();
-    req.headers['X-Request-Id'] = requestId;
-    res.setHeader('X-Request-Id', requestId);
-    res.setHeader('X-Platform', "AIRAPI - ENJOYS");
-    next();
+    return (req: Request, res: Response, next: NextFunction) => {
+      const requestId = Helpers.RequestId();
+      req.headers['X-Request-Id'] = requestId;
+      res.setHeader('X-Request-Id', requestId);
+      res.setHeader('X-Platform', "AIRAPI - ENJOYS");
+      next();
+    }
   }
   public static async SecureApiRoutesWithValidateSignature(req: Request, res: Response, next: NextFunction) {
     if (!req.get(sigHeaderName)) {

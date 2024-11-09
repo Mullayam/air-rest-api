@@ -2,7 +2,7 @@ import path from "path";
 import { Logging } from "@/logs";
 import * as Mail from "nodemailer/lib/mailer";
 import nodemailer, { Transporter, SentMessageInfo } from "nodemailer";
-import { MailOptionsWithTemplate } from "@/utils/types/mail.interface";
+import { MailOptionsWithTemplate } from "@/utils/interfaces/mail.interface";
 import { MailOptions } from "nodemailer/lib/json-transport";
 import hbs, { NodemailerExpressHandlebarsOptions, TemplateOptions } from 'nodemailer-express-handlebars';
 import SMTPTransport from "nodemailer/lib/smtp-transport";

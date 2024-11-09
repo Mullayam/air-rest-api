@@ -14,7 +14,7 @@ const __config = {
     STORAGE_DRIVER: String(process.env.STORAGE_DRIVER),
     SECRETS: {
         SALT: String(process.env.SALT),
-        JWT_SECRET_KEY: String(process.env.JWT_SECRET_KEY),
+        JWT_SECRET_KEY: String(process.env.JWT_SECRET_TOKEN),
         APP_SECRET: String(process.env.APP_SECRET),
         COOKIE_SECRET: String(process.env.COOKIE_SECRET),
         SESSION_SECRET: String(process.env.SESSION_SECRET),

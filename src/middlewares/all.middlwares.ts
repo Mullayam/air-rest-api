@@ -1,10 +1,7 @@
-import { OnAppReady } from '@/utils/types/application.interface';
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 
-class AllMiddlewares implements OnAppReady {
-  onAppReady(): void {
-    console.log("first")
-  }
+class AllMiddlewares {
+
   public customMiddlewareFunction(req: Request, res: Response, next: NextFunction) {
     // Your custom middleware logic goes here
     console.log('Custom Middleware executed');

@@ -1,7 +1,9 @@
 import jwt from "jsonwebtoken";
 import type { Response, Request, NextFunction } from 'express'
-import { IUser } from "@/utils/types";
 import { CONFIG } from "@/app/config";
+import { RouteResolver } from "@/app/common/RouteResolver";
+import { PUBLIC_ROUTE_KEY } from "@/utils/helpers/constants";
+import { IUser } from "@/utils/types";
 
 export class JwtAuth {
     /**
@@ -14,21 +16,32 @@ export class JwtAuth {
      */
     static validateUser(req: Request, res: Response, next: NextFunction) {
         try {
+            const routeHandler = RouteResolver.mappedRoutes.find((layer: any) => layer.path === req.originalUrl)?.handler;
+            const isPublicRoute = routeHandler && Reflect.getMetadata(PUBLIC_ROUTE_KEY, routeHandler);
+
+            if (isPublicRoute) {
+                return next();
+            }
             const authHeader = req.headers["authorization"] as String || null
 
             if (!authHeader) {
-                return res.json({ message: "Authorization header is missing", result: null, success: false })
+                res.json({ message: "Athorization header is missing", result: null, success: false }).end()
+
+                return
             }
             const token = authHeader?.replace("JWT ", "")
             if (!token) {
-                return res.json({ message: "Authorization Token is missing", result: null, success: false })
+                res.json({ message: "Authorization Token is missing", result: null, success: false }).end()
+                return
             }
             const decodedToken = jwt.verify(token, CONFIG.SECRETS.JWT_SECRET_KEY) as IUser
             if (!decodedToken) {
-                return res.json({ message: "Invalid Token", result: null, success: false })
+                res.json({ message: "Invalid Token", result: null, success: false }).end()
+                return
             }
             if (decodedToken.role !== "User") {
-                return res.json({ message: "Access Denied", result: null, success: false })
+                res.json({ message: "Access Denied", result: null, success: false }).end()
+                return
             }
             // req.session["user"] = decodedToken
             req.user = decodedToken
@@ -36,7 +49,8 @@ export class JwtAuth {
             req.clientSecret = decodedToken.uid || CONFIG.SECRETS.APP_SECRET
             next()
         } catch (error: any) {
-            return res.json({ message: "Invalid Token", result: error.message, success: false })
+            res.json({ message: "Invalid Token", result: error.message, success: false }).end()
+            return
         }
 
     }
@@ -54,19 +68,24 @@ export class JwtAuth {
             const authHeader = req.headers["authorization"] as String || null
 
             if (!authHeader) {
-                return res.json({ message: "Authorization header is missing", result: null, success: false })
+                res.json({ message: "Authorization header is missing", result: null, success: false }).end()
+                return
             }
             const token = authHeader?.replace("JWT ", "")
             if (!token) {
-                return res.json({ message: "Authorization Token is missing", result: null, success: false })
+                res.json({ message: "Authorization Token is missing", result: null, success: false }).end()
+                return
             }
             const decodedToken = jwt.verify(token, CONFIG.SECRETS.JWT_SECRET_KEY)
             if (!decodedToken) {
-                return res.json({ message: "Invalid Token", result: null, success: false })
+                res.json({ message: "Invalid Token", result: null, success: false })
+                return
             }
-            return res.json({ message: "Validated Token", result: decodedToken, success: true })
+            res.json({ message: "Validated Token", result: decodedToken, success: true }).end()
+            return
         } catch (error: any) {
-            return res.json({ message: "Invalid Token", result: error.message, success: false })
+            res.json({ message: "Invalid Token", result: error.message, success: false }).end()
+            return
         }
     }
 }

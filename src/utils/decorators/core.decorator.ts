@@ -3,12 +3,12 @@ import * as path from 'path'
 import * as fs from 'fs'
 import type { NextFunction, Request, RequestHandler, Response } from 'express';
 import { Storage } from '@utils/services/storage';
-import { FileHandler, FileUploadOptions } from '../types/fileupload.interface';
+import { FileHandler, FileUploadOptions } from '../interfaces/fileupload.interface';
 import { METADATA_KEYS } from '../helpers/constants';
 import { validationResult } from 'express-validator';
 import { Logging } from '@/logs';
 import { CacheService } from '@utils/services/redis/cacheService';
-import { HttpStatusCode } from '../types/httpCode.interface';
+import { HttpStatusCode } from '../interfaces/httpCode.interface';
 import helpers from '../helpers';
 const cacheClient = new CacheService()
 

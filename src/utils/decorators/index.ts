@@ -2,11 +2,10 @@ import jwt from "jsonwebtoken";
 import { CONFIG } from "@/app/config";
 import { interval, timer } from "rxjs";
 import type { Request, Response, NextFunction } from "express";
-import { IUser } from "@/utils/types";
-import { AllowedRoles } from "@/utils/types/user.interface";
-import { LIFECYCLE_HOOKS_KEY } from "../helpers/constants";
-
-
+import { AllowedRoles } from "@/utils/interfaces/user.interface";
+import { LIFECYCLE_HOOKS_KEY ,PUBLIC_ROUTE_KEY} from "../helpers/constants";
+import { AppEvents } from '../services/Events';
+import { IUser } from '@/utils/types';
 function handleAuthorization(
     req: Request,
     res: Response,
@@ -45,6 +44,12 @@ function handleAuthorization(
     } catch (error) {
         return res.status(401).json({ message: "Token is invalid", result: null, success: false });
     }
+}
+
+export function PublicRoute(): MethodDecorator {
+    return (target, propertyKey, descriptor) => {
+        Reflect.defineMetadata(PUBLIC_ROUTE_KEY, true, descriptor.value!);
+    };
 }
 /**
  * Decorator function that checks if the user has the required roles to access a protected route.
@@ -183,10 +188,34 @@ export function HandleTimeout(timeout: number) {
  * @return {Function} - A function that takes a target class and enhances it with
  * hook management capabilities.
  */
-
 export function onEnableHook() {
     return function (target: any) {
         const existingModules = Reflect.getMetadata(LIFECYCLE_HOOKS_KEY, Reflect) || [];
-         Reflect.defineMetadata(LIFECYCLE_HOOKS_KEY, [...existingModules, target], Reflect);
-      };
+        Reflect.defineMetadata(LIFECYCLE_HOOKS_KEY, [...existingModules, target], Reflect);
+    };
 }
+
+/**
+ * Decorator function that registers an event listener for the given event.
+ *
+ * @param {string} event - The event to listen for.
+ * @param {Object} [options] - Options for the event listener.
+ * @param {boolean} [options.async=false] - If true, the event listener will be
+ *   called asynchronously. If false, the event listener will be called
+ *   synchronously.
+ * @return {Function} - A decorator function that registers the event listener.
+ */
+export function OnEvent(event: string, options?: { async: boolean }) {
+    return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+        const originalMethod = descriptor.value;
+        AppEvents.on(event, async (message: any) => {
+            if (options?.async) {
+                await originalMethod.apply(target, [message]);
+            } else {
+                originalMethod.apply(target, [message]);
+            }
+        });
+    };
+}
+
+ 

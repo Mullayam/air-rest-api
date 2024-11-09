@@ -1,5 +1,5 @@
 import { google } from "googleapis";
-import { AuthProviders, AuthProvidersKeys, AuthProvidersList, AuthProvidersScopes } from "@/utils/types";
+import { AuthProviders, AuthProvidersKeys, AuthProvidersList, AuthProvidersScopes } from "@/utils/interfaces";
 
 
 export class Providers {
@@ -10,15 +10,17 @@ export class Providers {
      * @param {AuthProvidersList} authProvider - The AuthProvidersList to retrieve the provider object from.
      * @return {AuthProviders} The provider object corresponding to the given authProvider, or undefined if not found.
      */
-    private Providers(authProvider: AuthProvidersList): AuthProviders {
-        const Provider: AuthProviders = {
+    private Providers(authProvider: AuthProvidersList): Partial<AuthProvidersKeys> {
+        const Provider: Partial<AuthProviders> = {
             "google": {
-                clientID: process.env.GOOGLE_CLIENT_ID as string ,
-                clientSecret: process.env.GOOGLE_CLIENT_SECRET as string ,
-                callbackURL: process.env.GOOGLE_CALLBACK as string ,
-            }
+                clientID: process.env.GOOGLE_CLIENT_ID as string,
+                clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+                callbackURL: process.env.GOOGLE_CALLBACK as string,
+            },
+
         }
-        return Provider[authProvider as keyof typeof Provider]
+        const providers = Provider[authProvider as keyof typeof Provider]!
+        return providers
 
     }
     /**
@@ -33,8 +35,8 @@ export class Providers {
                 "https://www.googleapis.com/auth/userinfo.profile",
                 "https://www.googleapis.com/auth/userinfo.email",
             ],
-            // "facebook": [],  add scopes to provider array
-
+            facebook: [],
+            github: []
         }
         authProvider = authProvider.toLowerCase() as AuthProvidersList
         return scopes[authProvider as keyof typeof scopes]
@@ -56,7 +58,7 @@ export class Providers {
             access_type: "offline",
             scope: scopes,
         });
-        
+
         return googleURL
     }
 

@@ -1,7 +1,7 @@
 import { Application, Request, Response, NextFunction } from "express";
 
 import { Logging } from "@/logs"; 
-import { InterceptorsSettings } from "@/utils/types";
+import { InterceptorsSettings } from "@/utils/interfaces";
 import { HttpException } from "@enjoys/exception";
 
 const ORIGINAL_RESPONSE = { response: { info: "Interceptor Response" } }
