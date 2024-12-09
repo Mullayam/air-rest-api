@@ -33,3 +33,9 @@ export enum Action {
 
 export const UserRolesArray = Object.values(AppRoles);
 export type AllowedRoles = keyof typeof AppRoles;
+export type AuthProvidersList = "google" | "facebook" | "github";
+
+export interface IAuthProvider {
+    getAuthUrl(): string;
+    handleCallback(code: string): Promise<{ accessToken: string; user: any }>;
+  }

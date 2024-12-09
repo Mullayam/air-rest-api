@@ -11,4 +11,3 @@ export const AsyncHandler = (fn: (req: Request, res: Response) => Promise<any>) 
         });
     };
 };
- 

@@ -29,7 +29,9 @@ declare global {
             clientSecret?: string;
         }
     }
+    
 }
+
 export type FileUploadInfo = {
     id: string;
     key: string;
