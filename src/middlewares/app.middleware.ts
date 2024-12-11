@@ -1,3 +1,4 @@
+import { __CONFIG__ } from "@/app/config";
 import { Logging } from "@/logs";
 import Helpers, { SetAppRoutes } from "@/utils/helpers";
 import { Security } from "@/utils/helpers/security";
@@ -35,7 +36,7 @@ export class AppMiddlewares {
         res.end();
         return
       }
-      if (apiKey !== process.env.API_KEY) {
+      if (apiKey !== __CONFIG__.APP.API_KEY) {
         res.status(401).json({
           success: false,
           status_code: {

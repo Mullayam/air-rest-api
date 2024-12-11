@@ -41,13 +41,7 @@ const __config = {
         CACHE_HOST: String(process.env.CACHE_HOST),
         CACHE_PORT: Number(process.env.PORT) || 6379,
     },
-    PROVIDERS: {
-        GOOGLE: {
-            GOOGLE_CLIENT_ID: String(process.env.GOOGLE_CLIENT_ID),
-            GOOGLE_CLIENT_SECRET: String(process.env.GOOGLE_CLIENT_SECRET),
-            GOOGLE_CALLBACK_URL: String(process.env.GOOGLE_CALLBACK_URL),
-        },
-    },
+   
 };
 export const ConfigService = {
     /**
@@ -65,4 +59,4 @@ export const ConfigService = {
     }
 }
 
-export const CONFIG = Object.freeze(__config)
+export const __CONFIG__ = Object.freeze(__config)

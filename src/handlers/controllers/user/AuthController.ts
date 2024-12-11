@@ -1,3 +1,4 @@
+import { CustomResponse } from "@/utils/interfaces";
 import { AsyncHandler } from "@/utils/libs/AsyncHandler";
 import type { Request, Response } from "express";
 

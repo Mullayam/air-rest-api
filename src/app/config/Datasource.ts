@@ -1,22 +1,23 @@
-import { DatabaseType, DataSource } from 'typeorm'
-import { CONFIG } from '.'
-const DBURL = { url: `postgres://${CONFIG.DATABASE.DB_USER}:${CONFIG.DATABASE.DB_PASS}@${CONFIG.DATABASE.DB_HOST}:${+CONFIG.DATABASE.DB_PORT}/${CONFIG.DATABASE.DB_NAME}` }
+import {  DataSource } from 'typeorm'
+import { __CONFIG__ } from '.'
+
+const DBURL = { url: `postgres://${__CONFIG__.DATABASE.DB_USER}:${__CONFIG__.DATABASE.DB_PASS}@${__CONFIG__.DATABASE.DB_HOST}:${+__CONFIG__.DATABASE.DB_PORT}/${__CONFIG__.DATABASE.DB_NAME}` }
 const DB_OPTIONS = {
-    host: CONFIG.DATABASE.DB_HOST || "localhost",
-    port: +CONFIG.DATABASE.DB_HOST,
-    username: CONFIG.DATABASE.DB_USER,
-    password: CONFIG.DATABASE.DB_PASS,
-    database: CONFIG.DATABASE.DB_NAME,
+    host: __CONFIG__.DATABASE.DB_HOST || "localhost",
+    port: +__CONFIG__.DATABASE.DB_HOST,
+    username: __CONFIG__.DATABASE.DB_USER,
+    password: __CONFIG__.DATABASE.DB_PASS,
+    database: __CONFIG__.DATABASE.DB_NAME,
 }
-const DB = CONFIG.DATABASE.DATABASE_URL === "undefined" ? DBURL : DB_OPTIONS
+const DB = __CONFIG__.DATABASE.DATABASE_URL === "undefined" ? DBURL : DB_OPTIONS
 export const AppDataSource = new DataSource({
     ...DB,
     type: "postgres",
-    synchronize: CONFIG.APP.APP_ENV === "DEV" ? true : false,
+    synchronize: __CONFIG__.APP.APP_ENV === "DEV" ? true : false,
     logging: false,
     entities: ["src/factory/entities/**/*.entity{.ts,.js}"],
     subscribers: [],
-    migrationsRun: CONFIG.APP.APP_ENV === "DEV" ? true : false,
+    migrationsRun: __CONFIG__.APP.APP_ENV === "DEV" ? true : false,
     migrations: ["src/factory/migrations/**/*{.ts,.js}"],
     migrationsTableName: "migration_table",
     ssl: false,

@@ -1,4 +1,9 @@
-
+export interface IUser {
+    uid?: string;
+    email?: string;
+    role?: string;
+    status?: string;
+}
 export enum USER_STATUS {
     ACTIVE = 'ACTIVE',
     INACTIVE = 'INACTIVE',

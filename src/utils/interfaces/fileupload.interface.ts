@@ -25,3 +25,8 @@ export interface FileHandler extends UploadedFile {
     /** MD5 checksum of the uploaded file */
     md5: string;
 }
+export type FileUploadInfo = {
+    id: string;
+    key: string;
+    extenstion: string;
+} & FileHandler;

@@ -1,6 +1,6 @@
 import CryptoJS from "crypto-js";
 import * as crypto from "crypto";
-import { CONFIG } from "@/app/config";
+import { __CONFIG__ } from "@/app/config";
 const ALGORITHM = "aes-256-cbc";
 const ENCODING = "hex";
 const ENCRYPTION_KEY: string = "enjoys_encrption_key!@#%^&*()_NJ";
@@ -223,7 +223,7 @@ export class Security {
             decodedString = this.PurifiedString(method, uri, body);
         }
 
-        clientSecret = CONFIG.SECRETS.APP_SECRET;
+        clientSecret = __CONFIG__.SECRETS.APP_SECRET;
         const hmac = crypto
             .createHmac("sha512", clientSecret)
             .update(decodedString);
