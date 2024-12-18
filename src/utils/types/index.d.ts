@@ -1,14 +1,13 @@
-import { CONFIG } from "@/app/config";
+import { __CONFIG__ } from "@/app/config";
 import { Request, Response } from "express";
-
 import { JwtPayload } from "jsonwebtoken";
 import { FileHandler } from '../interfaces/fileupload.interface';
 import { IUser } from "../interfaces/user.interface";
 import { CustomResponse } from "../interfaces";
-
+import { Server } from 'socket.io';
 export type Type<C extends object = object> = new (...args: any) => C;
 
-export type AppConfig = typeof CONFIG;
+export type AppConfig = typeof __CONFIG__;
 type ENV = {
     APP_ENV: string
     API_KEY: number;
@@ -50,6 +49,8 @@ declare global {
                 user?: IUser & JwtPayload | null;
                 [key: string]: any;
             };
+            io?: Server
+
             files?: FileHandler[] | FileHandler;
             isAuthenticated?: boolean;
             user?: IUser;

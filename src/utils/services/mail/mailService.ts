@@ -6,7 +6,7 @@ import { MailOptionsWithTemplate } from "@/utils/interfaces/mail.interface";
 import { MailOptions } from "nodemailer/lib/json-transport";
 import hbs, { NodemailerExpressHandlebarsOptions, TemplateOptions } from 'nodemailer-express-handlebars';
 import SMTPTransport from "nodemailer/lib/smtp-transport";
-import { CONFIG } from "@/app/config";
+import {__CONFIG__ } from "@/app/config";
 
 const TemplatePath = path.join(process.cwd(), 'src', "resources", "templates");
 export class MailService {
@@ -35,12 +35,12 @@ export class MailService {
      */
     private TransportOptions(): SMTPTransport.Options {
         return {
-            host: CONFIG.SMTP_SETTINGS.SMTP_HOST as string,
-            port: Number(CONFIG.SMTP_SETTINGS.SMTP_HOST_PASS),
+            host: __CONFIG__.SMTP_SETTINGS.SMTP_HOST as string,
+            port: Number(__CONFIG__.SMTP_SETTINGS.SMTP_HOST_PASS),
             secure: false,
             auth: {
-                user: CONFIG.SMTP_SETTINGS.SMTP_HOST_USER,
-                pass: CONFIG.SMTP_SETTINGS.SMTP_HOST_PASS,
+                user: __CONFIG__.SMTP_SETTINGS.SMTP_HOST_USER,
+                pass: __CONFIG__.SMTP_SETTINGS.SMTP_HOST_PASS,
             },
 
         };

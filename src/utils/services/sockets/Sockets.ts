@@ -1,22 +1,19 @@
 import { Server, Socket } from "socket.io";
 import type { Server as HttpServer } from 'http'
-import { DefaultEventsMap } from "node_modules/socket.io/dist/typed-events";
-import { green, red, redBright } from "colorette";
 import { Logging } from "@/logs";
 
-let socketIo: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
-export const InitScoketConnection = (server: HttpServer) => {
+let io: Server;
+export const InitSocketConnection = () => {
   Logging.dev("Socket are Initialized")
-  const io = new Server(server, {
+  const io = new Server({
     cors: {
       origin: process.env.NODE_ENV === 'development' ? process.env.REACT_APP_URL : "*",
     }
   })
-  const infoNamespace = io.of('/info');
-  infoNamespace.on('connection', (socket: Socket) => {
+  io.on('connection', (socket: Socket) => {
 
     socket.on('disconnect', () => {
-      
+
     });
 
     socket.on("disconnecting", async (reason) => {
@@ -24,9 +21,11 @@ export const InitScoketConnection = (server: HttpServer) => {
     });
   });
 
-  io.listen(server)
-  socketIo = io
+
   return io
 };
 
-export const getSocketIo = () => socketIo
+io = InitSocketConnection()
+
+export const getSocketIo = () => io
+

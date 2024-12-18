@@ -1,10 +1,10 @@
 import jwt from "jsonwebtoken";
 import type { Response, Request, NextFunction } from 'express'
-import { CONFIG } from "@/app/config";
+import { __CONFIG__ } from "@/app/config";
 import { RouteResolver } from "@/app/common/RouteResolver";
 import { PUBLIC_ROUTE_KEY } from "@/utils/helpers/constants";
-import { IUser } from "@/utils/types";
-
+import { IUser } from "@/utils/interfaces/user.interface";
+ 
 export class JwtAuth {
     /**
      * Validates the user's authorization token.
@@ -34,7 +34,7 @@ export class JwtAuth {
                 res.json({ message: "Authorization Token is missing", result: null, success: false }).end()
                 return
             }
-            const decodedToken = jwt.verify(token, CONFIG.SECRETS.JWT_SECRET_KEY) as IUser
+            const decodedToken = jwt.verify(token, __CONFIG__.SECRETS.JWT_SECRET_KEY) as IUser
             if (!decodedToken) {
                 res.json({ message: "Invalid Token", result: null, success: false }).end()
                 return
@@ -46,7 +46,7 @@ export class JwtAuth {
             // req.session["user"] = decodedToken
             req.user = decodedToken
             // fetch client secerert from db or redis connection, for eg we use uid as secret
-            req.clientSecret = decodedToken.uid || CONFIG.SECRETS.APP_SECRET
+            req.clientSecret = decodedToken.uid || __CONFIG__.SECRETS.APP_SECRET
             next()
         } catch (error: any) {
             res.json({ message: "Invalid Token", result: error.message, success: false }).end()
@@ -76,7 +76,7 @@ export class JwtAuth {
                 res.json({ message: "Authorization Token is missing", result: null, success: false }).end()
                 return
             }
-            const decodedToken = jwt.verify(token, CONFIG.SECRETS.JWT_SECRET_KEY)
+            const decodedToken = jwt.verify(token, __CONFIG__.SECRETS.JWT_SECRET_KEY)
             if (!decodedToken) {
                 res.json({ message: "Invalid Token", result: null, success: false })
                 return

@@ -1,11 +1,11 @@
 import * as http from 'http'
-import express, { Application, NextFunction, Response, Request } from 'express'
+import express, { Application } from 'express'
 import morgan from 'morgan'
 import helmet from 'helmet';
 import { Logging } from '@/logs';
 import bodyParser from 'body-parser';
 import { blue } from 'colorette';
-import { CONFIG } from './app/config';
+import { __CONFIG__ } from './app/config';
 import { Cors } from '@/app/common/Cors';
 import cookieParser from 'cookie-parser'
 import AppRoutes from '@/routes/web';
@@ -15,18 +15,18 @@ import { SessionHandler } from '@/app/common/Session';
 import { Interceptor } from '@/app/common/Interceptors'
 import { RouteResolver } from '@/app/common/RouteResolver';
 import { AppMiddlewares } from '@/middlewares/app.middleware';
-import { InitScoketConnection } from '@/utils/services/sockets/Sockets';
+import { getSocketIo } from '@/utils/services/sockets/Sockets';
 import BroadCastEvents from '@/utils/services/sockets/broadCastEvents';
 import { CreateConnection } from '@factory/typeorm'
 import { AppLifecycleManager } from '@app/modules/appLifecycle';
 import { AppEvents } from './utils/services/Events';
 import { Modifiers } from './app/common/Modifiers';
-
+const io = getSocketIo()
 
 
 class AppServer {
     static App: Application = express();
-    static PORT: number = +CONFIG.APP.APP_PORT;
+    static PORT: number = +__CONFIG__.APP.APP_PORT;
     /**
      * Initializes the constructor.
      */
@@ -51,12 +51,13 @@ class AppServer {
         Logging.dev("Applying Express Server Configurations")
         Modifiers.useRoot(AppServer.App)
         AppServer.App.use(helmet());
-        AppServer.App.use(morgan("dev"));
+        AppServer.App.use(morgan("dev"));       
         AppServer.App.use(Cors.useCors());
         AppServer.App.use(bodyParser.json());
         AppServer.App.use(useHttpsRedirection);
+        AppServer.App.use(AppMiddlewares.attachIoToRequestHandler(io));
         AppServer.App.use(SessionHandler.forRoot());
-        AppServer.App.use(cookieParser(CONFIG.SECRETS.COOKIE_SECRET));
+        AppServer.App.use(cookieParser(__CONFIG__.SECRETS.COOKIE_SECRET));
         AppServer.App.use(bodyParser.urlencoded({ extended: false }));
     }
     /**
@@ -69,7 +70,7 @@ class AppServer {
     private InitMiddlewares(): void {
         Logging.dev("Middlewares Initiated")
         /** Enable Request headers for production */
-        if (CONFIG.APP.APP_ENV.toUpperCase() === 'PRODUCTION' || CONFIG.APP.APP_ENV.toUpperCase() === 'PROD') {
+        if (__CONFIG__.APP.APP_ENV.toUpperCase() === 'PRODUCTION' || __CONFIG__.APP.APP_ENV.toUpperCase() === 'PROD') {
             AppServer.App.use(AppMiddlewares.IRequestHeaders())
             AppServer.App.use(AppMiddlewares.isApiProtected())
         }
@@ -119,9 +120,9 @@ class AppServer {
     }
     private InitServer() {
         const server = http.createServer(AppServer.App).listen(AppServer.PORT, () => {
-            InitScoketConnection(server)
+            io.attach(server)
             AppEvents.emit('ready')
-            console.log(blue(`Application Started Successfully on ${CONFIG.APP.APP_URL}`),)
+            console.log(blue(`Application Started Successfully on ${__CONFIG__.APP.APP_URL}`),)
 
         })
         server.on('close', () => {

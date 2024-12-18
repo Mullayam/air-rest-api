@@ -1,6 +1,6 @@
 import session from 'express-session'
 import { Logging } from '@/logs';
-import { CONFIG } from '../config';
+import { __CONFIG__ } from '../config';
 import helpers from '@/utils/helpers';
 export class SessionHandler {
 
@@ -14,7 +14,7 @@ export class SessionHandler {
                 return helpers.uuid_v4() // use UUIDs for session IDs
             },
             saveUninitialized: true,
-            secret: CONFIG.SECRETS.SESSION_SECRET,
+            secret: __CONFIG__.SECRETS.SESSION_SECRET,
             proxy: true,
             resave: false,
             cookie: {

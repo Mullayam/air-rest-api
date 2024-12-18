@@ -5,6 +5,7 @@ const __config = {
     APP: {
         APP_PORT,
         APP_ENV,
+        API_VERSION: String(process.env.API_VERSION),
         APP_DOMAIN,
         APP_URL: APP_ENV === "DEV" || APP_ENV === "undefined" ? `http://localhost:${APP_PORT}` : `https://${APP_DOMAIN}`,
         API_KEY: String(process.env.API_KEY),

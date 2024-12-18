@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 const saltRounds = 10;
 const salt = bcrypt.genSaltSync(saltRounds);
 import jwt from 'jsonwebtoken'
-import { CONFIG } from "@/app/config";
+import { __CONFIG__ } from "@/app/config";
 
 class Utils {
     /**
@@ -33,7 +33,7 @@ class Utils {
      * @return {string} The signed JWT as a string.
      */
     signJWT(payload: any, kid: string): string {
-        return jwt.sign(payload, CONFIG.SECRETS.JWT_SECRET_KEY, {
+        return jwt.sign(payload, __CONFIG__.SECRETS.JWT_SECRET_KEY, {
             expiresIn: '7d',
             issuer: "ENJOYS",
             header: {
@@ -54,7 +54,7 @@ class Utils {
      * @return {any} The decoded payload.
      */
     verifyJWT(token: string, options?: jwt.VerifyOptions): any {
-        return jwt.verify(token, CONFIG.SECRETS.JWT_SECRET_KEY, options);
+        return jwt.verify(token, __CONFIG__.SECRETS.JWT_SECRET_KEY, options);
     }
 
     /**
