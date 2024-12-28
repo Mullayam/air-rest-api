@@ -23,6 +23,9 @@ export class Modifiers {
         this.app.set('trust proxy', 1)
         this.app.set('title', this.title);
         this.app.use(this.customHeaders)
+        this.app.get('/health', (req, res) => {
+            res.status(200).json({ status: 'UP', message: 'Server is running' })
+        })
         this.modifiedCustomFunction()
 
     }

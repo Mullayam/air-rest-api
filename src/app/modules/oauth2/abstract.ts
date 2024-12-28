@@ -1,4 +1,4 @@
-import { IAuthProvider } from "@/utils/interfaces/user.interface";
+import { IAuthProvider } from "@/utils/interfaces/provider.interface";
 
 export abstract class AbstractOAuth2Provider implements IAuthProvider {
     protected clientId: string; // Made protected for access in subclasses
@@ -10,8 +10,10 @@ export abstract class AbstractOAuth2Provider implements IAuthProvider {
         this.clientSecret = clientSecret;
         this.redirectUri = redirectUri;
     }
-     
+
     abstract getAuthUrl(): string;
 
     abstract handleCallback<T>(code: string): Promise<T>;
+
+    abstract refreshToken<T>(code: string): Promise<T>;
 }

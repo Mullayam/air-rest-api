@@ -1,7 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
 import { validationResult } from "express-validator";
-import { FileValidationArgs, FileValidationOptions } from "@/utils/interfaces/file-validator.interface";
-import { FileHandler } from "@/utils/interfaces/fileupload.interface";
 
 export class Validator {
     /**
@@ -13,17 +11,16 @@ export class Validator {
     static forFeature(validations: any[]) {
         return async (req: Request, res: Response, next: NextFunction) => {
             for (let validation of validations) {
-                const result = await validation.run(req);
-                if (result.errors.length) break;
+                await validation.run(req);
             }
-            // Execute all validations
-            // await Promise.all(validations.map(validation => validation.run(req)));
+
             const errors = validationResult(req);
-            const err = errors.formatWith(x => x.msg).array()
+            const err = errors.formatWith(x => x.msg).array().filter(x => x !== "Invalid value")
             if (errors.isEmpty()) {
                 return next();
             }
-            return res.status(422).json({ message: "Validation Error", result: err, success: false })
+            res.status(422).json({ message: "Validation Error", result: err, success: false })
+            return
         };
     }
 

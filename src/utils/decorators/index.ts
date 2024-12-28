@@ -1,11 +1,11 @@
 import jwt from "jsonwebtoken";
-import { CONFIG } from "@/app/config";
+import { __CONFIG__ } from "@/app/config";
 import { interval, timer } from "rxjs";
 import type { Request, Response, NextFunction } from "express";
-import { AllowedRoles } from "@/utils/interfaces/user.interface";
-import { LIFECYCLE_HOOKS_KEY ,PUBLIC_ROUTE_KEY} from "../helpers/constants";
+import { AllowedRoles, IUser } from "@/utils/interfaces/user.interface";
+import { LIFECYCLE_HOOKS_KEY, PUBLIC_ROUTE_KEY } from "../helpers/constants";
 import { AppEvents } from '../services/Events';
-import { IUser } from '@/utils/types';
+
 function handleAuthorization(
     req: Request,
     res: Response,
@@ -33,7 +33,7 @@ function handleAuthorization(
             return res.status(401).json({ message: "Authorization Token is missing", result: null, success: false });
         }
 
-        const decodedToken = jwt.verify(token, CONFIG.SECRETS.JWT_SECRET_KEY) as IUser;
+        const decodedToken = jwt.verify(token, __CONFIG__.SECRETS.JWT_SECRET_TOKEN) as IUser;
         if (!decodedToken) {
             return res.status(401).json({ message: "Invalid Token", result: null, success: false });
         }
@@ -46,11 +46,45 @@ function handleAuthorization(
     }
 }
 
-export function PublicRoute(): MethodDecorator {
-    return (target, propertyKey, descriptor) => {
-        Reflect.defineMetadata(PUBLIC_ROUTE_KEY, true, descriptor.value!);
+
+export function PublicRoute(): ClassDecorator & MethodDecorator {
+    return (target: any, propertyKey?: string | symbol, descriptor?: TypedPropertyDescriptor<any>) => {
+        if (descriptor) {
+            // If descriptor is present, the decorator is applied to a method
+            const originalMethod = descriptor.value!;
+
+            if (typeof originalMethod === 'function') {
+                descriptor.value = function (...args: any[]) {
+                    // Bind `this` to the class instance
+                    return originalMethod.apply(this, args);
+                };
+            }
+
+            Reflect.defineMetadata(PUBLIC_ROUTE_KEY, true, descriptor.value!);
+        } else {
+            // If descriptor is not present, the decorator is applied to a class
+            const classPrototype = target.prototype;
+            const methodNames = Object.getOwnPropertyNames(classPrototype).filter(
+                (name) => typeof classPrototype[name] === 'function' && name !== 'constructor'
+            );
+
+            // Apply the decorator to each method in the class
+            methodNames.forEach((methodName) => {
+                const originalMethod = classPrototype[methodName];
+
+                if (typeof originalMethod === 'function') {
+                    // Wrap the method to ensure `this` binding
+                    classPrototype[methodName] = function (...args: any[]) {
+                        return originalMethod.apply(this, args);
+                    };
+
+                    Reflect.defineMetadata(PUBLIC_ROUTE_KEY, true, classPrototype[methodName]);
+                }
+            });
+        }
     };
 }
+
 /**
  * Decorator function that checks if the user has the required roles to access a protected route.
  *
@@ -218,4 +252,3 @@ export function OnEvent(event: string, options?: { async: boolean }) {
     };
 }
 
- 

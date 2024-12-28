@@ -1,26 +1,29 @@
+import { join } from 'path';
 import * as http from 'http'
-import express, { Application } from 'express'
 import morgan from 'morgan'
 import helmet from 'helmet';
+import { blue } from 'colorette';
 import { Logging } from '@/logs';
 import bodyParser from 'body-parser';
-import { blue } from 'colorette';
-import { __CONFIG__ } from './app/config';
-import { Cors } from '@/app/common/Cors';
-import cookieParser from 'cookie-parser'
 import AppRoutes from '@/routes/web';
-import { useHttpsRedirection } from '@/app/common/HttpsRedirection'
+import cookieParser from 'cookie-parser'
+import { Cors } from '@/app/common/Cors';
+import { __CONFIG__ } from './app/config';
+import fileUpload from 'express-fileupload';
+import express, { Application } from 'express'
+import { Modifiers } from './app/common/Modifiers';
+import { CreateConnection } from '@factory/typeorm'
 import { createHandlers } from '@enjoys/exception';
+import { AppEvents } from './utils/services/Events';
 import { SessionHandler } from '@/app/common/Session';
 import { Interceptor } from '@/app/common/Interceptors'
 import { RouteResolver } from '@/app/common/RouteResolver';
 import { AppMiddlewares } from '@/middlewares/app.middleware';
 import { getSocketIo } from '@/utils/services/sockets/Sockets';
-import BroadCastEvents from '@/utils/services/sockets/broadCastEvents';
-import { CreateConnection } from '@factory/typeorm'
 import { AppLifecycleManager } from '@app/modules/appLifecycle';
-import { AppEvents } from './utils/services/Events';
-import { Modifiers } from './app/common/Modifiers';
+import { useHttpsRedirection } from '@/app/common/HttpsRedirection'
+import BroadCastEvents from '@/utils/services/sockets/broadCastEvents';
+
 const io = getSocketIo()
 
 
@@ -50,15 +53,39 @@ class AppServer {
     private ApplyConfiguration(): void {
         Logging.dev("Applying Express Server Configurations")
         Modifiers.useRoot(AppServer.App)
-        AppServer.App.use(helmet());
-        AppServer.App.use(morgan("dev"));       
+        AppServer.App.use(helmet({ crossOriginResourcePolicy: false }));
+        AppServer.App.use(morgan("dev"));
         AppServer.App.use(Cors.useCors());
         AppServer.App.use(bodyParser.json());
         AppServer.App.use(useHttpsRedirection);
-        AppServer.App.use(AppMiddlewares.attachIoToRequestHandler(io));
         AppServer.App.use(SessionHandler.forRoot());
-        AppServer.App.use(cookieParser(__CONFIG__.SECRETS.COOKIE_SECRET));
+        AppServer.App.use(fileUpload({ tempFileDir: "./" }));
         AppServer.App.use(bodyParser.urlencoded({ extended: false }));
+        AppServer.App.use(AppMiddlewares.attachIoToRequestHandler(io));
+        AppServer.App.use(cookieParser(__CONFIG__.SECRETS.COOKIE_SECRET));
+        this.MakeAssetsPublic()
+    }
+    /**
+     * Configures the Express application to serve static assets.
+     *
+     * Sets up a route to serve static files from the 'uploads' directory under the '/public' path.
+     * The function configures various options for serving static files, such as ignoring dotfiles,
+     * disabling etag, setting file extensions, and setting cache max age to 1 day. Additionally,
+     * a custom header with a timestamp is added to each response.
+     */
+    private MakeAssetsPublic() {
+        const options = {
+            dotfiles: 'ignore',
+            etag: false,
+            extensions: ['htm', 'html'],
+            index: false,
+            maxAge: '1d',
+            redirect: false,
+            setHeaders(res: any, path: any, stat: any) {
+                res.set('x-timestamp', Date.now())
+            }
+        }
+        AppServer.App.use('/public', express.static(join(process.cwd(), 'uploads'), options));
     }
     /**
      * Initializes the middlewares for the application.

@@ -1,44 +1,14 @@
 import { Observable } from 'rxjs';
 import * as path from 'path'
 import * as fs from 'fs'
-import type { NextFunction, Request, RequestHandler, Response } from 'express';
-import { Storage } from '@utils/services/storage';
+import type { NextFunction, Request, Response } from 'express';
 import { FileHandler, FileUploadOptions } from '../interfaces/fileupload.interface';
-import { METADATA_KEYS } from '../helpers/constants';
 import { validationResult } from 'express-validator';
 import { Logging } from '@/logs';
-import { CacheService } from '@utils/services/redis/cacheService';
 import { HttpStatusCode } from '../interfaces/httpCode.interface';
 import helpers from '../helpers';
-const cacheClient = new CacheService()
 
-/**
- * A decorator that adds caching functionality to a method.
- *
- * @param {Object} options - The options for the cache decorator.
- * @param {number} options.ttl - The time-to-live (TTL) for the cached result in seconds. Defaults to 60 seconds.
- * @param {string} options.cacheKey - The custom cache key. If not provided, a default cache key will be generated based on the class name and method name.
- * @return {Function} - The decorated function.
- */
-export function Cache({ ttl = 60, cacheKey }: { ttl?: number, cacheKey?: string } = {}) {
-    return function (target: any, propertyKey: any, descriptor: PropertyDescriptor) {
-        const originalMethod = descriptor.value;
-        const key = cacheKey || `${target.constructor.name}::${propertyKey}`;
-        descriptor.value = async function (...args: any[]) {
-            console.log(await cacheClient.cache.get("key"))
-            const cachedResult = await cacheClient.cache.get(key)
-            if (cachedResult) {
-                return JSON.parse(cachedResult);
-            }
-            return originalMethod.apply(this, args).then((result: any) => {
-                cacheClient.cache.set(key, JSON.stringify(result), { EX: ttl });
-                return result;
-            })
-        };
 
-        return descriptor;
-    };
-}
 /**
  * Redirects the user to the specified URL.
  *
@@ -115,9 +85,9 @@ export function UseDelayResponse(delayFunc: (req: Request, res: Response, next: 
  */
 export function UploadFile(data?: FileUploadOptions) {
     return function (target: any, key: string, descriptor: PropertyDescriptor) {
-        const originalMethod = descriptor.value;       
+        const originalMethod = descriptor.value;
         descriptor.value = function (req: any, res: any, next: () => void) {
-           const uploadDirPath = helpers.createPath(data?.uploadDirPath || 'public/uploads')
+            const uploadDirPath = helpers.CreatePath(data?.uploadDirPath || 'public/uploads')
             fs.mkdirSync(uploadDirPath, { recursive: true })
             let FilesArray: any = []
             try {
@@ -197,16 +167,31 @@ export function ThrottleApi(delay: number) {
 export function Validate(validations: any[]) {
     return function (target: any, key: string, descriptor: PropertyDescriptor) {
         const originalMethod = descriptor.value;
+
         descriptor.value = async function (req: any, res: any, next: () => void) {
-            // Validator.forFeature(validations)(req, res, next);
-            await Promise.all(validations.map((rule: any) => rule.run(req)));
-            const errors = validationResult(req);
-            const err = errors.formatWith(x => x.msg).array()
-            if (!errors.isEmpty()) {
-                return res.status(422).json({ message: "Validation Error", result: err, success: false })
+            try {
+                await Promise.all(validations.map((rule: any) => rule.run(req)));
+
+                const errors = validationResult(req);
+                if (!errors.isEmpty()) {
+                    const formattedErrors = errors.formatWith((x) => x.msg).array();
+                    return res.status(422).json({
+                        message: "Validation Error",
+                        result: formattedErrors,
+                        success: false,
+                    });
+                }
+                return await originalMethod.apply(this, [req, res, next]);
+            } catch (error: any) {
+
+                return res.status(500).json({
+                    message: "Internal Server Error",
+                    error: error.message,
+                    success: false,
+                });
             }
-            return originalMethod.apply(this, arguments);
         };
+
         return descriptor;
     };
 }

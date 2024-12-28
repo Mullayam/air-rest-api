@@ -1,6 +1,7 @@
 import CryptoJS from "crypto-js";
 import * as crypto from "crypto";
 import { __CONFIG__ } from "@/app/config";
+import { RoutingMethods } from "../interfaces/routes.interface";
 const ALGORITHM = "aes-256-cbc";
 const ENCODING = "hex";
 const ENCRYPTION_KEY: string = "enjoys_encrption_key!@#%^&*()_NJ";
@@ -196,7 +197,7 @@ export class Security {
                 return CryptoJS.AES.encrypt(data, secret || ENCRYPTION_KEY).toString();
             },
             DecryptFromString: () => {
-                return CryptoJS.AES.decrypt(data, secret || ENCRYPTION_KEY).toString();
+                return CryptoJS.AES.decrypt(data, secret || ENCRYPTION_KEY).toString(CryptoJS.enc.Utf8);
             },
         };
     }
@@ -204,17 +205,17 @@ export class Security {
     /**
      * Generates a signature for the given method, URI, body, and client secret.
      *
-     * @param {string} method - The HTTP method used for the request.
+     * @param {RoutingMethods} method - The HTTP method used for the request.
      * @param {string} uri - The URI of the request.
      * @param {any} body - The body of the request.
      * @param {string} clientSecret - The client secret used for generating the signature.
      * @return {Promise<string>} A promise that resolves to the generated signature.
      */
     async GenerateSignature(
-        method: string,
+        method: RoutingMethods,
         uri: string,
-        body: any,
-        clientSecret: string
+        body?: any,
+        clientSecret?: string
     ): Promise<string> {
         let decodedString: string;
         if (method === "GET") {
@@ -239,7 +240,7 @@ export class Security {
      * @return {Promise<boolean>} A promise that resolves when the signature is verified.
      */
     async VerifySignature(
-        method: string,
+        method: RoutingMethods,
         uri: string,
         body: any,
         clientSecret: string

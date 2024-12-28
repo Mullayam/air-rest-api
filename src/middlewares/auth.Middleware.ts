@@ -4,7 +4,8 @@ import { __CONFIG__ } from "@/app/config";
 import { RouteResolver } from "@/app/common/RouteResolver";
 import { PUBLIC_ROUTE_KEY } from "@/utils/helpers/constants";
 import { IUser } from "@/utils/interfaces/user.interface";
- 
+import { match } from 'path-to-regexp';
+
 export class JwtAuth {
     /**
      * Validates the user's authorization token.
@@ -16,7 +17,18 @@ export class JwtAuth {
      */
     static validateUser(req: Request, res: Response, next: NextFunction) {
         try {
-            const routeHandler = RouteResolver.mappedRoutes.find((layer: any) => layer.path === req.originalUrl)?.handler;
+            const routeHandler = RouteResolver.mappedRoutes.find((layer: any) => {
+                const path = req.originalUrl.split('?')[0];
+                const matcher = match(layer.path, { decode: decodeURIComponent });
+                const result = matcher(path);
+                // const regex = new RegExp(
+                //     `^${layer.path
+                //         .replace(/\/:([^/]+)\?/g, '(?:/[^/]*)?')
+                //         .replace(/\/:([^/]+)/g, '/[^/]+')}$` 
+                // );            
+                // return regex.test(path);
+                return !!result;
+            })?.handler;
             const isPublicRoute = routeHandler && Reflect.getMetadata(PUBLIC_ROUTE_KEY, routeHandler);
 
             if (isPublicRoute) {

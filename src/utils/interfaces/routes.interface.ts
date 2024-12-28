@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express'
-type RoutingMethods = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "OPTIONS" | "HEAD" | "ALL"
+export type RoutingMethods = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "OPTIONS" | "HEAD" | "ALL"
 export interface RoutesTypes {
     routeName: string,
     method: RoutingMethods,

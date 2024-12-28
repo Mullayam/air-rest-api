@@ -17,7 +17,6 @@ export class GoogleAuthProvider extends AbstractOAuth2Provider {
     }
 
     async handleCallback<T>(code: string): Promise<T> {
-        // Example logic for handling OAuth2 callback
         const response = await fetch("https://oauth2.googleapis.com/token", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -31,6 +30,20 @@ export class GoogleAuthProvider extends AbstractOAuth2Provider {
         });
 
         const data = await response.json();
-        return data as T; // Cast the response to a generic type
+        return data as T;
+    }
+    async refreshToken<T>(refresh_token: string): Promise<T> {
+        const response = await fetch("hhttps://oauth2.googleapis.com/token", {
+            method: "POST",
+            headers: { "Content-Type": "application/json,application/x-www-form-urlencoded" },
+            body: JSON.stringify({
+                client_id: this.clientId,
+                client_secret: this.clientSecret,
+                refresh_token: refresh_token,
+                grant_type: "refresh_token",
+            }),
+        });
+        const data = await response.json();
+        return data as T;
     }
 }

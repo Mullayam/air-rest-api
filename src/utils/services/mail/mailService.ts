@@ -26,6 +26,13 @@ export class MailService {
         this.transporter = nodemailer.createTransport({
             ...this.TransportOptions()
         });
+        this.transporter.verify((error, success) => {
+            if (error) {
+                Logging.error(`Error occurred while connecting to the SMTP server: ${error.message}`);
+                return;
+            }
+            Logging.dev("Connected to the SMTP server");
+        });
     }
     /**
      * Returns the transport options for the SMTP server.
@@ -36,7 +43,7 @@ export class MailService {
     private TransportOptions(): SMTPTransport.Options {
         return {
             host: __CONFIG__.SMTP_SETTINGS.SMTP_HOST as string,
-            port: Number(__CONFIG__.SMTP_SETTINGS.SMTP_HOST_PASS),
+            port: Number(__CONFIG__.SMTP_SETTINGS.SMTP_HOST_PORT),
             secure: false,
             auth: {
                 user: __CONFIG__.SMTP_SETTINGS.SMTP_HOST_USER,
@@ -102,7 +109,7 @@ export class MailService {
      */
     async SendMail({ to, subject, text, html, from }: MailOptions): Promise<SentMessageInfo> {
         if (!from) {
-            from = `${process.env.SENDER_NAME as string} < ${process.env.MAIL_USER as string} >`
+            from = `${__CONFIG__.SMTP_SETTINGS.SMTP_SENDER_NAME||__CONFIG__.SMTP_SETTINGS.SMTP_HOST_USER  as string} < ${__CONFIG__.SMTP_SETTINGS.SMTP_HOST_USER as string} >`
         }
         if (Array.isArray(to)) {
             to = to.join(',')

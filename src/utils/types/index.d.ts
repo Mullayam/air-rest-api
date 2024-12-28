@@ -13,6 +13,8 @@ type ENV = {
     API_KEY: number;
     APP_PORT: string;
     APP_DOMAIN: string;
+    API_VERSION: string;
+    ALLOWED_PRIMARY_DOMAINS: string|(`${string},${string}`)[];
     SALT: string;
     APP_SECRET: string;
     JWT_SECRET_TOKEN: string;
@@ -50,7 +52,6 @@ declare global {
                 [key: string]: any;
             };
             io?: Server
-
             files?: FileHandler[] | FileHandler;
             isAuthenticated?: boolean;
             user?: IUser;

@@ -22,11 +22,12 @@ export const USER_STATUS_AND_ERROR = {
     [USER_STATUS.BLOCKED]: "Your Account is Blocked,Due to Many Failed Login Attempts",
 }
 export enum AppRoles {
-    User = 'USER',
-    Admin = 'ADMIN',
-    SuperViser = 'SUPERVISER',
-    Manager = 'MANAGER',
-    SuperAdmin = 'SUPERADMIN',
+    GUEST = 'GUEST',
+    USER = 'USER',
+    ADMIN = 'ADMIN',
+    SUPERVISER = 'SUPERVISER',
+    MANAGER = 'MANAGER',
+    SUPERADMIN = 'SUPERADMIN',
 }
 export enum Action {
     Manage = 'manage',
@@ -38,9 +39,3 @@ export enum Action {
 
 export const UserRolesArray = Object.values(AppRoles);
 export type AllowedRoles = keyof typeof AppRoles;
-export type AuthProvidersList = "google" | "facebook" | "github";
-
-export interface IAuthProvider {
-    getAuthUrl(): string;
-    handleCallback(code: string): Promise<{ accessToken: string; user: any }>;
-  }

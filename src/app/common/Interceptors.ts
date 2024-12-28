@@ -1,6 +1,6 @@
 import { Application, Request, Response, NextFunction } from "express";
 
-import { Logging } from "@/logs"; 
+import { Logging } from "@/logs";
 import { InterceptorsSettings } from "@/utils/interfaces";
 import { HttpException } from "@enjoys/exception";
 

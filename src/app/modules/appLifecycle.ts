@@ -1,4 +1,3 @@
-import { Logging } from "@/logs";
 import { LIFECYCLE_HOOKS_KEY } from "@/utils/helpers/constants";
 import { AppEvents } from "@/utils/services/Events";
 import { Methods } from "@/utils/interfaces/application.interface";
@@ -15,7 +14,7 @@ export class AppLifecycleManager {
         this.prototype.modules = modules;
         modules.forEach((Module: any) => {
             const instance = new Module();
-            if (instance.onModuleInit) instance.onModuleInit();         
+            if (instance.onModuleInit) instance.onModuleInit();
         });
         this.ListenMethods()
     }

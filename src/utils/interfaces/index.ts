@@ -10,21 +10,6 @@ export function PartialType<T>(BaseClass: new () => T): new () => Partial<T> {
     return PartialClassType as new () => Partial<T>;
 }
 
-export type AuthProviders = {
-    [key in AuthProvidersList]: AuthProvidersKeys;
-};
-export type AuthProvidersScopes = {
-    [key in AuthProvidersList]: string[];
-};
-export interface AuthProvidersKeys {
-    clientID: string;
-    clientSecret: string;
-    callbackURL: string;
-}
-export type AuthProvidersList = "google" | "facebook" | "github";
-
-
-
 export interface CustomResponse {
     success: boolean;
     message: string;

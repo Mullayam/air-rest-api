@@ -6,11 +6,11 @@ export let Tokens = new Map();
 export let BlacklistedTokens: string[] = [];
 export const SetAppRoutes = new Map();
 class Helpers {
-    createPath = (currentPath: string) => {
+    CreatePath = (currentPath: string) => {
         const currentPathArray = currentPath.split("/")
         return join(process.cwd(), ...currentPathArray)
     }
-    randomToken(length: number = 64): string {
+    RandomToken(length: number = 64): string {
         return crypto.randomBytes(length).toString("hex");
     }
     /**
@@ -20,7 +20,7 @@ class Helpers {
      * @param {number} max - The maximum value of the range (default: 999999).
      * @return {number} - The randomly generated number.
      */
-    randomNumber(min: number = 100000, max: number = 999999): number {
+    RandomNumber(min: number = 100000, max: number = 999999): number {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
     /**
@@ -28,7 +28,7 @@ class Helpers {
      *
      * @return {string} The generated user ID.
      */
-    createUserID(): string {
+    CreateUserID(): string {
         const id = Math.floor(Math.random() * 10000000).toString();
         return id;
     }
@@ -38,7 +38,7 @@ class Helpers {
      * @param {number} byteLength - The length of the token in bytes. Defaults to 48.
      * @return {string} - The generated token as a base64-encoded string.
      */
-    generateToken(byteLength: number = 48): string {
+    GenerateToken(byteLength: number = 48): string {
         return crypto.randomBytes(byteLength).toString("base64");
     }
     /**
@@ -47,7 +47,7 @@ class Helpers {
      * @param {number} byteLength - The length of the refresh token in bytes. Defaults to 32.
      * @return {string} - The generated refresh token.
      */
-    createRefreshToken(byteLength: number = 32): string {
+    CreateRefreshToken(byteLength: number = 32): string {
         return crypto.randomBytes(byteLength).toString("base64");
     }
     /**
@@ -66,7 +66,7 @@ class Helpers {
      * @return {string} - The newly generated refresh token.
      */
     HandleRefreshToken(id: string): string {
-        const RefreshToken = this.createRefreshToken();
+        const RefreshToken = this.CreateRefreshToken();
         Tokens.set(id, RefreshToken);
         return RefreshToken;
     }
@@ -94,6 +94,16 @@ class Helpers {
         });
 
         return NewObject;
+    }
+    ObjectToQuery(obj: Record<string, string | object>): string {
+        return Object.entries(obj)
+            .map(([key, value]) => {
+                if (typeof value === "object") {
+                    return `${key}=${JSON.stringify(value)}`;
+                }
+                return `${key}=${value}`
+            })
+            .join("&");
     }
     /**
      * Converts a string representation of a date word into a formatted date string.
@@ -139,7 +149,7 @@ class Helpers {
      * @param {string} str - The string to be purified.
      * @return {string} The purified string.
      */
-    purifyString(str: string): string {
+    PurifyString(str: string): string {
         return str
             .toLowerCase()
             .trim()

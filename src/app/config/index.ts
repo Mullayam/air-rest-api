@@ -1,5 +1,5 @@
-const APP_PORT = Number(process.env.APP_PORT) || 7134
 const APP_ENV = String(process.env.APP_ENV) || "DEV"
+const APP_PORT = Number(process.env.APP_PORT) || 7654
 const APP_DOMAIN = String(process.env.APP_DOMAIN) || "localhost"
 const __config = {
     APP: {
@@ -12,10 +12,9 @@ const __config = {
         ALLOWED_PRIMARY_DOMAINS: String(process.env.ALLOWED_PRIMARY_DOMAINS),
         MAIL_TEMPLATE_PATH: String(process.env.MAIL_TEMPLATE_PATH),
     },
-    STORAGE_DRIVER: String(process.env.STORAGE_DRIVER),
     SECRETS: {
         SALT: String(process.env.SALT),
-        JWT_SECRET_KEY: String(process.env.JWT_SECRET_TOKEN),
+        JWT_SECRET_TOKEN: String(process.env.JWT_SECRET_TOKEN),
         APP_SECRET: String(process.env.APP_SECRET),
         COOKIE_SECRET: String(process.env.COOKIE_SECRET),
         SESSION_SECRET: String(process.env.SESSION_SECRET),
@@ -35,14 +34,14 @@ const __config = {
         SMTP_HOST_PORT: Number(process.env.SMTP_HOST_PORT) || 465,
         SMTP_HOST_USER: String(process.env.SMTP_HOST_USER),
         SMTP_HOST_PASS: String(process.env.SMTP_HOST_PASS),
-        SMTP_SENDER_NAME: Number(process.env.SMTP_SENDER_NAME),
+        SMTP_SENDER_NAME: String(process.env.SMTP_SENDER_NAME),
     },
     CACHE: {
         CACHE_ENBALED: String(process.env.CACHE_ENBALED),
         CACHE_HOST: String(process.env.CACHE_HOST),
         CACHE_PORT: Number(process.env.PORT) || 6379,
     },
-   
+
 };
 export const ConfigService = {
     /**
