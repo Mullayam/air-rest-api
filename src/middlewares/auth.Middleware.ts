@@ -34,7 +34,7 @@ export class JwtAuth {
             if (isPublicRoute) {
                 return next();
             }
-            const authHeader = req.headers["authorization"] as String || null
+            const authHeader =    req.cookies?.access_token || req.headers["authorization"] as String || null
 
             if (!authHeader) {
                 res.json({ message: "Athorization header is missing", result: null, success: false }).end()
@@ -46,7 +46,7 @@ export class JwtAuth {
                 res.json({ message: "Authorization Token is missing", result: null, success: false }).end()
                 return
             }
-            const decodedToken = jwt.verify(token, __CONFIG__.SECRETS.JWT_SECRET_KEY) as IUser
+            const decodedToken = jwt.verify(token, __CONFIG__.SECRETS.JWT_SECRET_TOKEN) as IUser
             if (!decodedToken) {
                 res.json({ message: "Invalid Token", result: null, success: false }).end()
                 return
@@ -77,7 +77,7 @@ export class JwtAuth {
 
     static Me(req: Request, res: Response, next: NextFunction) {
         try {
-            const authHeader = req.headers["authorization"] as String || null
+            const authHeader = req.cookies?.access_token ||req.headers["authorization"] as String || null
 
             if (!authHeader) {
                 res.json({ message: "Authorization header is missing", result: null, success: false }).end()
@@ -88,7 +88,7 @@ export class JwtAuth {
                 res.json({ message: "Authorization Token is missing", result: null, success: false }).end()
                 return
             }
-            const decodedToken = jwt.verify(token, __CONFIG__.SECRETS.JWT_SECRET_KEY)
+            const decodedToken = jwt.verify(token, __CONFIG__.SECRETS.JWT_SECRET_TOKEN)
             if (!decodedToken) {
                 res.json({ message: "Invalid Token", result: null, success: false })
                 return

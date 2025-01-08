@@ -18,7 +18,7 @@ function handleAuthorization(
             return next();
         }
 
-        const authHeader = (req.headers["authorization"] as string) || null;
+        const authHeader =  req.cookies?.access_token ||(req.headers["authorization"] as string) || null;
 
         if (!authHeader) {
             return res.status(400).json({ message: "Authorization header is missing", result: null, success: false });
@@ -140,7 +140,7 @@ export function isAuthorized(opts: { isPublic: boolean } = { isPublic: false }):
                 if (typeof originalMethod === 'function') {
                     classConstructor.prototype[methodName] = function (req: Request, res: Response, next: NextFunction) {
                         handleAuthorization(req, res, next, opts, () => {
-                            originalMethod.apply(this, arguments);
+                            originalMethod.call(this, arguments);
                         });
                     };
                 }
@@ -152,7 +152,7 @@ export function isAuthorized(opts: { isPublic: boolean } = { isPublic: false }):
 
             descriptor.value = function (req: Request, res: Response, next: NextFunction) {
                 handleAuthorization(req, res, next, opts, () => {
-                    originalMethod.apply(this, arguments);
+                    originalMethod.call(this, arguments);
                 });
             };
 
@@ -178,7 +178,7 @@ export function HandleInterval(intervalTime: number) {
             const intervalObservable = interval(intervalTime);
 
             const subscription = intervalObservable.subscribe(() => {
-                originalFunction.apply(this, args);
+                originalFunction.call(this, args);
             });
 
             return subscription;
@@ -203,7 +203,7 @@ export function HandleTimeout(timeout: number) {
             const timeoutObservable = timer(timeout);
 
             const subscription = timeoutObservable.subscribe(() => {
-                originalFunction.apply(this, args);
+                originalFunction.call(this, args);
             });
 
             return subscription;
@@ -239,16 +239,33 @@ export function onEnableHook() {
  *   synchronously.
  * @return {Function} - A decorator function that registers the event listener.
  */
+// export function OnEvent(event: string, options?: { async: boolean }) {
+//     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+//         const originalMethod = descriptor.value;
+//         AppEvents.on(event, async (message: any) => {
+//             if (options?.async) {
+//                 await originalMethod.apply(target, [message]);
+//             } else {
+//                 originalMethod.apply(target, [message]);
+//             }
+//         });
+//     };
+// }
+
 export function OnEvent(event: string, options?: { async: boolean }) {
     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
         const originalMethod = descriptor.value;
-        AppEvents.on(event, async (message: any) => {
-            if (options?.async) {
-                await originalMethod.apply(target, [message]);
-            } else {
-                originalMethod.apply(target, [message]);
-            }
-        });
+
+        descriptor.value = function (...args: any[]) {
+            const boundMethod = originalMethod.bind(this);
+
+            AppEvents.on(event, async (message: any) => {
+                if (options?.async) {
+                    await boundMethod(message);
+                } else {
+                    boundMethod(message);
+                }
+            });
+        };
     };
 }
-

@@ -5,7 +5,38 @@ import { join } from "path";
 export let Tokens = new Map();
 export let BlacklistedTokens: string[] = [];
 export const SetAppRoutes = new Map();
+
+
+type Units = "d" | "h" | "m" | "w";
+export type TTL = `${number}${Units}`;
 class Helpers {
+
+    ParseTTL(ttl: TTL | number): number {
+		if (typeof ttl === "number") {
+			return ttl;
+		}
+
+		const timeUnits: { [key: string]: number } = {
+			d: 86400,
+			h: 3600,
+			m: 60,
+			w: 604800,
+		};
+
+		const regex = /^(\d+)([dhmw])$/i; // Regex to capture number and unit
+		const match = ttl.match(regex);
+
+		if (match) {
+			const value = Number.parseInt(match[1], 10); // Extract number part
+			const unit = match[2].toLowerCase(); // Extract unit (d, h, m, w)
+
+			if (timeUnits[unit]) {
+				return value * timeUnits[unit]; // Convert to seconds
+			}
+		}
+
+		return 60;
+	}
     CreatePath = (currentPath: string) => {
         const currentPathArray = currentPath.split("/")
         return join(process.cwd(), ...currentPathArray)

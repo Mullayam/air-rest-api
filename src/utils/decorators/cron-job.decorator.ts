@@ -6,7 +6,7 @@ import { CronExpression } from "../interfaces/cron-expression.interface";
 
 export const CronJob = (cronExpression: keyof typeof CronExpression, name?: string | null) => {
     if (name === null || !name) {
-        name = 'CRON:' + helpers.randomNumber()
+        name = 'CRON:' + helpers.RandomNumber()
     }
     return (target: any, key: string, descriptor: any) => {
         const original = descriptor.value;

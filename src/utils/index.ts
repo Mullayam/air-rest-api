@@ -3,6 +3,7 @@ const saltRounds = 10;
 const salt = bcrypt.genSaltSync(saltRounds);
 import jwt from 'jsonwebtoken'
 import { __CONFIG__ } from "@/app/config";
+import helpers, { TTL } from "./helpers";
 
 class Utils {
     /**
@@ -32,9 +33,9 @@ class Utils {
      * @param {string} kid - The key ID to include in the JWT header.
      * @return {string} The signed JWT as a string.
      */
-    signJWT(payload: any, kid: string): string {
-        return jwt.sign(payload, __CONFIG__.SECRETS.JWT_SECRET_KEY, {
-            expiresIn: '7d',
+    signJWT(payload: any, kid: string, expiresIn: number | TTL = "7d"): string {
+        return jwt.sign(payload, __CONFIG__.SECRETS.JWT_SECRET_TOKEN, {
+            expiresIn: helpers.ParseTTL(expiresIn),
             issuer: "ENJOYS",
             header: {
                 alg: "HS256",
@@ -54,7 +55,7 @@ class Utils {
      * @return {any} The decoded payload.
      */
     verifyJWT(token: string, options?: jwt.VerifyOptions): any {
-        return jwt.verify(token, __CONFIG__.SECRETS.JWT_SECRET_KEY, options);
+        return jwt.verify(token, __CONFIG__.SECRETS.JWT_SECRET_TOKEN, options);
     }
 
     /**
