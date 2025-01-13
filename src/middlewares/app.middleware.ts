@@ -79,43 +79,56 @@ export class AppMiddlewares {
     }
   }
   public static async SecureApiRoutesWithValidateSignature(req: Request, res: Response, next: NextFunction) {
-    if (!req.get(sigHeaderName)) {
-      return res.status(400).json({
-        success: false,
-        result: {
-          code: 400
-        },
-        message: "Signature is Required",
-      });
-    }
+    try {
+      if (!req.headers[sigHeaderName.toLowerCase()] || req.headers[sigHeaderName.toLowerCase()] === null) {
+        res.status(400).json({
+          success: false,
+          result: {
+            code: 400
+          },
+          message: "Signature is Required",
+        }).end()
+        return
+      }
 
-    //Extract Signature header
-    const sig = req.get(sigHeaderName)
-    if (sig == null || sig == "") {
-      return res.status(400).json({
-        success: false,
-        result: {
-          code: 400
-        },
-        message: "Signature cant be empty or null",
-      });
 
-    }
+      const sig = req.headers[sigHeaderName.toLowerCase()] as string
 
-    // //Calculate HMAC
-    const originalUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`
-    const [method] = SetAppRoutes.get(req.path)
-    const digest = await new Security().GenerateSignature(method, originalUrl, JSON.stringify(req.body), req.clientSecret!)
-    // //Compare HMACs
-    if (sig.length !== digest.length || String(sig) !== String(digest)) {
-      return res.status(400).json({
-        success: false,
-        result: {
-          code: 400
-        },
-        message: "Invalid Signature",
-      });
+      if (sig.trim() === "") {
+        res.status(400).json({
+          success: false,
+          result: {
+            code: 400
+          },
+          message: "Signature cant be empty or null",
+        }).end()
+        return
+      }
+
+      const originalUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`
+      const [method] = SetAppRoutes.get(req.originalUrl)      
+      const digest = await new Security().GenerateSignature(method, originalUrl, JSON.stringify(req.body))
+
+      if (sig.length !== digest.length || String(sig) !== String(digest) || !digest.match(sig)) {
+        res.status(400).json({
+          success: false,
+          result: {
+            code: 400
+          },
+          message: "Invalid Signature",
+        }).end()
+        return
+      }
+      return next();
     }
-    return next();
+    catch (error) {
+      if (error instanceof Error) {
+        res.json({ message: error.message, result: null, success: false }).end()
+
+        return
+      }
+      res.json({ message: "Something went wrong", result: null, success: false }).end()
+      return
+    }
   }
 }
