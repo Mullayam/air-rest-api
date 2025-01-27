@@ -1,14 +1,9 @@
-import { Router} from "express";
-import {UserAuthController} from "@/handlers/controllers/user";
+import { UserAuthController } from "@/handlers/controllers/user";
+import { Router } from "express";
 
 const router = Router();
 
-router.post("/login",UserAuthController.default.Login)
-router.post("/register",UserAuthController.default.Register)
-router.get("/refresh-token",UserAuthController.default.RefereshToken)
+router.post("/login", UserAuthController.default.Login);
 
 
-
-
-
-export default  router
+export default router;

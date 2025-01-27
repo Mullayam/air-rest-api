@@ -1,4 +1,3 @@
 export enum SocketEventConstants {
-    ServerClosed = "@@ServerClosed",
-
+	ServerClosed = "@@ServerClosed",
 }

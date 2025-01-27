@@ -1,5 +1,4 @@
-import type { NextFunction, Request, RequestHandler, Response } from 'express';
-
+import type { NextFunction, Request, RequestHandler, Response } from "express";
 
 /**
  * A decorator that applies middleware to a controller or individual controller methods.
@@ -13,85 +12,94 @@ import type { NextFunction, Request, RequestHandler, Response } from 'express';
  *
  */
 export function UseMiddleware<T>(middlewareInstance: any): any {
-    return function (target: any, propertyKey?: string | symbol, descriptor?: PropertyDescriptor) {
-        if (propertyKey && descriptor) {
-            // Method decorator
-            const originalMethod = descriptor.value;
-            const instance = new middlewareInstance();
+	return (
+		target: any,
+		propertyKey?: string | symbol,
+		descriptor?: PropertyDescriptor,
+	) => {
+		if (propertyKey && descriptor) {
+			// Method decorator
+			const originalMethod = descriptor.value;
+			const instance = new middlewareInstance();
 
-            descriptor.value = function (...args: any[]) {
-                const [req, res, next] = args;
-                instance.activate(req, res, () => {
-                    originalMethod.apply(this, args); // Preserve `this` context
-                });
-            };
+			descriptor.value = function (...args: any[]) {
+				const [req, res, next] = args;
+				instance.activate(req, res, () => {
+					originalMethod.apply(this, args); // Preserve `this` context
+				});
+			};
 
-            return descriptor;
-        } else if (!propertyKey && !descriptor) {
-            // Class decorator
-            const methodNames = Object.getOwnPropertyNames(target.prototype).filter(
-                (methodName) => methodName !== 'constructor'
-            );
+			return descriptor;
+		}
+		if (!propertyKey && !descriptor) {
+			// Class decorator
+			const methodNames = Object.getOwnPropertyNames(target.prototype).filter(
+				(methodName) => methodName !== "constructor",
+			);
 
-            for (const methodName of methodNames) {
-                const originalMethod = target.prototype[methodName];
-                if (typeof originalMethod === 'function') {
-                    const instance = new middlewareInstance();
+			for (const methodName of methodNames) {
+				const originalMethod = target.prototype[methodName];
+				if (typeof originalMethod === "function") {
+					const instance = new middlewareInstance();
 
-                    target.prototype[methodName] = function (...args: any[]) {
-                        const [req, res, next] = args;
-                        instance.activate(req, res, () => {
-                            originalMethod.apply(this, args); // Preserve `this` context
-                        });
-                    };
-                }
-            }
-        }
-    };
+					target.prototype[methodName] = function (...args: any[]) {
+						const [req, res, next] = args;
+						instance.activate(req, res, () => {
+							originalMethod.apply(this, args); // Preserve `this` context
+						});
+					};
+				}
+			}
+		}
+	};
 }
 
-
-
-
 export function Middleware(
-    middleware: (req: Request, res: Response, next: NextFunction) => void
+	middleware: (req: Request, res: Response, next: NextFunction) => void,
 ): any {
-    return function (target: any, propertyKey?: string | symbol, descriptor?: PropertyDescriptor) {
-        // Class decorator (only 1 argument is passed)
-        if (typeof propertyKey === 'undefined' && typeof descriptor === 'undefined') {
-            const classConstructor = target;
+	return (
+		target: any,
+		propertyKey?: string | symbol,
+		descriptor?: PropertyDescriptor,
+	) => {
+		// Class decorator (only 1 argument is passed)
+		if (
+			typeof propertyKey === "undefined" &&
+			typeof descriptor === "undefined"
+		) {
+			const classConstructor = target;
 
-            // Get all the method names in the class (excluding the constructor)
-            const methodNames = Object.getOwnPropertyNames(classConstructor.prototype).filter(
-                methodName => methodName !== 'constructor'
-            );
+			// Get all the method names in the class (excluding the constructor)
+			const methodNames = Object.getOwnPropertyNames(
+				classConstructor.prototype,
+			).filter((methodName) => methodName !== "constructor");
 
-            // Apply middleware to all methods in the class
-            for (const methodName of methodNames) {
-                const originalMethod = classConstructor.prototype[methodName];
+			// Apply middleware to all methods in the class
+			for (const methodName of methodNames) {
+				const originalMethod = classConstructor.prototype[methodName];
 
-                if (typeof originalMethod === 'function') {
-                    classConstructor.prototype[methodName] = function (...args: any[]) {
-                        const [req, res, next] = args;
-                        middleware(req, res, () => {
-                            originalMethod.apply(this, args); // Preserve `this` context
-                        });
-                    };
-                }
-            }
-        }
-        // Method decorator (3 arguments are passed)
-        else if (propertyKey && descriptor) {
-            const originalMethod = descriptor.value;
+				if (typeof originalMethod === "function") {
+					classConstructor.prototype[methodName] = function (...args: any[]) {
+						const [req, res, next] = args;
+						middleware(req, res, () => {
+							originalMethod.apply(this, args); // Preserve `this` context
+						});
+					};
+				}
+			}
+		}
+		// Method decorator (3 arguments are passed)
+		else if (propertyKey && descriptor) {
+			const originalMethod = descriptor.value;
 
-            descriptor.value = function (...args: any[]) {
-                const [req, res, next] = args;
-                middleware(req, res, () => {
-                    originalMethod.apply(this, args); // Preserve `this` context
-                });
-            };
+			descriptor.value = function (...args: any[]) {
+				const [req, res, next] = args;
+				middleware(req, res, () => {
+					originalMethod.apply(this, args); // Preserve `this` context
+				});
+			};
 
-            return descriptor;
-        }
-    };
+			return descriptor;
+		}
+	};
 }

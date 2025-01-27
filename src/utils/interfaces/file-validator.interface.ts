@@ -1,9 +1,9 @@
 export interface FileValidationArgs {
-    field: string
-    allowedMimeTypes: string[]
-    strict?: boolean
-  }
-  
+	field: string;
+	allowedMimeTypes: string[];
+	strict?: boolean;
+}
+
 export interface FileValidationOptions {
-    minFieldsRequired?: number
-  }
+	minFieldsRequired?: number;
+}

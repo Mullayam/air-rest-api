@@ -1,24 +1,30 @@
-export type Methods = "OnModuleInit" | "OnModuleDestroy" | "onAppReady" | "onAppShutDown" | "onAppStart" | "onAppError";
+export type Methods =
+	| "OnModuleInit"
+	| "OnModuleDestroy"
+	| "onAppReady"
+	| "onAppShutDown"
+	| "onAppStart"
+	| "onAppError";
 export interface OnAppReady {
-    onAppReady(): void;
+	onAppReady(): void;
 }
 
 export interface OnAppShutDown {
-    onAppShutDown(): void;
+	onAppShutDown(): void;
 }
 
 export interface OnAppStart {
-    onAppStart(): void;
+	onAppStart(): void;
 }
 
 export interface OnAppError {
-    onAppError(): void;
+	onAppError(): void;
 }
 
 export interface OnModuleInit {
-    onModuleInit(): void;
+	onModuleInit(): void;
 }
 
 export interface OnModuleDestroy {
-    onModuleDestroy(): void;
+	onModuleDestroy(): void;
 }

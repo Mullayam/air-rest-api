@@ -1,9 +1,8 @@
-import { MigrationInterface, QueryRunner } from "typeorm"
+import type { MigrationInterface, QueryRunner } from "typeorm";
 
-export  class Migrations1701341490750 implements MigrationInterface {
-
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`
+export class Migrations1701341490750 implements MigrationInterface {
+	public async up(queryRunner: QueryRunner): Promise<void> {
+		await queryRunner.query(`
         -- Table: public.admin
 
         -- DROP TABLE IF EXISTS public.admin;
@@ -24,13 +23,11 @@ export  class Migrations1701341490750 implements MigrationInterface {
         )
         
         TABLESPACE pg_default;
-        `)
-        await queryRunner.query(
-            `INSERT INTO "admin" ("fullname", "username", "email", "password", "status", "role", "created_at") VALUES ('SuperAdmin', 'admin', 'a@admin.com', '$2a$10$n4cXZonjEEjvpCXpV2CYKeWVWnhmrAI/nTpHoSESFP9o6XoX22ENG', 'Active', 'Admin', '2023-11-27 17:34:14.755')`,
-        )
-    }
+        `);
+		await queryRunner.query(
+			`INSERT INTO "admin" ("fullname", "username", "email", "password", "status", "role", "created_at") VALUES ('SuperAdmin', 'admin', 'a@admin.com', '$2a$10$n4cXZonjEEjvpCXpV2CYKeWVWnhmrAI/nTpHoSESFP9o6XoX22ENG', 'Active', 'Admin', '2023-11-27 17:34:14.755')`,
+		);
+	}
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-    }
-
+	public async down(queryRunner: QueryRunner): Promise<void> {}
 }
