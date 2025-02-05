@@ -3,6 +3,7 @@
 	"version": "1.0.0",
 	"main": "build/main.js",
 	"scripts": {
+		"build2": "swc src -d dist",
 		"build": "nest build",
 		"ready": "npm install",
 		"start": "node ./build/main.js",
