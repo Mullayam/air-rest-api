@@ -8,17 +8,18 @@ export class SessionHandler {
 		return session(SessionHandler.prototype._sessionOptions());
 	}
 	private _sessionOptions(): session.SessionOptions {
+		const isProduction = __CONFIG__.APP.APP_ENV.toUpperCase() === "PRODUCTION" || __CONFIG__.APP.APP_ENV.toUpperCase() === "PROD";
 		return {
 			genid: (req: any) => {
-				return helpers.uuid_v4(); // use UUIDs for session IDs
+				return helpers.uuid_v4();
 			},
-			saveUninitialized: true,
+			saveUninitialized: false,
 			secret: __CONFIG__.SECRETS.SESSION_SECRET,
 			proxy: true,
 			resave: false,
 			cookie: {
 				httpOnly: true,
-				secure: false,
+				secure: isProduction,
 				maxAge: 1000 * 60 * 60 * 24 * 7,
 			},
 		};

@@ -6,7 +6,7 @@ export function useHttpsRedirection(
 	next: NextFunction,
 ) {
 	if (req.get("X-Forwarded-Proto") === "http") {
-		res.redirect(`https://${req.headers.host}${req.url}`);
+		res.redirect(301, `https://${req.headers.host}${req.url}`);
 	} else {
 		next();
 	}

@@ -12,13 +12,14 @@ import { AppMiddlewares } from "@/middlewares/app.middleware";
 import AppRoutes from "@/routes/web";
 import { getSocketIo } from "@/utils/services/sockets/Sockets";
 import BroadCastEvents from "@/utils/services/sockets/broadCastEvents";
-import { AppLifecycleManager } from "@app/modules/appLifecycle";
+import { AppLifecycleManager } from "@/app/modules/appLifecycle";
 import { createHandlers } from "@enjoys/exception";
-import { CreateConnection,CloseConnection } from "@factory/typeorm";
-import bodyParser from "body-parser";
+import { CreateConnection,CloseConnection } from "@/factory/typeorm";
+// body-parser removed - using express built-in json/urlencoded parsers
 import { blue } from "colorette";
 import cookieParser from "cookie-parser";
 import express, { type Application } from "express";
+// express-fileupload moved to route-level to avoid processing every request
 import fileUpload from "express-fileupload";
 import helmet from "helmet";
 import morgan from "morgan";
@@ -56,15 +57,22 @@ class AppServer {
 		this.MakeAssetsPublic();
 		Modifiers.useRoot(AppServer.App);
 		AppServer.App.use(helmet({ crossOriginResourcePolicy: false }));
-		AppServer.App.use(morgan("dev"));
+		// Use morgan only in development to avoid blocking I/O in production
+		if (__CONFIG__.APP.APP_ENV.toUpperCase() !== "PRODUCTION" && __CONFIG__.APP.APP_ENV.toUpperCase() !== "PROD") {
+			AppServer.App.use(morgan("dev"));
+		}
 		AppServer.App.use(cors(Cors.options()));
-		AppServer.App.use(bodyParser.json());
-		AppServer.App.use(useHttpsRedirection);
-		AppServer.App.use(SessionHandler.forRoot());
-		AppServer.App.use(fileUpload({ tempFileDir: "./" }));
-		AppServer.App.use(bodyParser.urlencoded({ extended: false }));
-		AppServer.App.use(AppMiddlewares.attachIoToRequestHandler(io));
+		// Use express built-in parsers instead of separate body-parser package
+		AppServer.App.use(express.json({ limit: "1mb" }));
+		AppServer.App.use(express.urlencoded({ extended: false, limit: "1mb" }));
 		AppServer.App.use(cookieParser(__CONFIG__.SECRETS.COOKIE_SECRET));
+		// HTTPS redirection only in production
+		if (__CONFIG__.APP.APP_ENV.toUpperCase() === "PRODUCTION" || __CONFIG__.APP.APP_ENV.toUpperCase() === "PROD") {
+			AppServer.App.use(useHttpsRedirection);
+		}
+		// Session only on API routes, not static files
+		AppServer.App.use(`/api`, SessionHandler.forRoot());
+		AppServer.App.use(AppMiddlewares.attachIoToRequestHandler(io));
 	}
 	/**
 	 * Configures the Express application to serve static assets.

@@ -15,18 +15,24 @@ export class JwtAuth {
 	 * @param {NextFunction} next - The next function in the middleware chain.
 	 * @return {void} This function does not return a value.
 	 */
+	// Cache compiled matchers to avoid recompiling path-to-regexp on every request
+	private static matcherCache = new Map<string, ReturnType<typeof match>>();
+
+	private static getMatcher(path: string) {
+		let matcher = JwtAuth.matcherCache.get(path);
+		if (!matcher) {
+			matcher = match(path, { decode: decodeURIComponent });
+			JwtAuth.matcherCache.set(path, matcher);
+		}
+		return matcher;
+	}
+
 	static validateUser(req: Request, res: Response, next: NextFunction) {
 		try {
 			const routeHandler = RouteResolver.mappedRoutes.find((layer: any) => {
 				const path = req.originalUrl.split("?")[0];
-				const matcher = match(layer.path, { decode: decodeURIComponent });
+				const matcher = JwtAuth.getMatcher(layer.path);
 				const result = matcher(path);
-				// const regex = new RegExp(
-				//     `^${layer.path
-				//         .replace(/\/:([^/]+)\?/g, '(?:/[^/]*)?')
-				//         .replace(/\/:([^/]+)/g, '/[^/]+')}$`
-				// );
-				// return regex.test(path);
 				return !!result;
 			})?.handler;
 			const isPublicRoute =

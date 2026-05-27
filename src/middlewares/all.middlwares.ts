@@ -27,10 +27,12 @@ class AllMiddlewares {
 	}
 }
 
+// Singleton instance to avoid creating a new object on every request
+const allMiddlewaresInstance = new AllMiddlewares();
+
 export function ApplyMiddleware(
 	middlewareFunction: keyof AllMiddlewares,
 ): RequestHandler {
-	const instance = new AllMiddlewares();
 	return (req: Request, res: Response, next: NextFunction) =>
-		instance[middlewareFunction](req, res, next);
+		allMiddlewaresInstance[middlewareFunction](req, res, next);
 }

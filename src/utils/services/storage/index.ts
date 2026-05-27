@@ -1,15 +1,11 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { Logging } from "@/logs";
-import helpers from "@utils/helpers";
-import type { FileUploadInfo } from "@utils/types";
-import type {
-	FileHandler,
-	FileUploadOptions,
-} from "@utils/types/fileupload.interface";
+import helpers from "@/utils/helpers";
+import type { FileUploadInfo, FileHandler, FileUploadOptions } from "@/utils/interfaces/fileupload.interface";
 import type { NextFunction, Request, Response } from "express";
 
-const UploadFilesPath = helpers.createPath("public/train-data");
+const UploadFilesPath = helpers.CreatePath("public/train-data");
 export class Storage {
 	UploadFiles({
 		fieldName,
@@ -23,7 +19,7 @@ export class Storage {
 					Logging.dev("No files found for upload.", "error");
 					return next();
 				}
-				uploadDirPath = helpers.createPath(uploadDirPath);
+				uploadDirPath = helpers.CreatePath(uploadDirPath);
 				fs.mkdirSync(uploadDirPath, { recursive: true });
 				if (hasMultipleFiles && Object.keys(req.files).length) {
 					const filetack = req.files as unknown as FileHandler[];

@@ -10,9 +10,8 @@ export class Validator {
 	 */
 	static forFeature(validations: any[]) {
 		return async (req: Request, res: Response, next: NextFunction) => {
-			for (const validation of validations) {
-				await validation.run(req);
-			}
+			// Run validations in parallel instead of sequentially
+			await Promise.all(validations.map((validation) => validation.run(req)));
 
 			const errors = validationResult(req);
 			const err = errors

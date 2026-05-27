@@ -30,8 +30,7 @@ export class AppMiddlewares {
 	 * @param {NextFunction} next - The next middleware function.
 	 */
 	public static isApiProtected() {
-		Logging.dev("API Route are Protected");
-		return (req: Request, res: Response, next: NextFunction) => {
+		return function apiProtected(req: Request, res: Response, next: NextFunction) {
 			const headers = req.headers;
 			const apiKey = headers.api_key || undefined;
 			if (typeof apiKey === "undefined") {
@@ -68,8 +67,7 @@ export class AppMiddlewares {
 	 * @param {NextFunction} next - The next function in the middleware chain.
 	 */
 	public static IRequestHeaders() {
-		Logging.dev("IRequestHeaders ID Initiated");
-		return (req: Request, res: Response, next: NextFunction) => {
+		return function requestHeaders(req: Request, res: Response, next: NextFunction) {
 			const requestId = Helpers.RequestId();
 			req.headers["X-Request-Id"] = requestId;
 			res.setHeader("X-Request-Id", requestId);

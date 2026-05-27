@@ -27,11 +27,20 @@ export class GithubAuthProvider extends AbstractOAuth2Provider {
 		return data as T;
 	}
 	async refreshToken<T>(refresh_token: string): Promise<T> {
-		const queryString = `client_id=${this.clientId}&client_secret=${this.clientSecret}&grant_type=refresh_token&refresh_token=${refresh_token}`;
 		const response = await fetch(
-			`https://github.com/login/oauth/access_token?${queryString}`,
+			"https://github.com/login/oauth/access_token",
 			{
-				method: "GET",
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Accept: "application/json",
+				},
+				body: JSON.stringify({
+					client_id: this.clientId,
+					client_secret: this.clientSecret,
+					grant_type: "refresh_token",
+					refresh_token,
+				}),
 			},
 		);
 		const data = await response.json();

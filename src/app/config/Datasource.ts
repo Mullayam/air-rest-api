@@ -12,7 +12,7 @@ const DB_OPTIONS = {
 	database: __CONFIG__.DATABASE.DB_NAME,
 };
 const DB =
-	__CONFIG__.DATABASE.DATABASE_URL === "undefined" ? DBURL : DB_OPTIONS;
+	__CONFIG__.DATABASE.DATABASE_URL !== "undefined" ? DBURL : DB_OPTIONS;
 export const AppDataSource = new DataSource({
 	...DB,
 	type: "postgres",

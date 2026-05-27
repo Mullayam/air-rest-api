@@ -192,7 +192,7 @@ export function isAuthorized(
 						next: NextFunction,
 					) {
 						handleAuthorization(req, res, next, opts, () => {
-							originalMethod.call(this, arguments);
+							originalMethod.call(this, req, res, next);
 						});
 					};
 				}
@@ -208,7 +208,7 @@ export function isAuthorized(
 				next: NextFunction,
 			) {
 				handleAuthorization(req, res, next, opts, () => {
-					originalMethod.call(this, arguments);
+					originalMethod.call(this, req, res, next);
 				});
 			};
 
@@ -315,16 +315,13 @@ export function OnEvent(event: string, options?: { async: boolean }) {
 	return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
 		const originalMethod = descriptor.value;
 
-		descriptor.value = function (...args: any[]) {
-			const boundMethod = originalMethod.bind(this);
-
-			AppEvents.on(event, async (message: any) => {
-				if (options?.async) {
-					await boundMethod(message);
-				} else {
-					boundMethod(message);
-				}
-			});
-		};
+		// Register event listener at decoration time, not when method is called
+		AppEvents.on(event, async (message: any) => {
+			if (options?.async) {
+				await originalMethod.call(target, message);
+			} else {
+				originalMethod.call(target, message);
+			}
+		});
 	};
 }

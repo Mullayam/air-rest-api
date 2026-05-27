@@ -96,51 +96,40 @@ export function UseDelayResponse(
 export function UploadFile(data?: FileUploadOptions) {
 	return (target: any, key: string, descriptor: PropertyDescriptor) => {
 		const originalMethod = descriptor.value;
-		descriptor.value = function (req: any, res: any, next: () => void) {
+		descriptor.value = async function (req: any, res: any, next: () => void) {
 			const uploadDirPath = helpers.CreatePath(
 				data?.uploadDirPath || "public/uploads",
 			);
 			fs.mkdirSync(uploadDirPath, { recursive: true });
-			const FilesArray: any = [];
 			try {
 				if (!req.files || Object.keys(req.files).length === 0) {
 					Logging.dev("No files found for upload.", "error");
-					return next();
+					return originalMethod.call(this, req, res, next);
 				}
 				const filetack = req.files.filetack as FileHandler[] | FileHandler;
-				if (Array.isArray(filetack)) {
-					filetack.forEach((file: FileHandler) => {
-						const renameFile = file.name.replace(/\s+/g, "").trim();
-						file.mv(
-							`${path.join(uploadDirPath, renameFile)}`,
-							async (err: any) => {
-								if (err) throw new Error(err);
-								const id = helpers.Md5Checksum(Date.now().toString());
-								const key = helpers.SimpleHash();
-								const extenstion = file.name.split(".")[1];
-								const createInfo = { id, key, ...file, extenstion };
-								FilesArray.push(createInfo);
-								req.body.uploadedFiles = FilesArray;
-								return next();
-							},
-						);
-					});
-				} else {
-					const renameFile = filetack.name.replace(/\s+/g, "").trim();
-					filetack.mv(
-						`${path.join(uploadDirPath, renameFile)}`,
-						async (err: any) => {
-							if (err) throw new Error(err);
-							const id = helpers.Md5Checksum(Date.now().toString());
-							const key = helpers.SimpleHash();
-							const extenstion = filetack.name.split(".")[1];
-							const createInfo = { id, key, ...filetack, extenstion };
-							FilesArray.push(createInfo);
-							req.body.uploadedFiles = FilesArray;
-							return next();
-						},
-					);
-				}
+				const filesToProcess = Array.isArray(filetack) ? filetack : [filetack];
+
+				// Process all files with Promise.all to avoid race conditions
+				const results = await Promise.all(
+					filesToProcess.map((file: FileHandler) => {
+						return new Promise<any>((resolve, reject) => {
+							const renameFile = file.name.replace(/\s+/g, "").trim();
+							file.mv(
+								`${path.join(uploadDirPath, renameFile)}`,
+								(err: any) => {
+									if (err) return reject(err);
+									const id = helpers.Md5Checksum(Date.now().toString());
+									const key = helpers.SimpleHash();
+									const extension = file.name.split(".").pop() || "";
+									resolve({ id, key, ...file, extension });
+								},
+							);
+						});
+					}),
+				);
+
+				req.body.uploadedFiles = results;
+				return originalMethod.call(this, req, res, next);
 			} catch (error: any) {
 				return res.json({
 					success: false,
@@ -148,7 +137,6 @@ export function UploadFile(data?: FileUploadOptions) {
 					result: null,
 				});
 			}
-			originalMethod.call(this, req, res, next);
 		};
 		return descriptor;
 	};
@@ -161,21 +149,31 @@ export function UploadFile(data?: FileUploadOptions) {
  */
 export function ThrottleApi(delay: number) {
 	Logging.dev("Response Throttling in API is Enabled");
-	let lastExecution = 0;
 	return (
 		target: any,
 		key: any,
 		descriptor: { value: (...args: any[]) => Promise<any> },
 	) => {
 		const originalMethod = descriptor.value;
+		// Each decorated method gets its own lastExecution tracker
+		let lastExecution = 0;
 		descriptor.value = async function (...args: any) {
 			const now = Date.now();
 			if (now - lastExecution >= delay) {
 				lastExecution = now;
 				return originalMethod.apply(this, args);
 			}
-			console.log(`Method ${key} throttled.`);
+			// Return 429 if it's an Express handler
+			const [req, res] = args;
+			if (res && typeof res.status === "function") {
+				return res.status(429).json({
+					message: "Too many requests, please try again later",
+					result: null,
+					success: false,
+				});
+			}
 		};
+		return descriptor;
 	};
 }
 /**

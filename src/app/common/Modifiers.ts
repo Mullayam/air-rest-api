@@ -21,7 +21,7 @@ export class Modifiers {
 	constructor(private readonly app: Application) {
 		Logging.dev("Modifiers Initiated");
 		this.set();
-		this.mount;
+		this.mount();
 	}
 	/**
 	 * Set the value of this.app.locals.title to "Air API - ENJOYS"
@@ -32,9 +32,8 @@ export class Modifiers {
 		this.app.disable("x-powered-by");
 		this.app.set("trust proxy", 1);
 		this.app.set("title", this.title);
-		this.app.use(this.customHeaders);
 		this.app.get("/health", (req, res) => {
-			res.status(200).json({ status: "Ok Report Hai Ji", message: "Server is running" });
+			res.status(200).json({ status: "ok", message: "Server is running" });
 		});
 		this.modifiedCustomFunction();
 	}

@@ -22,8 +22,8 @@ function ThrottleException(
 		solution:
 			"Try Again after time you settled in the rate limit, or disable it",
 	},
-): void {
-	new HttpException({
+): never {
+	throw new HttpException({
 		name: "TOO_MANY_REQUESTS",
 		message: "Current Rate Limit is Exceeded",
 		stack: message,

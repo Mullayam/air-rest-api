@@ -8,9 +8,9 @@ export class Cors {
 	 */
 	static options(): CorsOptions {
 		return {
-			origin: ['*'],
+			origin: true,
 			optionsSuccessStatus: 200,
-			methods: ["GET", "POST", "PUT", "DELETE"],
+			methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
 			allowedHeaders: [
 				"Origin",
 				"X-Requested-With",

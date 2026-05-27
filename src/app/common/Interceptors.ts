@@ -24,11 +24,10 @@ export class Interceptor {
 			try {
 				const oldJSON = res.json;
 				res.json = (data) => {
-					if (data && data.then !== undefined) {
+					if (data && typeof data === "object" && typeof data.then === "function") {
 						return data
 							.then((resData: any) => {
 								res.json = oldJSON;
-
 								return oldJSON.call(res, resData);
 							})
 							.catch((error: any) => {

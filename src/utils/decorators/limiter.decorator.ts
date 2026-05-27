@@ -17,17 +17,22 @@ function ThrottleException(
 type RateLimitOptions = Omit<Partial<Options>, "handler">;
 export function UseLimiter(limit?: number | "noLimit", timeout = 0): Function {
 	return (target: any, key: any, descriptor: PropertyDescriptor) => {
-		if (limit === "noLimit") limit = 60;
+		if (limit === "noLimit") return descriptor;
 		if (timeout === 0) timeout = 1;
-		const options = {
-			windowMs: timeout * 60 * 1000, // 15 minutes
-			max: 5, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
-			// standardHeaders: 'draft-7', // draft-6: RateLimit-* headers; draft-7: combined RateLimit header
-			// legacyHeaders: false, // X-RateLimit-* headers
-
+		const originalMethod = descriptor.value;
+		const limiterMiddleware = rateLimit({
+			windowMs: timeout * 60 * 1000,
+			max: limit || 60,
+			standardHeaders: "draft-7",
+			legacyHeaders: false,
 			handler: ThrottleException,
+		});
+
+		descriptor.value = function (req: any, res: any, next: any) {
+			limiterMiddleware(req, res, () => {
+				originalMethod.call(this, req, res, next);
+			});
 		};
-		descriptor.value = rateLimit(options);
 		return descriptor;
 	};
 }

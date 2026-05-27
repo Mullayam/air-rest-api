@@ -42,7 +42,7 @@ const __config = {
 	CACHE: {
 		CACHE_ENBALED: String(process.env.CACHE_ENBALED),
 		CACHE_HOST: String(process.env.CACHE_HOST),
-		CACHE_PORT: Number(process.env.PORT) || 6379,
+		CACHE_PORT: Number(process.env.CACHE_PORT) || 6379,
 	},
 };
 export const ConfigService = {

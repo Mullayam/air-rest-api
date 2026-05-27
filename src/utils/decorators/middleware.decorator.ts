@@ -12,6 +12,9 @@ import type { NextFunction, Request, RequestHandler, Response } from "express";
  *
  */
 export function UseMiddleware<T>(middlewareInstance: any): any {
+	// Create a single instance at decoration time, not per request
+	const instance = new middlewareInstance();
+
 	return (
 		target: any,
 		propertyKey?: string | symbol,
@@ -20,12 +23,11 @@ export function UseMiddleware<T>(middlewareInstance: any): any {
 		if (propertyKey && descriptor) {
 			// Method decorator
 			const originalMethod = descriptor.value;
-			const instance = new middlewareInstance();
 
 			descriptor.value = function (...args: any[]) {
 				const [req, res, next] = args;
 				instance.activate(req, res, () => {
-					originalMethod.apply(this, args); // Preserve `this` context
+					originalMethod.apply(this, args);
 				});
 			};
 
@@ -40,12 +42,10 @@ export function UseMiddleware<T>(middlewareInstance: any): any {
 			for (const methodName of methodNames) {
 				const originalMethod = target.prototype[methodName];
 				if (typeof originalMethod === "function") {
-					const instance = new middlewareInstance();
-
 					target.prototype[methodName] = function (...args: any[]) {
 						const [req, res, next] = args;
 						instance.activate(req, res, () => {
-							originalMethod.apply(this, args); // Preserve `this` context
+							originalMethod.apply(this, args);
 						});
 					};
 				}

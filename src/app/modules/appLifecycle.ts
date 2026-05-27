@@ -4,6 +4,7 @@ import { AppEvents } from "@/utils/services/Events";
 
 export class AppLifecycleManager {
 	private modules: any[] = [];
+	private moduleInstances: any[] = [];
 	static isAppLifecycleManager = false;
 	static setAppLifecycleManager() {
 		return (AppLifecycleManager.isAppLifecycleManager = true);
@@ -11,28 +12,26 @@ export class AppLifecycleManager {
 	static initializeModules() {
 		const modules = Reflect.getMetadata(LIFECYCLE_HOOKS_KEY, Reflect) || [];
 		AppLifecycleManager.prototype.modules = modules;
-		modules.forEach((Module: any) => {
-			const instance = new Module();
+		// Create instances once and reuse them
+		AppLifecycleManager.prototype.moduleInstances = modules.map(
+			(Module: any) => new Module(),
+		);
+		AppLifecycleManager.prototype.moduleInstances.forEach((instance: any) => {
 			if (instance.onModuleInit) instance.onModuleInit();
 		});
 		AppLifecycleManager.ListenMethods();
 	}
 
 	static destroyModules() {
-		const modules = Reflect.getMetadata(LIFECYCLE_HOOKS_KEY, Reflect) || [];
-		modules.forEach((Module: any) => {
-			const instance = new Module();
+		AppLifecycleManager.prototype.moduleInstances.forEach((instance: any) => {
 			if (instance.onModuleDestroy) instance.onModuleDestroy();
 		});
 	}
 
-	// Handle App Error and emit `onAppError`
 	static handleAppError(error: Error) {
-		const modules = Reflect.getMetadata(LIFECYCLE_HOOKS_KEY, Reflect) || [];
-		modules.forEach((Module: any) => {
-			const instance = new Module();
+		AppLifecycleManager.prototype.moduleInstances.forEach((instance: any) => {
 			if (instance.onAppError) {
-				AppEvents.emit("error", instance, error);
+				instance.onAppError(error);
 			}
 		});
 	}

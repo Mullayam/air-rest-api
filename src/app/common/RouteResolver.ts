@@ -1,10 +1,6 @@
 import { Logging } from "@/logs";
 import { SetAppRoutes } from "@/utils/helpers";
 import {
-	bgCyan,
-	bgMagenta,
-	bgWhite,
-	blackBright,
 	blue,
 	blueBright,
 	bold,
@@ -13,7 +9,6 @@ import {
 	green,
 	magenta,
 	red,
-	redBright,
 	yellow,
 } from "colorette";
 import type { Application } from "express";
@@ -77,27 +72,32 @@ export class RouteResolver {
 				regExpToParseExpressPathRegExp.test(endpoint.path)
 					? (RouteResolver.dynamicRoutes[endpoint.path] = endpoint.methods)
 					: SetAppRoutes.set(endpoint.path, endpoint.methods);
-				const str = `${
-					endpoint.methods.includes("GET")
-						? bold(bgWhite(gray("GET")))
-						: endpoint.methods.includes("POST")
-							? bold(bgCyan(blue("POST")))
-							: endpoint.methods.includes("PATCH")
-								? bold(bgCyan(magenta("PATCH")))
-								: endpoint.methods.includes("PUT")
-									? bold(bgMagenta(green("PUT")))
-									: endpoint.methods.includes("DELETE")
-										? bold(bgWhite(red("DELETE")))
-										: endpoint.methods.includes("ALL")
-											? bold(bgWhite(cyan("ALL")))
-											: endpoint.methods.includes("OPTIONS")
-												? bold(bgWhite(redBright("OPTIONS")))
-												: endpoint.methods.includes("HEAD")
-													? bold(bgWhite(blackBright("HEAD")))
-													: options.onlyPaths
-														? blueBright(endpoint.middlewares.join())
-														: bold(yellow(endpoint.methods.join(", ")))
-				} ${blueBright(endpoint.middlewares.join())} - ${yellow(endpoint.path)}`;
+
+				const method = endpoint.methods[0] || "";
+				const methodLabel = (() => {
+					switch (method) {
+						case "GET":
+							return bold(green(" GET    "));
+						case "POST":
+							return bold(yellow(" POST   "));
+						case "PUT":
+							return bold(blue(" PUT    "));
+						case "PATCH":
+							return bold(magenta(" PATCH  "));
+						case "DELETE":
+							return bold(red(" DELETE "));
+						case "OPTIONS":
+							return bold(cyan(" OPTIONS"));
+						case "HEAD":
+							return bold(gray(" HEAD   "));
+						case "ALL":
+							return bold(blueBright(" ALL    "));
+						default:
+							return bold(yellow(` ${method.padEnd(7)}`));
+					}
+				})();
+
+				const str = `${methodLabel} ${cyan(endpoint.middlewares.join(", "))} ${gray("-")} ${blueBright(endpoint.path)}`;
 
 				if (options.listEndpoints) {
 					Logging.dev(str);
@@ -119,7 +119,15 @@ export class RouteResolver {
 	}
 	private getRouteMiddlewares(route: any): Middlewares {
 		return route.stack.map((item: any) => {
-			return item.handle.name || "anonymous";
+			const fn = item.handle;
+			// Try function name, then wrapped _name, then toString extraction for arrow/anonymous fns
+			if (fn.name && fn.name !== "anonymous") return fn.name;
+			if (fn._name) return fn._name;
+			// Extract name from function source for short functions
+			const fnStr = fn.toString();
+			const match = fnStr.match(/^(?:async\s+)?(\w+)\s*\(/);
+			if (match && match[1] !== "function") return match[1];
+			return "handler";
 		});
 	}
 	private parseExpressRoute(route: any, basePath: string): Endpoint[] {
