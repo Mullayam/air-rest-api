@@ -1,8 +1,8 @@
 import * as fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import type { Type } from "@/utils/types";
 import { globSync } from "glob";
+import type { Type } from "@/utils/types";
 
 type T = "controller" | "entity" | "service" | "middleware" | "migrations";
 export class FilesMapper {
@@ -64,7 +64,7 @@ export class FilesMapper {
 	 * @param {"default" | "special"} [type="default"] - description of parameter
 	 * @return {Type[] | any} description of return value
 	 */
-	static forRoot<K>(
+	static forRoot<_K>(
 		pathName: string,
 		type: "default" | "special" = "default",
 	): Type[] | any {
@@ -108,7 +108,7 @@ export class FilesMapper {
 	 * @param {string} pathName - path to modules
 	 * @return {Type[] | any} description of return value
 	 */
-	static forFeature<K>(pathName: string): Type[] | any {
+	static forFeature<_K>(pathName: string): Type[] | any {
 		const __workingDir = path.join(process.cwd(), pathName);
 		return fs
 			.readdirSync(__workingDir)

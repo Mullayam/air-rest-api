@@ -1,6 +1,6 @@
+import type { Application } from "express";
 import { Logging } from "@/logs";
 import { AppEvents } from "@/utils/services/Events";
-import type { Application, NextFunction, Request, Response } from "express";
 import { AppLifecycleManager } from "../modules/appLifecycle";
 
 export class Modifiers {
@@ -32,24 +32,19 @@ export class Modifiers {
 		this.app.disable("x-powered-by");
 		this.app.set("trust proxy", 1);
 		this.app.set("title", this.title);
-		this.app.get("/health", (req, res) => {
+		this.app.get("/health", (_req, res) => {
 			res.status(200).json({ status: "ok", message: "Server is running" });
 		});
 		this.modifiedCustomFunction();
-	}
-
-	private customHeaders(req: Request, res: Response, next: NextFunction) {
-		res.setHeader("X-Powered-By", "AIRAPI-ENJOYS");
-		next();
 	}
 	/**
 	 * Mounts the application.
 	 */
 	private mount() {
-		this.app.on("mount", (parent) => console.log("Application Mounted"));
-		this._events.forEach((event) =>
-			this.app.on(event, () => console.log(event)),
-		);
+		this.app.on("mount", (_parent) => console.log("Application Mounted"));
+		for (const event of this._events) {
+			this.app.on(event, () => console.log(event));
+		}
 	}
 	private modifiedCustomFunction() {
 		this.app.enableHooks = () => AppLifecycleManager.setAppLifecycleManager();

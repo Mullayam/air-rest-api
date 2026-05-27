@@ -1,6 +1,6 @@
+import * as cron from "node-cron";
 import { METADATA_KEYS } from "@/utils/helpers/constants";
 import type { CronExpression } from "@/utils/interfaces/cron-expression.interface";
-import cron from "node-cron";
 export class Scheduler {
 	private static _instance: Scheduler;
 	private constructor() {}
@@ -13,11 +13,11 @@ export class Scheduler {
 	addJob(
 		cronExpression: CronExpression,
 		callback: () => void,
-		options?: cron.ScheduleOptions,
+		options?: cron.TaskOptions,
 	): cron.ScheduledTask {
 		return cron.schedule(cronExpression, callback, options);
 	}
-	getJobs(): Map<string, cron.ScheduledTask> {
+	getJobs(): Map<string, cron.TaskOptions> {
 		return cron.getTasks();
 	}
 	validate(cronExpression: string): boolean {

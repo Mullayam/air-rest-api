@@ -1,9 +1,13 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
+import type { NextFunction, Request, Response } from "express";
 import { Logging } from "@/logs";
 import helpers from "@/utils/helpers";
-import type { FileUploadInfo, FileHandler, FileUploadOptions } from "@/utils/interfaces/fileupload.interface";
-import type { NextFunction, Request, Response } from "express";
+import type {
+	FileHandler,
+	FileUploadInfo,
+	FileUploadOptions,
+} from "@/utils/interfaces/fileupload.interface";
 
 const UploadFilesPath = helpers.CreatePath("public/train-data");
 export class Storage {
@@ -78,7 +82,7 @@ export class Storage {
 		};
 	}
 
-	async DownloadFile(req: Request, res: Response) {
+	async DownloadFile(_req: Request, res: Response) {
 		try {
 			const DownloadPath = path.join(process.cwd(), "public", "uploads");
 			res.download(DownloadPath, (error: any) => {

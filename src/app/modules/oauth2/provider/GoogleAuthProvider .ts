@@ -1,6 +1,5 @@
-import { AbstractOAuth2Provider } from "../abstract";
-
 import { google } from "googleapis";
+import { AbstractOAuth2Provider } from "../abstract";
 
 export class GoogleAuthProvider extends AbstractOAuth2Provider {
 	getAuthUrl(): string {

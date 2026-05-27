@@ -1,15 +1,15 @@
 import path from "node:path";
-import { __CONFIG__ } from "@/app/config";
-import { Logging } from "@/logs";
-import type { MailOptionsWithTemplate } from "@/utils/interfaces/mail.interface";
-import nodemailer, { type Transporter, type SentMessageInfo } from "nodemailer";
+import nodemailer, { type SentMessageInfo, type Transporter } from "nodemailer";
+import type { MailOptions } from "nodemailer/lib/json-transport";
+import type * as Mail from "nodemailer/lib/mailer";
+import type SMTPTransport from "nodemailer/lib/smtp-transport";
 import hbs, {
 	type NodemailerExpressHandlebarsOptions,
 	type TemplateOptions,
 } from "nodemailer-express-handlebars";
-import type { MailOptions } from "nodemailer/lib/json-transport";
-import type * as Mail from "nodemailer/lib/mailer";
-import type SMTPTransport from "nodemailer/lib/smtp-transport";
+import { __CONFIG__ } from "@/app/config";
+import { Logging } from "@/logs";
+import type { MailOptionsWithTemplate } from "@/utils/interfaces/mail.interface";
 
 const TemplatePath = path.join(process.cwd(), "src", "resources", "templates");
 export class MailService {
@@ -29,7 +29,7 @@ export class MailService {
 		this.transporter = nodemailer.createTransport({
 			...this.TransportOptions(),
 		});
-		this.transporter.verify((error, success) => {
+		this.transporter.verify((error, _success) => {
 			if (error) {
 				Logging.error(
 					`Error occurred while connecting to the SMTP server: ${error.message}`,

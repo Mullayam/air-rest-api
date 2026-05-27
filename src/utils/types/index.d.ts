@@ -1,7 +1,6 @@
-import type { __CONFIG__ } from "@/app/config";
-import { Request, Response } from "express";
 import type { JwtPayload } from "jsonwebtoken";
 import type { Server } from "socket.io";
+import type { __CONFIG__ } from "@/app/config";
 import type { CustomResponse } from "../interfaces";
 import type { FileHandler } from "../interfaces/fileupload.interface";
 import type { IUser } from "../interfaces/user.interface";

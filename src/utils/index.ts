@@ -1,8 +1,10 @@
 import bcrypt from "bcryptjs";
+
 const saltRounds = 10;
 const salt = bcrypt.genSaltSync(saltRounds);
-import { __CONFIG__ } from "@/app/config";
+
 import jwt from "jsonwebtoken";
+import { __CONFIG__ } from "@/app/config";
 import helpers, { type TTL } from "./helpers";
 
 class Utils {

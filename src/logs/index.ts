@@ -1,16 +1,16 @@
 import path from "node:path";
+import { bold, greenBright, magenta, red, white, yellow } from "colorette";
+import moment from "moment";
+import winston, { createLogger, format, transports } from "winston";
 import type {
 	LoggingLevel,
 	LoggingOptions,
 } from "@/utils/interfaces/logs.interface";
-import { bold, greenBright, magenta, red, white, yellow } from "colorette";
-import moment from "moment";
-import winston from "winston";
-import { createLogger, format, transports } from "winston";
+
 const { combine, timestamp, label, printf, colorize } = format;
 const LogsPath = path.join(process.cwd(), "src", "logs");
 
-const Colors: Record<LoggingLevel, string> = {
+const _Colors: Record<LoggingLevel, string> = {
 	info: "blue",
 	error: "red",
 	alert: "yellow",
@@ -163,4 +163,5 @@ class Logger {
 	}
 }
 const Logging = new Logger();
+
 export { Logging };

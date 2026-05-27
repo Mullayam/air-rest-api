@@ -1,6 +1,6 @@
+import session from "express-session";
 import { Logging } from "@/logs";
 import helpers from "@/utils/helpers";
-import session from "express-session";
 import { __CONFIG__ } from "../config";
 export class SessionHandler {
 	static forRoot() {
@@ -8,9 +8,11 @@ export class SessionHandler {
 		return session(SessionHandler.prototype._sessionOptions());
 	}
 	private _sessionOptions(): session.SessionOptions {
-		const isProduction = __CONFIG__.APP.APP_ENV.toUpperCase() === "PRODUCTION" || __CONFIG__.APP.APP_ENV.toUpperCase() === "PROD";
+		const isProduction =
+			__CONFIG__.APP.APP_ENV.toUpperCase() === "PRODUCTION" ||
+			__CONFIG__.APP.APP_ENV.toUpperCase() === "PROD";
 		return {
-			genid: (req: any) => {
+			genid: (_req: any) => {
 				return helpers.uuid_v4();
 			},
 			saveUninitialized: false,

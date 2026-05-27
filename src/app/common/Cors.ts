@@ -1,6 +1,5 @@
-import cors, { type CorsOptions } from "cors";
+import type { CorsOptions } from "cors";
 export class Cors {
-
 	/**
 	 * Returns the options for the function.
 	 *

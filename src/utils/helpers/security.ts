@@ -1,7 +1,8 @@
 import * as crypto from "node:crypto";
-import { __CONFIG__ } from "@/app/config";
 import CryptoJS from "crypto-js";
+import { __CONFIG__ } from "@/app/config";
 import type { RoutingMethods } from "../interfaces/routes.interface";
+
 const ALGORITHM = "aes-256-cbc";
 const ENCODING = "hex";
 const ENCRYPTION_KEY: string = "enjoys_encrption_key!@#%^&*()_NJ";
@@ -241,10 +242,10 @@ export class Security {
 	 * @return {Promise<boolean>} A promise that resolves when the signature is verified.
 	 */
 	async VerifySignature(
-		method: RoutingMethods,
-		uri: string,
-		body: any,
-		clientSecret: string,
+		_method: RoutingMethods,
+		_uri: string,
+		_body: any,
+		_clientSecret: string,
 	): Promise<boolean> {
 		return true;
 	}

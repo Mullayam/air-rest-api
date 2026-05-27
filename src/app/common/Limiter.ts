@@ -1,17 +1,12 @@
-import { Logging } from "@/logs";
 import { HttpException } from "@enjoys/exception";
-import {
-	Application,
-	type NextFunction,
-	type Request,
-	type Response,
-} from "express";
+import type { NextFunction, Request, Response } from "express";
 import {
 	type Options,
 	type RateLimitRequestHandler,
 	rateLimit,
 } from "express-rate-limit";
 import { RateLimiterMemory, RateLimiterRes } from "rate-limiter-flexible";
+import { Logging } from "@/logs";
 
 const tokenBucket: any = [];
 
@@ -91,7 +86,7 @@ export class Limiter {
 			points: 2,
 			duration: 30,
 		});
-		return (req: Request, res: Response, next: NextFunction) =>
+		return (req: Request, _res: Response, next: NextFunction) =>
 			rateLimit
 				.consume(req.ip!, 1)
 				.then(() => next())
@@ -134,7 +129,7 @@ export class Limiter {
 	tokenBucketMiddleware() {
 		return (req: Request, res: Response, next: any) => {
 			if (tokenBucket.length > 0) {
-				const token = tokenBucket.shift();
+				const _token = tokenBucket.shift();
 				res.set("X-RateLimit-Remaining", tokenBucket.length);
 				next();
 			} else {

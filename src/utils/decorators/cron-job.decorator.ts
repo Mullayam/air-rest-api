@@ -31,7 +31,10 @@ export const CronJob = (
 				try {
 					InitializeCronJobs(target.constructor);
 				} catch (error: any) {
-					Logging.dev(`Failed to initialize cron jobs: ${error.message}`, "error");
+					Logging.dev(
+						`Failed to initialize cron jobs: ${error.message}`,
+						"error",
+					);
 				}
 			});
 		}

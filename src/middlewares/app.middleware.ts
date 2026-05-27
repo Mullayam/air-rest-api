@@ -1,9 +1,8 @@
-import { __CONFIG__ } from "@/app/config";
-import { Logging } from "@/logs";
-import Helpers, { SetAppRoutes } from "@/utils/helpers";
-import { Security } from "@/utils/helpers/security";
 import type { NextFunction, Request, Response } from "express";
 import type { Server } from "socket.io";
+import { __CONFIG__ } from "@/app/config";
+import Helpers, { SetAppRoutes } from "@/utils/helpers";
+import { Security } from "@/utils/helpers/security";
 
 const sigHeaderName = "X-Signature";
 export class AppMiddlewares {
@@ -14,7 +13,7 @@ export class AppMiddlewares {
 	 * @return {Function} Middleware function that adds the io instance to the request object and calls the next middleware.
 	 */
 	static attachIoToRequestHandler(io: Server) {
-		return (req: Request, res: Response, next: NextFunction) => {
+		return (req: Request, _res: Response, next: NextFunction) => {
 			req.io = io;
 			next();
 		};
@@ -30,7 +29,11 @@ export class AppMiddlewares {
 	 * @param {NextFunction} next - The next middleware function.
 	 */
 	public static isApiProtected() {
-		return function apiProtected(req: Request, res: Response, next: NextFunction) {
+		return function apiProtected(
+			req: Request,
+			res: Response,
+			next: NextFunction,
+		) {
 			const headers = req.headers;
 			const apiKey = headers.api_key || undefined;
 			if (typeof apiKey === "undefined") {
@@ -67,7 +70,11 @@ export class AppMiddlewares {
 	 * @param {NextFunction} next - The next function in the middleware chain.
 	 */
 	public static IRequestHeaders() {
-		return function requestHeaders(req: Request, res: Response, next: NextFunction) {
+		return function requestHeaders(
+			req: Request,
+			res: Response,
+			next: NextFunction,
+		) {
 			const requestId = Helpers.RequestId();
 			req.headers["X-Request-Id"] = requestId;
 			res.setHeader("X-Request-Id", requestId);

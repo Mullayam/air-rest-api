@@ -1,8 +1,9 @@
 import { join } from "node:path";
-import express from "express";
 import type { Application, NextFunction, Request, Response } from "express";
+import express from "express";
 import { pathToRegexp } from "path-to-regexp";
 import type * as serveStatic from "serve-static";
+
 type Options = {
 	rootPath?: string;
 	exclude?: string[];

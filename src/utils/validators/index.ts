@@ -1,11 +1,11 @@
-import { plainToInstance } from "class-transformer";
 import type {
 	ClassConstructor,
 	ClassTransformOptions,
 } from "class-transformer";
-import type { ValidationError } from "class-validator";
+import { plainToInstance } from "class-transformer";
+import type { ValidationError, ValidatorOptions } from "class-validator";
 import { validate } from "class-validator";
-import type { ValidatorOptions } from "class-validator";
+
 type ValidatorResult<T> = {
 	data: T | null; // Transformed object or null if validation fails
 	success: boolean; // Validation success status

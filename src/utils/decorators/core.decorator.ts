@@ -1,9 +1,9 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { Logging } from "@/logs";
 import type { NextFunction, Request, Response } from "express";
 import { validationResult } from "express-validator";
 import type { Observable } from "rxjs";
+import { Logging } from "@/logs";
 import helpers from "../helpers";
 import type {
 	FileHandler,
@@ -18,10 +18,14 @@ import { HttpStatusCode } from "../interfaces/httpCode.interface";
  * @return {Function} - A decorator function that redirects the user to the specified URL.
  */
 export function Redirect(url: string) {
-	return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-		const originalMethod = descriptor.value;
+	return (
+		_target: any,
+		_propertyKey: string,
+		descriptor: PropertyDescriptor,
+	) => {
+		const _originalMethod = descriptor.value;
 
-		descriptor.value = (req: Request, res: Response, next: NextFunction) => {
+		descriptor.value = (_req: Request, res: Response, _next: NextFunction) => {
 			res.redirect(url);
 		};
 
@@ -37,7 +41,11 @@ export function Redirect(url: string) {
 export function HttpStatus<T extends keyof typeof HttpStatusCode | number>(
 	statusCode: T,
 ) {
-	return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+	return (
+		_target: any,
+		_propertyKey: string,
+		descriptor: PropertyDescriptor,
+	) => {
 		const originalMethod = descriptor.value;
 
 		descriptor.value = function (
@@ -77,7 +85,7 @@ export function UseDelayResponse(
 	delayFunc: (req: Request, res: Response, next: () => void) => Observable<any>,
 ) {
 	Logging.dev("Delay in Response is Initiated");
-	return (target: any, key: string, descriptor: PropertyDescriptor) => {
+	return (_target: any, _key: string, descriptor: PropertyDescriptor) => {
 		const originalMethod = descriptor.value;
 		descriptor.value = function (req: any, res: any, next: () => void) {
 			delayFunc(req, res, next).subscribe(() => {
@@ -94,7 +102,7 @@ export function UseDelayResponse(
  * @return {Function} The decorated function for file upload handling.
  */
 export function UploadFile(data?: FileUploadOptions) {
-	return (target: any, key: string, descriptor: PropertyDescriptor) => {
+	return (_target: any, _key: string, descriptor: PropertyDescriptor) => {
 		const originalMethod = descriptor.value;
 		descriptor.value = async function (req: any, res: any, next: () => void) {
 			const uploadDirPath = helpers.CreatePath(
@@ -114,16 +122,13 @@ export function UploadFile(data?: FileUploadOptions) {
 					filesToProcess.map((file: FileHandler) => {
 						return new Promise<any>((resolve, reject) => {
 							const renameFile = file.name.replace(/\s+/g, "").trim();
-							file.mv(
-								`${path.join(uploadDirPath, renameFile)}`,
-								(err: any) => {
-									if (err) return reject(err);
-									const id = helpers.Md5Checksum(Date.now().toString());
-									const key = helpers.SimpleHash();
-									const extension = file.name.split(".").pop() || "";
-									resolve({ id, key, ...file, extension });
-								},
-							);
+							file.mv(`${path.join(uploadDirPath, renameFile)}`, (err: any) => {
+								if (err) return reject(err);
+								const id = helpers.Md5Checksum(Date.now().toString());
+								const key = helpers.SimpleHash();
+								const extension = file.name.split(".").pop() || "";
+								resolve({ id, key, ...file, extension });
+							});
 						});
 					}),
 				);
@@ -150,8 +155,8 @@ export function UploadFile(data?: FileUploadOptions) {
 export function ThrottleApi(delay: number) {
 	Logging.dev("Response Throttling in API is Enabled");
 	return (
-		target: any,
-		key: any,
+		_target: any,
+		_key: any,
 		descriptor: { value: (...args: any[]) => Promise<any> },
 	) => {
 		const originalMethod = descriptor.value;
@@ -164,7 +169,7 @@ export function ThrottleApi(delay: number) {
 				return originalMethod.apply(this, args);
 			}
 			// Return 429 if it's an Express handler
-			const [req, res] = args;
+			const [_req, res] = args;
 			if (res && typeof res.status === "function") {
 				return res.status(429).json({
 					message: "Too many requests, please try again later",
@@ -183,7 +188,7 @@ export function ThrottleApi(delay: number) {
  * @returns {PropertyDescriptor} The updated property descriptor with validation logic.
  */
 export function Validate(validations: any[]) {
-	return (target: any, key: string, descriptor: PropertyDescriptor) => {
+	return (_target: any, _key: string, descriptor: PropertyDescriptor) => {
 		const originalMethod = descriptor.value;
 
 		descriptor.value = async function (req: any, res: any, next: () => void) {

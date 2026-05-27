@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import session from "express-session";
+import type session from "express-session";
 export class SessionMiddleware {
 	/**
 	 * Validates if the user is an admin by checking the session ID.
@@ -35,7 +35,7 @@ export class SessionMiddleware {
 					success: false,
 				});
 			}
-			if (!session.hasOwnProperty(sessionId)) {
+			if (!Object.hasOwn(session, sessionId)) {
 				return res.json({
 					message: "Invalid Session",
 					result: null,

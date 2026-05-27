@@ -1,6 +1,6 @@
+import type { EntityTarget, ObjectLiteral, Repository } from "typeorm";
 import { AppDataSource } from "@/app/config/Datasource";
 import { Logging } from "@/logs";
-import type { EntityTarget, ObjectLiteral, Repository } from "typeorm";
 
 export const InjectRepository = <T extends ObjectLiteral>(
 	repository: EntityTarget<T extends ObjectLiteral ? T : ObjectLiteral>,

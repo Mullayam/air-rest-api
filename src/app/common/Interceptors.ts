@@ -1,8 +1,7 @@
+import { HttpException } from "@enjoys/exception";
 import type { Application, NextFunction, Request, Response } from "express";
-
 import { Logging } from "@/logs";
 import type { InterceptorsSettings } from "@/utils/interfaces";
-import { HttpException } from "@enjoys/exception";
 
 const ORIGINAL_RESPONSE = { response: { info: "Interceptor Response" } };
 export class Interceptor {
@@ -10,7 +9,7 @@ export class Interceptor {
 	private myResponse: Record<string, any>;
 	constructor(
 		private app: Application,
-		private settings: InterceptorsSettings,
+		settings: InterceptorsSettings,
 	) {
 		Interceptor.app = app;
 		this.myResponse = settings.response;
@@ -20,11 +19,15 @@ export class Interceptor {
 	}
 	private InterceptResponse() {
 		Logging.dev("Modifying Response using Interceptor");
-		Interceptor.app.use((req: Request, res: Response, next: NextFunction) => {
+		Interceptor.app.use((_req: Request, res: Response, next: NextFunction) => {
 			try {
 				const oldJSON = res.json;
 				res.json = (data) => {
-					if (data && typeof data === "object" && typeof data.then === "function") {
+					if (
+						data &&
+						typeof data === "object" &&
+						typeof data.then === "function"
+					) {
 						return data
 							.then((resData: any) => {
 								res.json = oldJSON;
@@ -34,8 +37,11 @@ export class Interceptor {
 								next(error);
 							});
 					}
-					data = Object.assign(data, this.myResponse);
-					return oldJSON.call(res, data);
+					const output =
+						data && typeof data === "object" && !Array.isArray(data)
+							? { ...data, ...this.myResponse }
+							: data;
+					return oldJSON.call(res, output);
 				};
 				next();
 			} catch (error) {

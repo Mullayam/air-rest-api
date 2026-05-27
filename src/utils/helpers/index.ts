@@ -141,7 +141,7 @@ class Helpers {
 	 * @return {string} - The formatted date string.
 	 */
 	ConvertDateWordsToDate(str: string): string {
-		let newDate;
+		let newDate: Date | undefined;
 		if (str === "Latest") {
 			newDate = moment().subtract(10, "minutes").toDate();
 		} else if (str === "LastHour") {

@@ -1,6 +1,5 @@
-import type { Server as HttpServer } from "node:http";
-import { Logging } from "@/logs";
 import { Server, type Socket } from "socket.io";
+import { Logging } from "@/logs";
 
 let io: Server;
 export const InitSocketConnection = () => {

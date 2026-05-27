@@ -1,8 +1,8 @@
-import { __CONFIG__ } from "@/app/config";
-import type { AllowedRoles, IUser } from "@/utils/interfaces/user.interface";
 import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { interval, timer } from "rxjs";
+import { __CONFIG__ } from "@/app/config";
+import type { AllowedRoles, IUser } from "@/utils/interfaces/user.interface";
 import { LIFECYCLE_HOOKS_KEY, PUBLIC_ROUTE_KEY } from "../helpers/constants";
 import { AppEvents } from "../services/Events";
 
@@ -12,9 +12,18 @@ function handleAuthorization(
 	next: NextFunction,
 	opts: { isPublic: boolean },
 	callback: () => void,
+	originalMethod?: Function,
 ) {
 	try {
 		if (opts.isPublic) {
+			return next();
+		}
+
+		// Check if @PublicRoute() metadata is set on the method
+		if (
+			originalMethod &&
+			Reflect.getMetadata(PUBLIC_ROUTE_KEY, originalMethod)
+		) {
 			return next();
 		}
 
@@ -61,7 +70,7 @@ function handleAuthorization(
 		(req as any).user = decodedToken; // Attach the decoded token to the request
 
 		return callback(); // Proceed to the original method
-	} catch (error) {
+	} catch (_error) {
 		return res
 			.status(401)
 			.json({ message: "Token is invalid", result: null, success: false });
@@ -71,46 +80,27 @@ function handleAuthorization(
 export function PublicRoute(): ClassDecorator & MethodDecorator {
 	return (
 		target: any,
-		propertyKey?: string | symbol,
+		_propertyKey?: string | symbol,
 		descriptor?: TypedPropertyDescriptor<any>,
 	) => {
 		if (descriptor) {
-			// If descriptor is present, the decorator is applied to a method
-			const originalMethod = descriptor.value!;
-
-			if (typeof originalMethod === "function") {
-				descriptor.value = function (...args: any[]) {
-					// Bind `this` to the class instance
-					return originalMethod.apply(this, args);
-				};
-			}
-
+			// Method decorator — mark current descriptor.value as public
 			Reflect.defineMetadata(PUBLIC_ROUTE_KEY, true, descriptor.value!);
 		} else {
-			// If descriptor is not present, the decorator is applied to a class
+			// Class decorator — mark all methods on the prototype as public
 			const classPrototype = target.prototype;
 			const methodNames = Object.getOwnPropertyNames(classPrototype).filter(
 				(name) =>
 					typeof classPrototype[name] === "function" && name !== "constructor",
 			);
 
-			// Apply the decorator to each method in the class
-			methodNames.forEach((methodName) => {
-				const originalMethod = classPrototype[methodName];
-
-				if (typeof originalMethod === "function") {
-					// Wrap the method to ensure `this` binding
-					classPrototype[methodName] = function (...args: any[]) {
-						return originalMethod.apply(this, args);
-					};
-
-					Reflect.defineMetadata(
-						PUBLIC_ROUTE_KEY,
-						true,
-						classPrototype[methodName],
-					);
-				}
-			});
+			for (const methodName of methodNames) {
+				Reflect.defineMetadata(
+					PUBLIC_ROUTE_KEY,
+					true,
+					classPrototype[methodName],
+				);
+			}
 		}
 	};
 }
@@ -123,7 +113,11 @@ export function PublicRoute(): ClassDecorator & MethodDecorator {
  * @return {Function} - The decorator function that checks the user's roles.
  */
 export function Accessible<T = AllowedRoles[]>(allowedRoles: T) {
-	return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+	return (
+		_target: any,
+		_propertyKey: string,
+		descriptor: PropertyDescriptor,
+	) => {
 		const originalMethod = descriptor.value;
 
 		descriptor.value = function (
@@ -140,11 +134,15 @@ export function Accessible<T = AllowedRoles[]>(allowedRoles: T) {
 						success: false,
 					});
 				}
-				const userRoles = user.role.toUpperCase() || [];
+				const userRoles: string[] = Array.isArray(user.role)
+					? user.role.map((r: string) => r.toUpperCase())
+					: [user.role.toUpperCase()];
 
 				const hasRole = Array.isArray(allowedRoles)
-					? allowedRoles.some((role) => userRoles.includes(role.toUpperCase())!)
-					: userRoles.includes(allowedRoles);
+					? allowedRoles.some((role) =>
+							userRoles.includes((role as string).toUpperCase()),
+						)
+					: userRoles.includes((allowedRoles as string).toUpperCase());
 
 				if (!hasRole) {
 					return res
@@ -153,7 +151,7 @@ export function Accessible<T = AllowedRoles[]>(allowedRoles: T) {
 				}
 
 				return originalMethod.apply(this, [req, res, next]);
-			} catch (error) {
+			} catch (_error) {
 				return res.status(500).json({
 					message: "Internal Server Error",
 					result: "Something went wrong",
@@ -191,9 +189,16 @@ export function isAuthorized(
 						res: Response,
 						next: NextFunction,
 					) {
-						handleAuthorization(req, res, next, opts, () => {
-							originalMethod.call(this, req, res, next);
-						});
+						handleAuthorization(
+							req,
+							res,
+							next,
+							opts,
+							() => {
+								originalMethod.call(this, req, res, next);
+							},
+							originalMethod,
+						);
 					};
 				}
 			}
@@ -207,10 +212,22 @@ export function isAuthorized(
 				res: Response,
 				next: NextFunction,
 			) {
-				handleAuthorization(req, res, next, opts, () => {
-					originalMethod.call(this, req, res, next);
-				});
+				handleAuthorization(
+					req,
+					res,
+					next,
+					opts,
+					() => {
+						originalMethod.call(this, req, res, next);
+					},
+					originalMethod,
+				);
 			};
+
+			// Propagate PublicRoute metadata to the wrapper so middleware can find it
+			if (Reflect.getMetadata(PUBLIC_ROUTE_KEY, originalMethod)) {
+				Reflect.defineMetadata(PUBLIC_ROUTE_KEY, true, descriptor.value);
+			}
 
 			return descriptor;
 		}
@@ -224,15 +241,14 @@ export function isAuthorized(
  * @return {Function} - A decorator function that wraps the original method with a setInterval.
  */
 export function HandleInterval(intervalTime: number) {
-	return (target: any, key: string, descriptor: PropertyDescriptor) => {
+	return (_target: any, _key: string, descriptor: PropertyDescriptor) => {
 		const originalMethod = descriptor.value;
 
 		descriptor.value = function (...args: any[]) {
-			const originalFunction = originalMethod.apply(this, args);
 			const intervalObservable = interval(intervalTime);
 
 			const subscription = intervalObservable.subscribe(() => {
-				originalFunction.call(this, args);
+				originalMethod.apply(this, args);
 			});
 
 			return subscription;
@@ -249,15 +265,14 @@ export function HandleInterval(intervalTime: number) {
  * @return {Function} - A decorator function that wraps the original method with a setTimeout.
  */
 export function HandleTimeout(timeout: number) {
-	return (target: any, key: string, descriptor: PropertyDescriptor) => {
+	return (_target: any, _key: string, descriptor: PropertyDescriptor) => {
 		const originalMethod = descriptor.value;
 
 		descriptor.value = function (...args: any[]) {
-			const originalFunction = originalMethod.apply(this, args);
 			const timeoutObservable = timer(timeout);
 
 			const subscription = timeoutObservable.subscribe(() => {
-				originalFunction.call(this, args);
+				originalMethod.apply(this, args);
 			});
 
 			return subscription;
@@ -312,7 +327,11 @@ export function onEnableHook() {
 // }
 
 export function OnEvent(event: string, options?: { async: boolean }) {
-	return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+	return (
+		target: any,
+		_propertyKey: string,
+		descriptor: PropertyDescriptor,
+	) => {
 		const originalMethod = descriptor.value;
 
 		// Register event listener at decoration time, not when method is called

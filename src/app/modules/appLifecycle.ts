@@ -7,7 +7,8 @@ export class AppLifecycleManager {
 	private moduleInstances: any[] = [];
 	static isAppLifecycleManager = false;
 	static setAppLifecycleManager() {
-		return (AppLifecycleManager.isAppLifecycleManager = true);
+		AppLifecycleManager.isAppLifecycleManager = true;
+		return true;
 	}
 	static initializeModules() {
 		const modules = Reflect.getMetadata(LIFECYCLE_HOOKS_KEY, Reflect) || [];

@@ -9,8 +9,12 @@ import type { NextFunction, Request, Response } from "express";
  * @return {void} No return value.
  */
 export function NotFound() {
-	return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-		descriptor.value = (req: Request, res: Response, next: NextFunction) =>
+	return (
+		_target: any,
+		_propertyKey: string,
+		descriptor: PropertyDescriptor,
+	) => {
+		descriptor.value = (req: Request, res: Response, _next: NextFunction) =>
 			res.status(404).send({
 				error: "NOT FOUND",
 				code: 404,
@@ -34,8 +38,12 @@ export function NotFound() {
  * @return {PropertyDescriptor} The updated property descriptor.
  */
 export function BadRequest() {
-	return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-		descriptor.value = (req: Request, res: Response, next: NextFunction) =>
+	return (
+		_target: any,
+		_propertyKey: string,
+		descriptor: PropertyDescriptor,
+	) => {
+		descriptor.value = (req: Request, res: Response, _next: NextFunction) =>
 			res.status(400).send({
 				error: "BAD REQUEST",
 				code: 400,
@@ -58,8 +66,12 @@ export function BadRequest() {
  * This inner function sets the response status to 500 and sends a JSON object with the error message, code, and stack information.
  */
 export function ServerError() {
-	return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-		descriptor.value = (req: Request, res: Response, next: NextFunction) =>
+	return (
+		_target: any,
+		_propertyKey: string,
+		descriptor: PropertyDescriptor,
+	) => {
+		descriptor.value = (req: Request, res: Response, _next: NextFunction) =>
 			res.status(500).send({
 				error: "INTERNAL SERVER ERROR",
 				code: 500,

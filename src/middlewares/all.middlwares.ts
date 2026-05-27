@@ -2,8 +2,8 @@ import type { NextFunction, Request, RequestHandler, Response } from "express";
 
 class AllMiddlewares {
 	public customMiddlewareFunction(
-		req: Request,
-		res: Response,
+		_req: Request,
+		_res: Response,
 		next: NextFunction,
 	) {
 		// Your custom middleware logic goes here

@@ -1,10 +1,10 @@
+import type { NextFunction, Request, Response } from "express";
+import jwt from "jsonwebtoken";
+import { match } from "path-to-regexp";
 import { RouteResolver } from "@/app/common/RouteResolver";
 import { __CONFIG__ } from "@/app/config";
 import { PUBLIC_ROUTE_KEY } from "@/utils/helpers/constants";
 import type { IUser } from "@/utils/interfaces/user.interface";
-import type { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
-import { match } from "path-to-regexp";
 
 export class JwtAuth {
 	/**
@@ -108,7 +108,7 @@ export class JwtAuth {
 	 * @param {NextFunction} next - The next function.
 	 */
 
-	static Me(req: Request, res: Response, next: NextFunction) {
+	static Me(req: Request, res: Response, _next: NextFunction) {
 		try {
 			const authHeader =
 				req.cookies?.access_token ||

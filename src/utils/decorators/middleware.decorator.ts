@@ -1,4 +1,4 @@
-import type { NextFunction, Request, RequestHandler, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 /**
  * A decorator that applies middleware to a controller or individual controller methods.
@@ -11,7 +11,7 @@ import type { NextFunction, Request, RequestHandler, Response } from "express";
  * middleware applied.
  *
  */
-export function UseMiddleware<T>(middlewareInstance: any): any {
+export function UseMiddleware<_T>(middlewareInstance: any): any {
 	// Create a single instance at decoration time, not per request
 	const instance = new middlewareInstance();
 
@@ -25,7 +25,7 @@ export function UseMiddleware<T>(middlewareInstance: any): any {
 			const originalMethod = descriptor.value;
 
 			descriptor.value = function (...args: any[]) {
-				const [req, res, next] = args;
+				const [req, res, _next] = args;
 				instance.activate(req, res, () => {
 					originalMethod.apply(this, args);
 				});
@@ -43,7 +43,7 @@ export function UseMiddleware<T>(middlewareInstance: any): any {
 				const originalMethod = target.prototype[methodName];
 				if (typeof originalMethod === "function") {
 					target.prototype[methodName] = function (...args: any[]) {
-						const [req, res, next] = args;
+						const [req, res, _next] = args;
 						instance.activate(req, res, () => {
 							originalMethod.apply(this, args);
 						});
@@ -80,7 +80,7 @@ export function Middleware(
 
 				if (typeof originalMethod === "function") {
 					classConstructor.prototype[methodName] = function (...args: any[]) {
-						const [req, res, next] = args;
+						const [req, res, _next] = args;
 						middleware(req, res, () => {
 							originalMethod.apply(this, args); // Preserve `this` context
 						});
@@ -93,7 +93,7 @@ export function Middleware(
 			const originalMethod = descriptor.value;
 
 			descriptor.value = function (...args: any[]) {
-				const [req, res, next] = args;
+				const [req, res, _next] = args;
 				middleware(req, res, () => {
 					originalMethod.apply(this, args); // Preserve `this` context
 				});

@@ -2,7 +2,6 @@ type StorageType = "Redis" | "Memory" | "Disk";
 const IN_MEMORY_STORAGE = new Map();
 
 export class StorageService {
-	constructor(private storageType: StorageType = "Disk") {}
 	static get(key: string) {
 		return IN_MEMORY_STORAGE.get(key);
 	}

@@ -1,32 +1,27 @@
 import * as http from "node:http";
 import { join } from "node:path";
+import { createHandlers } from "@enjoys/exception";
+// body-parser removed - using express built-in json/urlencoded parsers
+import { blue } from "colorette";
+import cookieParser from "cookie-parser";
 import cors from "cors";
-
+import express, { type Application } from "express";
+import helmet from "helmet";
+import morgan from "morgan";
 import { Cors } from "@/app/common/Cors";
 import { useHttpsRedirection } from "@/app/common/HttpsRedirection";
 import { Interceptor } from "@/app/common/Interceptors";
 import { RouteResolver } from "@/app/common/RouteResolver";
 import { SessionHandler } from "@/app/common/Session";
+import { AppLifecycleManager } from "@/app/modules/appLifecycle";
 import { Logging } from "@/logs";
 import { AppMiddlewares } from "@/middlewares/app.middleware";
 import AppRoutes from "@/routes/web";
-import { getSocketIo } from "@/utils/services/sockets/Sockets";
 import BroadCastEvents from "@/utils/services/sockets/broadCastEvents";
-import { AppLifecycleManager } from "@/app/modules/appLifecycle";
-import { createHandlers } from "@enjoys/exception";
-import { CreateConnection,CloseConnection } from "@/factory/typeorm";
-// body-parser removed - using express built-in json/urlencoded parsers
-import { blue } from "colorette";
-import cookieParser from "cookie-parser";
-import express, { type Application } from "express";
-// express-fileupload moved to route-level to avoid processing every request
-import fileUpload from "express-fileupload";
-import helmet from "helmet";
-import morgan from "morgan";
+import { getSocketIo } from "@/utils/services/sockets/Sockets";
 import { Modifiers } from "./app/common/Modifiers";
 import { __CONFIG__ } from "./app/config";
 import { AppEvents } from "./utils/services/Events";
-import { Cache } from "./utils/services/redis/cacheService";
 
 const io = getSocketIo();
 
@@ -58,7 +53,10 @@ class AppServer {
 		Modifiers.useRoot(AppServer.App);
 		AppServer.App.use(helmet({ crossOriginResourcePolicy: false }));
 		// Use morgan only in development to avoid blocking I/O in production
-		if (__CONFIG__.APP.APP_ENV.toUpperCase() !== "PRODUCTION" && __CONFIG__.APP.APP_ENV.toUpperCase() !== "PROD") {
+		if (
+			__CONFIG__.APP.APP_ENV.toUpperCase() !== "PRODUCTION" &&
+			__CONFIG__.APP.APP_ENV.toUpperCase() !== "PROD"
+		) {
 			AppServer.App.use(morgan("dev"));
 		}
 		AppServer.App.use(cors(Cors.options()));
@@ -67,7 +65,10 @@ class AppServer {
 		AppServer.App.use(express.urlencoded({ extended: false, limit: "1mb" }));
 		AppServer.App.use(cookieParser(__CONFIG__.SECRETS.COOKIE_SECRET));
 		// HTTPS redirection only in production
-		if (__CONFIG__.APP.APP_ENV.toUpperCase() === "PRODUCTION" || __CONFIG__.APP.APP_ENV.toUpperCase() === "PROD") {
+		if (
+			__CONFIG__.APP.APP_ENV.toUpperCase() === "PRODUCTION" ||
+			__CONFIG__.APP.APP_ENV.toUpperCase() === "PROD"
+		) {
 			AppServer.App.use(useHttpsRedirection);
 		}
 		// Session only on API routes, not static files
@@ -90,7 +91,7 @@ class AppServer {
 			index: false,
 			maxAge: "1d",
 			redirect: false,
-			setHeaders(res: any, path: any, stat: any) {
+			setHeaders(res: any, _path: any, _stat: any) {
 				res.set("x-timestamp", Date.now());
 			},
 		};
@@ -217,16 +218,16 @@ class AppServer {
 	 * @private
 	 */
 	private GracefulShutdown(): void {
-		process.on('SIGINT', () => {
-            this.closeAllOpenedConnection()
-            Logging.dev("Manually Shutting Down", "notice")
-            process.exit(1);
-        })
-        process.on('SIGTERM', () => {
-            this.closeAllOpenedConnection()
-            Logging.dev("Error Occured", "error")
-            process.exit(1);
-        })
+		process.on("SIGINT", () => {
+			this.closeAllOpenedConnection();
+			Logging.dev("Manually Shutting Down", "notice");
+			process.exit(1);
+		});
+		process.on("SIGTERM", () => {
+			this.closeAllOpenedConnection();
+			Logging.dev("Error Occured", "error");
+			process.exit(1);
+		});
 		process.on("uncaughtException", (err, origin) => {
 			AppLifecycleManager.handleAppError(err);
 			Logging.dev(
@@ -244,13 +245,13 @@ class AppServer {
 		});
 	}
 	private closeAllOpenedConnection() {
-        AppLifecycleManager.destroyModules()
-        BroadCastEvents.sendServerClosed();
-        AppEvents.emit('shutdown')
+		AppLifecycleManager.destroyModules();
+		BroadCastEvents.sendServerClosed();
+		AppEvents.emit("shutdown");
 		/** NOTE  Close Database/Redis or any opened Connection */
-        // CloseConnection()
-        // Cache.closeClonnection()
-    }
+		// CloseConnection()
+		// Cache.closeClonnection()
+	}
 	/**
 	 * Closes the given server and exits the process.
 	 *

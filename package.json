@@ -3,10 +3,10 @@
 	"version": "1.0.0",
 	"main": "build/main.js",
 	"scripts": {
-		"build": "nest build",
+		"build": "swc src -d build --strip-leading-paths",
 		"ready": "npm install",
 		"start": "node ./build/main.js",
-		"dev": "nest start --watch",
+		"dev": "bun --watch src/main.ts",
 		"mig:create": "typeorm migration:create ./src/factory/migrations/%npm_config_name%",
 		"mig:run": "npx typeorm-ts-node-esm migration:generate ./src/factory/migrations/%npm_config_name% -d ./src/app/config/Datasource.ts",
 		"mig:revert": "typeorm migration:revert -- -d ./src/app/config/Datasource.ts",
@@ -16,9 +16,9 @@
 		"migrate:revert": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm migration:revert",
 		"schema:drop": "./node_modules/.bin/ts-node ./node_modules/.bin/typeorm schema:drop",
 		"lint": "biome check .",
-		"lint:fix": "biome check --write . --ignore build ",
+		"lint:fix": "biome check --write .",
 		"format": "biome format .",
-		"format:fix": "biome check --fix --unsafe"
+		"format:fix": "biome check --fix --unsafe ."
 	},
 	"lint-staged": {
 		"*.{js,jsx,ts,tsx}": [
